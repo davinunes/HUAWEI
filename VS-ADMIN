@@ -1,0 +1,375 @@
+
+return
+system-view immediately
+
+
+
+#=================================================================== VS-ADMIN - BRAS (POOL + PPPOE + RADIUS)
+
+
+
+
+#======================================================================== BOOT
+
+
+
+dhcpv6 duid 0001000afeca5e1a5fcafebaba1a
+
+ipv6-pool statistic include shared-user
+#
+
+aaa
+    ppp username check
+    pure-user-name no-exist-policy online
+    acct-session-id-version version3
+    user-name minimum-length 4
+#
+
+pppoe ppp-max-payload enable
+pppoe-server send padt always
+#
+undo ppp connection chasten
+#
+
+
+
+
+
+#======================================================================== IPV4 - PREFIX + POOL
+
+
+ip pool IPV4-POOL-CGNAT-01 bas local
+    gateway 100.64.64.1 255.255.224.0 
+    section 0 100.64.64.2 100.64.95.254
+    dns-server 8.8.8.8 4.2.2.2
+#
+
+
+
+ip pool BLOQUEADO bas local
+ gateway 172.31.0.1 255.255.0.0
+ section 0 172.31.0.2 172.31.15.254
+ dns-server 8.8.8.8 4.2.2.2
+#
+
+
+#======================================================================== IPV6 - DIRETO (entre servidor e WAN da CPE)
+
+
+ipv6 prefix IPV6-PREFIX-DIRECT-01 local
+    prefix 2804:2b28:490::/44
+#
+
+
+ipv6 pool IPV6-POOL-DIRECT-01 bas local  
+    dns-server 2001:4860:4860::8888 2001:4860:4860::8844
+    prefix IPV6-PREFIX-DIRECT-01
+#
+
+
+
+#======================================================================== IPV6 - DELEGADO (para usar na LAN da CPE - dentro da casa do cliente)
+
+
+ipv6 prefix IPV6-PREFIX-DELEGATED-01 delegation
+    prefix 2804:2b28:4a0::/43 delegating-prefix-length 64
+    lifetime preferred-lifetime days 1 hours 0 minutes 0 valid-lifetime days 15 hours 0 minutes 0
+    frame-ipv6 lease manage
+    reserved prefix mac lease
+#
+
+
+ipv6 pool IPV6-POOL-DELEGATED-01 bas delegation  
+    dns-server 2001:4860:4860::8888 2001:4860:4860::8844
+    prefix IPV6-PREFIX-DELEGATED-01
+#
+
+
+
+#======================================================================== Loopback com IP publico para acesso a Internet
+
+
+interface loopback 11
+    ip address 10.255.201.1 32
+    ipv6 enable
+    ipv6 address 2804:2b28:0:7::2/64
+
+     ospf enable 1 area 0.0.0.0
+     ospfv3 1 area 0.0.0.0
+#
+
+
+#======================================================================== RADIUS BOOT
+
+radius-server source interface Loopback 11
+#
+
+radius-server authorization error-reply version2
+#
+
+radius-server authorization 143.208.72.22 destination-port 3799 shared-key tulipa
+#
+
+radius-attribute delegated-ipv6-prefix encapsulation-method version2
+#
+
+radius-attribute framed-ip-address encapsulation-method version2
+#
+
+#- 
+#
+
+
+#======================================================================== RADIUS SERVER
+
+
+radius-server group ISP-RADIUS-SERVER
+    radius-server shared-key       tulipa
+    radius-server authentication   143.208.72.22 1812 weight 0
+    radius-server accounting       143.208.72.22 1813 weight 0
+    radius-server timeout 3
+    radius-server retransmit 2
+    radius-server user-name original
+    radius-server timeout 25
+    radius-server attribute translate
+    radius-server called-station-id include ap-ip account-request
+    radius-server accounting-start-packet resend 3
+    radius-server accounting-stop-packet resend 3
+    radius-server accounting-interim-packet resend 5
+    radius-server user-name trust-server-request 
+    radius-server accounting-stop-packet send force
+    radius-server user-name trust-server-request 
+    radius-attribute include HW-Auth-Type
+    radius-attribute include Reply-Message coa-nak
+    radius-attribute include edsg-service-name accounting-request 
+    radius-attribute include Event-Timestamp accounting-on accounting-off 
+    radius-attribute translate extend HW-Auth-Type vendor-specific 2011 109 access-request account 
+    radius-attribute assign hw-mng-ipv6 pppoe motm 
+    radius-attribute case-sensitive qos-profile-name
+    radius-attribute apply user-name match user-type ipoe 
+    radius-attribute apply framed-ipv6-pool match pool-type
+    radius-attribute service-type value outbound user-type ipoe  
+    radius-attribute include agent-circuit-id value-added-service
+    radius-attribute include agent-remote-id value-added-service
+    radius-attribute hw-user-password simple coa-request
+    radius-server connect-info include refer-option82
+	radius-server format-attribute nas-port-id vendor 2352
+#
+
+
+
+#======================================================================== SCHEME
+
+
+aaa
+    authentication-scheme ISP-RADIUS-AUTH
+        authentication-mode radius
+    #
+#
+aaa
+    accounting-scheme ISP-RADIUS-ACCT
+        accounting interim interval 1 traffic hash 
+        accounting send-update
+        accounting start-fail online
+        accounting interim-fail max-times 10 online
+    #
+#
+
+
+
+#======================================================================== DEFAULT DOMAIN
+aaa
+   domain acessodf.net
+    radius-server group     ISP-RADIUS-SERVER
+    authentication-scheme   ISP-RADIUS-AUTH
+    accounting-scheme       ISP-RADIUS-ACCT
+    ip-pool                 IPV4-POOL-CGNAT-01
+    ipv6-pool               IPV6-POOL-DIRECT-01
+    ipv6-pool               IPV6-POOL-DELEGATED-01
+    dns primary-ip          8.8.8.8
+    dns second-ip           4.2.2.6
+    dns primary-ipv6        2001:4860:4860::8888
+    dns second-ipv6         2001:4860:4860::8844
+    accounting-start-delay 10 online user-type ppp ipoe static 
+    user-basic-service-ip-type ipv4 
+    ipv6 ppp assign-interfaceid
+    qos rate-limit-mode user-queue inbound
+    qos rate-limit-mode user-queue outbound
+    reallocate-ip-address
+    user-max-session 65530
+#
+
+
+
+#======================================================================== QOS Profile por nome (parametro Huawei-Qos-Profile-Name respondido pelo radius)
+
+
+
+qos-profile 2MB
+    user-queue cir 1536 cbs 1536 pir 1536 inbound
+    user-queue cir 2048 cbs 2048 pir 2048 outbound
+#
+
+qos-profile 4MB
+    user-queue cir 2048 cbs 2048 pir 2048 inbound
+    user-queue cir 4096 cbs 4096 pir 4096 outbound
+#
+
+qos-profile 6MB
+    user-queue cir 1536 cbs 1536 pir 1536 inbound
+    user-queue cir 6144 cbs 6144 pir 6144 outbound
+#
+
+qos-profile 8MB
+    user-queue cir 2048 cbs 2048 pir 2048 inbound
+    user-queue cir 8192 cbs 8192 pir 8192 outbound
+#
+
+qos-profile 10MB
+    user-queue cir 5120 cbs 5120 pir 5120 inbound
+    user-queue cir 10240 cbs 10240 pir 10240 outbound
+#
+
+qos-profile 15MB
+    user-queue cir 5120 cbs 5120 pir 5120 inbound
+    user-queue cir 15360 cbs 15360 pir 15360 outbound
+#
+
+qos-profile 60MB
+    user-queue cir 10240 cbs 10240 pir 10240 inbound
+    user-queue cir 104448 cbs 104448 pir 104448 outbound
+#
+
+qos-profile 70MB
+    user-queue cir 35000 cbs 35000 pir 35000 inbound
+    user-queue cir 70000 cbs 70000 pir 70000 outbound
+#
+
+
+qos-profile 80MB
+    user-queue cir 30000 cbs 30000 pir 30000 inbound
+    user-queue cir 82944 cbs 82944 pir 82944 outbound
+#
+
+qos-profile 100MB
+    user-queue cir 51200 cbs 51200 pir 51200 inbound
+    user-queue cir 107520 cbs 107520 pir 107520 outbound
+#
+
+qos-profile 150MB
+    user-queue cir 50960 cbs 50960 pir 50960 inbound
+    user-queue cir 153600 cbs 153600 pir 153600 outbound
+#
+qos-profile 200MB
+    user-queue cir 51200 cbs 51200 pir 51200 inbound
+    user-queue cir 204800 cbs 204800 pir 204800 outbound
+#
+
+qos-profile 300MB
+    user-queue cir 102000 cbs 102000 pir 102000 inbound
+    user-queue cir 320000 cbs 320000 pir 320000 outbound
+#
+
+qos-profile 400MB
+    user-queue cir 202000 cbs 202000 pir 202000 inbound
+    user-queue cir 420000 cbs 420000 pir 420000 outbound
+#
+
+qos-profile 1GB 
+    user-queue cir 1024000 cbs 1024000 pir 1024000 inbound
+    user-queue cir 1024000 cbs 1024000 pir 1024000 outbound
+#
+
+
+
+
+
+#======================================================================== Virtual-Template
+
+
+interface Virtual-Template 0
+    ppp authentication-mode auto
+#
+
+interface Virtual-Template 1
+    mtu 1492
+
+    ppp authentication-mode pap chap mschapv1 mschapv2
+    ppp keepalive interval 20 retransmit 3
+    ppp mru 1500
+    pppoe-server ac-name N40-PPPoE
+    pppoe-server service-name-parameter INTERNET
+
+    ip urpf strict enable check subnet
+    ipv6 urpf strict enable check subnet
+
+    tcp adjust-mss 1420
+#
+
+
+
+
+#======================================================================== Interfaces VLAN/RANGE - PPPoE
+
+interface GigabitEthernet0/3/8
+undo eth-trunk
+undo dcn
+y
+#
+
+
+# undo interface GigabitEthernet0/3/6.8001
+
+interface GigabitEthernet0/3/9.8001
+    undo shutdown
+    user-vlan 300 302
+	quit
+    description VLANs-PPPoE
+    statistic enable
+
+    ipv6 enable
+    ipv6 address auto link-local
+
+    8021p 0
+
+    pppoe-server bind Virtual-Template 1
+
+    bas
+        access-type layer2-subscriber default-domain authentication acessodf.net
+		authentication-method ppp
+        access-delay 1500
+    #
+#
+
+
+
+#======================================================================== Interfaces VLAN/RANGE - IPoE (DHCP)
+
+
+
+interface Eth-Trunk10.8002
+    undo shutdown
+    user-vlan 200 299
+#
+interface Eth-Trunk10.8002
+    description VLANs-IPOE
+    statistic enable
+
+    ipv6 enable
+    ipv6 address auto link-local
+
+    8021p 0
+
+    pppoe-server bind Virtual-Template 1
+
+    bas
+    commit
+        access-type layer2-subscriber default-domain authentication ISP-DOMAIN-01
+        client-option82
+        authentication-method bind
+    #
+#
+
+
+
+#======================================================================== 
