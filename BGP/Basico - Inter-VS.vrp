@@ -1,0 +1,154 @@
+#=================================================================== N8000 - Parte 2 - Criar VS e inter-vs veth
+
+
+
+
+#-------------------------------------------- VETH L2
+
+
+interface Virtual-Ethernet0/2/2
+ ve-group 2 l2-terminate
+#
+
+
+interface Virtual-Ethernet0/3/3
+ ve-group 3 l2-terminate
+#
+
+
+#-------------------------------------------- VETH L3
+
+
+interface Virtual-Ethernet0/2/21
+ ve-group 2 l3-access
+ mac-address c4b8-cafe-ee21
+#
+
+interface Virtual-Ethernet0/3/31
+ ve-group 3 l3-access
+ mac-address c4b8-cafe-ee31
+#
+
+
+#-------------------------------------------- VETH VLANS [A]
+
+ 
+interface Virtual-Ethernet0/2/2.1001
+ vlan-type dot1q 1001
+ statistic enable
+#
+
+interface Virtual-Ethernet0/2/2.1002
+ vlan-type dot1q 1002
+ statistic enable
+#
+
+interface Virtual-Ethernet0/2/2.1003
+ vlan-type dot1q 1003
+ statistic enable
+#
+
+#-------------------------------------------- VETH VLANS [B]
+
+
+interface Virtual-Ethernet0/3/3.1001
+ vlan-type dot1q 1001
+ statistic enable
+#
+
+interface Virtual-Ethernet0/3/3.1002
+ vlan-type dot1q 1002
+ statistic enable
+#
+
+interface Virtual-Ethernet0/3/3.1003
+ vlan-type dot1q 1003
+ statistic enable
+#
+
+#-------------------------------------------- CCC entre VLANS VETH
+
+
+ccc p2p-1001 interface Virtual-Ethernet0/2/2.1001 tagged out-interface Virtual-Ethernet0/3/3.1001 tagged
+ccc p2p-1002 interface Virtual-Ethernet0/2/2.1002 tagged out-interface Virtual-Ethernet0/3/3.1002 tagged
+ccc p2p-1003 interface Virtual-Ethernet0/2/2.1003 tagged out-interface Virtual-Ethernet0/3/3.1003 tagged
+
+
+#-------------------------------------------- VETH VLANS L3 para VSs
+
+
+interface Virtual-Ethernet0/2/21.1001
+ vlan-type dot1q 1001
+#
+interface Virtual-Ethernet0/2/21.1002
+ vlan-type dot1q 1002
+#
+interface Virtual-Ethernet0/2/21.1003
+ vlan-type dot1q 1003
+#
+
+
+interface Virtual-Ethernet0/3/31.1001
+ vlan-type dot1q 1001
+#
+interface Virtual-Ethernet0/3/31.1002
+ vlan-type dot1q 1002
+#
+interface Virtual-Ethernet0/3/31.1003
+ vlan-type dot1q 1003
+#
+
+
+#-------------------------------------------- VETH VLANS L3 - CONFIG - LADO VS-ADMIN
+
+
+interface Virtual-Ethernet0/2/21.1001
+    description Conexao-com-VS-BGP-WAN-PUB-IPv4
+    vlan-type dot1q 1001
+    ip address 10.77.1.2 255.255.255.252
+    statistic enable
+#
+
+interface Virtual-Ethernet0/2/21.1002
+    description Conexao-com-VS-BGP-WAN-PUB-IPv6
+    vlan-type dot1q 1002
+    ipv6 enable
+    ipv6 address 2804:2b28:0:7::2/64
+    ospfv3 1 area 0.0.0.0
+    ospfv3 network-type p2p
+    ospfv3 cost 10
+    statistic enable
+#
+
+
+
+#-------------------------------------------- Config interfaces VS-01
+
+assign interface Virtual-Ethernet0/3/31.1001
+y
+  assign interface Virtual-Ethernet0/3/31.1002
+y
+  assign interface Virtual-Ethernet0/3/31.1003
+y
+
+
+
+
+interface Virtual-Ethernet0/3/31.1001
+    description Conexao-com-VS-ADMIN-BRAS-WAN-PUB-IPv4
+    vlan-type dot1q 1001
+    ip address 10.77.1.1 255.255.255.252
+    statistic enable
+#
+
+interface Virtual-Ethernet0/3/31.1002
+    description Conexao-com-VS-ADMIN-BRAS-WAN-PUB-IPv6
+    vlan-type dot1q 1002
+    ip address unnumbered interface LoopBack0
+    ipv6 enable
+    ipv6 address 2804:2b28:0:7::1/64
+    ospfv3 1 area 0.0.0.0
+    ospfv3 network-type p2p
+    ospfv3 cost 10
+    statistic enable
+#

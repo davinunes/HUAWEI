@@ -1,0 +1,266 @@
+
+return
+system-view immediately
+
+
+
+#=================================================================== iBGP - Base iBGP - Aplicar em ambos
+
+
+
+#===================================================== Blackhole action
+
+
+ip route-static 192.0.2.0 24 NULL0 preference 1
+
+ipv6 route-static 2001:db8:ffff:6666:: 64 NULL0 preference 1
+
+
+
+
+#================================================ Policies - IMPORT
+
+route-policy IBGP-IMPORT-IPV4 permit node 1
+
+route-policy IBGP-IMPORT-IPV4 deny node 9999
+#
+
+
+route-policy IBGP-IMPORT-IPV6 permit node 1
+
+route-policy IBGP-IMPORT-IPV6 deny node 9999
+#
+
+
+
+
+
+#================================================ Policies - EXPORT
+
+
+route-policy IBGP-EXPORT-IPV4 permit   node 1
+#
+route-policy IBGP-EXPORT-IPV4 deny node 9999
+#
+
+
+
+route-policy IBGP-EXPORT-IPV6 permit node 1
+
+route-policy IBGP-EXPORT-IPV6 deny node 9999
+#
+
+
+
+#================================================ Peer Group
+
+
+bgp 265138
+
+    group IBGP-IPV4 internal
+    peer IBGP-IPV4 as-number 265138
+    peer IBGP-IPV4 description IBGP-RR-CLIENTS-IPV4
+ #   peer IBGP-IPV4 connect-interface LoopBack0
+    peer IBGP-IPV4 timer connect-retry 1
+    peer IBGP-IPV4 timer keepalive 20 hold 60
+y
+
+    group IBGP-IPV6 internal
+    peer IBGP-IPV6 as-number 265138
+    peer IBGP-IPV6 description IBGP-RR-CLIENTS-IPV6
+    peer IBGP-IPV6 connect-interface LoopBack0
+    peer IBGP-IPV6 timer connect-retry 1
+    peer IBGP-IPV6 timer keepalive 20 hold 60
+y
+
+
+    ipv4-family unicast
+        peer IBGP-IPV4 enable
+        peer IBGP-IPV4 route-policy IBGP-IMPORT-IPV4 import
+        peer IBGP-IPV4 route-policy IBGP-EXPORT-IPV4 export
+        peer IBGP-IPV4 advertise-community
+        peer IBGP-IPV4 advertise-ext-community
+        peer IBGP-IPV4 advertise-large-community
+        peer IBGP-IPV4 reflect-client
+        peer IBGP-IPV4 next-hop-local
+
+
+    ipv6-family unicast
+        peer IBGP-IPV6 enable
+        peer IBGP-IPV6 route-policy IBGP-IMPORT-IPV6 import
+        peer IBGP-IPV6 route-policy IBGP-EXPORT-IPV6 export
+        peer IBGP-IPV6 advertise-community
+        peer IBGP-IPV6 advertise-ext-community
+        peer IBGP-IPV6 advertise-large-community
+        peer IBGP-IPV6 reflect-client
+        peer IBGP-IPV6 next-hop-local
+
+
+
+#
+commit
+
+
+
+
+#=================================================================== iBGP - LADO CCR1072_TRANSICAO - BGP
+
+
+
+interface Eth-Trunk10.126
+ vlan-type dot1q 126
+    description Conexao-com-CCR1072_TRANSICAO
+
+    ip address 10.61.61.6 255.255.255.252
+
+    ipv6 enable
+    ipv6 address 2804:2B28:0:6::1/64
+
+    statistic enable
+
+    # mtu 9216
+
+    ospf enable 1 area 0.0.0.0
+    ospf network-type p2p
+    ospf cost 10
+
+    ospfv3 1 area 0.0.0.0
+    ospfv3 network-type p2p
+    ospfv3 cost 10
+
+    mpls
+    # mpls mtu 9200
+    mpls ldp
+#
+
+interface Eth-Trunk10.127
+ vlan-type dot1q 127
+    description Conexao-com-CCR1072_NAT_Canal2
+
+    ip address 10.61.61.10 30
+
+    statistic enable
+
+    ospf enable 1 area 0.0.0.0
+    ospf network-type p2p
+    ospf cost 10
+
+    mpls
+    mpls ldp
+#
+
+interface LoopBack0
+    ospf enable 1 area 0.0.0.0
+    ospfv3 1 area 0.0.0.0
+#
+
+
+
+bgp 265138
+
+    peer 10.61.61.5 group IBGP-IPV4
+    peer 10.61.61.5 description CCR1072_TRANSICAO
+
+    ipv4-family unicast
+        peer 10.61.61.5 enable
+y
+        peer 10.61.61.5 group IBGP-IPV4
+#
+
+
+bgp 265138
+
+    peer 2804:2B28:0:6::2 group IBGP-IPV6
+    peer 2804:2B28:0:6::2 description IBGP CCR 1072
+
+    ipv6-family unicast
+        peer 2804:2B28:0:6::2 enable
+y
+        peer 2804:2B28:0:6::2 group IBGP-IPV6
+#
+
+
+
+
+
+
+#=================================================================== iBGP - LADO VS-02 - CDNS
+
+
+
+return
+switch virtual-system N8000V02
+system-view immediately
+
+
+interface Virtual-Ethernet0/2/21.1003
+    vlan-type dot1q 1003
+    description Conexao-com-VS-BGP
+    ipv6 enable
+    ip address 10.77.9.2 255.255.255.252
+    ipv6 address 2001:DB8:9::2/64
+    statistic enable
+
+    mtu 9216
+
+    ospf enable 1 area 0.0.0.0
+    ospf network-type p2p
+    ospf cost 10
+
+    ospfv3 1 area 0.0.0.0
+    ospfv3 network-type p2p
+    ospfv3 cost 10
+
+    mpls
+    mpls mtu 9200
+    mpls ldp
+#
+interface LoopBack0
+    ospf enable 1 area 0.0.0.0
+    ospfv3 1 area 0.0.0.0
+#
+
+
+bgp 265138
+
+    peer 10.200.255.241 group IBGP-IPV4
+    peer 10.200.255.241 description VS-01-BGP-IPV4
+
+    ipv4-family unicast
+        peer 10.200.255.241 enable
+y
+        peer 10.200.255.241 group IBGP-IPV4
+#
+
+
+bgp 265138
+
+    peer 2001:DB8:FFFF:EEEE::241 group IBGP-IPV6
+    peer 2001:DB8:FFFF:EEEE::241 description VS-01-BGP-IPV6
+
+    ipv6-family unicast
+        peer 2001:DB8:FFFF:EEEE::241 enable
+y
+        peer 2001:DB8:FFFF:EEEE::241 group IBGP-IPV6
+#
+
+
+return
+save
+y
+
+
+
+#======================================================================== 
+#======================================================================== 
+#======================================================================== 
+
+
+
+
+
+
+
+
+
+

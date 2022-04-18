@@ -1,0 +1,27 @@
+#
+sysname N40_BGP_LINKS
+#
+
+router id 10.61.61.2
+#
+#
+mpls lsr-id 10.61.61.2
+#
+mpls
+ mpls te
+ mpls rsvp-te
+ mpls te cspf
+#
+mpls l2vpn
+#
+mpls ldp
+ #
+ ipv4-family
+#
+#
+ospf 1 router-id 10.61.61.2
+ preference 110
+ opaque-capability enable
+ area 0.0.0.0
+  mpls-te enable
+#

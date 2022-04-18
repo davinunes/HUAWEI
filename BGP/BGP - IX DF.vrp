@@ -1,0 +1,343 @@
+
+return
+system-view immediately
+
+
+
+#=================================================================== BGP com ptt df rnp
+
+
+
+
+#======================================================================== INTERFACE
+
+
+
+interface Eth-Trunk10.2052
+    vlan-type dot1q 2052
+    undo shutdown
+    description C06-PTT-DF-IPv4
+    statistic enable
+
+    #-mac-address a33c-aaaa-bbbb
+
+    ip address 200.192.110.108 24
+
+    arp rate-limit 0
+    arp expire-time 21600
+    arp-limit maximum 8192
+#
+
+interface Eth-Trunk10.2053
+    vlan-type dot1q 2053
+    undo shutdown
+    description C06-PTT-DF-IPv6
+    statistic enable
+
+    #-mac-address a33c-aaaa-bbbb
+
+    ipv6 enable
+    ipv6 address 2001:12f8:0:13::108/64
+
+    ipv6 nd nud reachable-time 2400000
+    ipv6 nd ns retrans-timer 2000
+    ipv6 nd neighbor-limit 8192
+#
+
+
+
+#======================================================================== EXPORT
+
+undo route-policy C06-EXPORT
+
+route-policy C06-EXPORT permit node 1050
+    if-match community-filter EXPORT_C06
+	# Exportar o que tiver com a comunidade 26513:6, rotas que DEVEM sair para o PTT DF
+#
+
+route-policy C06-EXPORT deny node 9999
+#
+
+
+
+#======================================================================== LISTA DE PREFIXOS A BLOQUEAR
+
+
+# Lista de PREFIXOS para bloquear recebimento pelo circuito - IPV4:
+
+
+
+ip ip-prefix C06-BLOCKLIST-IPV4 index 100 permit 10.0.0.0 8 greater-equal 8 less-equal 32
+
+
+# Lista de PREFIXOS para bloquear recebimento pelo circuito - IPV6:
+
+
+ip ipv6-prefix C03-BLOCKLIST-IPV6 index 100 permit 2001:db8:: 32 greater-equal 32 less-equal 128
+
+#======================================================================== AS-PATH para priorizar via C02
+
+# Lista de AS-PATH para priorizar rota pelo circuito:
+
+ip as-path-filter C06-AS-ROUTE index 05 permit ^20121$
+ip as-path-filter C06-AS-ROUTE index 10 permit ^26162$
+# Cria uma lista com os prefixos Originados por Este ASN
+
+#======================================================================== IMPORT - IPV4
+
+
+route-policy C06-IMPORT-IPV4 deny   node 1000
+    if-match ip-prefix RFC5735
+	# Descarta rotas privadas
+#
+
+
+route-policy C06-IMPORT-IPV4 deny   node 1011
+    if-match ip-prefix BGP-CLIENT-LIST-ESP-IPV4
+	# descarta rotas específicas dos Clientes
+#
+
+route-policy C06-IMPORT-IPV4 permit node 2000
+    if-match ip-prefix BGP-CLIENT-LIST-SUM-IPV4
+    apply local-preference 50
+    apply community 26513:100 26513:0
+	# Aplica comunidades: CLIENTE EXPORT_ALL
+	# Aceita as rotas sumarizadas dos clientes e aplica as comunidades e controla a local preference
+#
+
+route-policy C06-IMPORT-IPV4 permit node 2002
+    if-match as-path-filter C06-AS-ROUTE
+    apply local-preference 205
+    apply community 26513:100 26513:0 26513:999 26513:6666
+	# Comunidades: CLIENTE EXPORT_ALL 
+	# E aumenta o local preference especificamente para as rotas deste link, e com a 999 não exporta para uplink
+#
+route-policy C06-IMPORT-IPV4 permit   node 8888
+    apply community 26513:999
+#
+
+route-policy C06-IMPORT-IPV4 permit node 9999
+	# Permite o restante de tudo, afinal é um fullroute entrando
+#
+
+
+#======================================================================== IMPORT - IPV6
+
+route-policy C06-IMPORT-IPV6 deny   node 1000
+    if-match ipv6 address prefix-list RFC3849
+#
+
+route-policy C06-IMPORT-IPV6 deny   node 1011
+    if-match ipv6 address prefix-list BGP-CLIENT-LIST-ESP-IPV6
+#
+
+route-policy C06-IMPORT-IPV6 permit node 2000
+    if-match ipv6 address prefix-list BGP-CLIENT-LIST-SUM-IPV6
+    apply local-preference 50
+    apply community 26513:100 26513:0
+#
+
+route-policy C06-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C06-AS-ROUTE
+    apply local-preference 202
+    apply community 26513:100 26513:0 26513:999
+#
+
+route-policy C06-IMPORT-IPV6 permit   node 8888
+    apply community 26513:999
+#
+
+route-policy C06-IMPORT-IPV6 permit  node 9999
+#
+
+
+
+#======================================================================== BGP - RS PEERING - RouterServer - IPv4
+
+
+bgp 265138
+    group IX-DF-V4 external
+    peer IX-DF-V4 as-number 26162
+    peer IX-DF-V4 timer connect-retry 1
+    peer IX-DF-V4 timer keepalive 20 hold 60
+
+    peer 200.192.110.253 as-number 26162
+    peer 200.192.110.253 group IX-DF-V4
+    peer 200.192.110.253 description RS1.DF.PTT.BR-IPv4
+
+    peer 200.192.110.254 as-number 26162
+    peer 200.192.110.254 group IX-DF-V4
+    peer 200.192.110.254 description RS2.DF.PTT.BR-IPv4
+
+    ipv4-family unicast
+
+       peer IX-DF-V4 enable
+y
+       peer IX-DF-V4 route-policy C06-IMPORT-IPV4 import
+       peer IX-DF-V4 route-policy C06-EXPORT export
+       peer IX-DF-V4 advertise-community
+       peer IX-DF-V4 advertise-ext-community
+       peer IX-DF-V4 next-hop-local
+       peer IX-DF-V4 public-as-only force
+
+       peer 200.192.110.253 enable
+y
+       peer 200.192.110.253 group IX-DF-V4
+
+       peer 200.192.110.254 enable
+y
+       peer 200.192.110.254 group IX-DF-V4
+
+
+
+#
+
+
+#======================================================================== BGP - RS PEERING - RouterServer - IPv6
+
+
+bgp 265138
+
+    group IX-DF-V6 external
+    peer IX-DF-V6 as-number 26162
+    peer IX-DF-V6 timer connect-retry 1
+    peer IX-DF-V6 timer keepalive 20 hold 60
+y
+
+    peer 2001:12f8:0:13::253 as-number 26162
+    peer 2001:12f8:0:13::253 group IX-DF-V6
+    peer 2001:12f8:0:13::253 description RS1.DF.IX.BR-IPv6
+
+    peer 2001:12f8:0:13::254 as-number 26162
+    peer 2001:12f8:0:13::254 group IX-DF-V6
+    peer 2001:12f8:0:13::254 description RS2.DF.IX.BR-IPv6
+
+
+    ipv6-family unicast
+
+       peer IX-DF-V6 enable
+y
+       peer IX-DF-V6 route-policy C06-IMPORT-IPV6 import
+       peer IX-DF-V6 route-policy C06-EXPORT export
+       peer IX-DF-V6 advertise-community
+       peer IX-DF-V6 advertise-ext-community
+       peer IX-DF-V6 next-hop-local
+       peer IX-DF-V6 public-as-only force
+
+       peer 2001:12f8:0:13::253 enable
+y
+       peer 2001:12f8:0:13::253 group IX-DF-V6
+
+       peer 2001:12f8:0:13::254 enable
+y
+       peer 2001:12f8:0:13::254 group IX-DF-V6
+
+#
+#
+
+
+#======================================================== POLICE - Looking Glass
+
+
+route-policy C06-LG-IMPORT-IPV4 deny node 9999
+#
+route-policy C06-LG-IMPORT-IPV6 deny node 9999
+#
+
+
+
+#======================================================== BGP Peering - Looking Glass
+
+
+
+bgp 265138
+
+    peer 200.192.110.252 as-number 20121
+    peer 200.192.110.252 description LG.DF.IX.BR-IPv4
+
+    peer 2001:12f8:0:13::252 as-number 20121
+    peer 2001:12f8:0:13::252 description LG.DF.IX.BR-IPv6
+
+    ipv4-family unicast
+
+        peer 200.192.110.252 enable
+y
+        peer 200.192.110.252 route-policy C06-LG-IMPORT-IPV4 import
+        peer 200.192.110.252 route-policy C06-EXPORT export
+        peer 200.192.110.252 next-hop-local
+        peer 200.192.110.252 public-as-only force
+
+
+    ipv6-family unicast
+
+       peer 2001:12f8:0:13::252 enable
+y
+
+       peer 2001:12f8:0:13::252 route-policy C06-LG-IMPORT-IPV6 import
+       peer 2001:12f8:0:13::252 route-policy C06-EXPORT export
+       peer 2001:12f8:0:13::252 next-hop-local
+       peer 2001:12f8:0:13::252 public-as-only force
+#
+#
+
+
+#======================================================================== BGP - DESATIVAR
+
+# Desativar peer
+bgp 265138
+
+    peer 200.192.110.253 ignore
+    peer 200.192.110.254 ignore
+
+    peer 200.192.110.252 ignore
+
+    peer 2001:12f8:0:13::253 ignore
+    peer 2001:12f8:0:13::254 ignore
+
+    peer 2001:12f8:0:13::252 ignore
+
+#
+commit
+
+
+#======================================================================== BGP - ATIVAR
+
+# Ativar
+bgp 265138
+    undo peer 200.192.110.253 ignore
+    undo peer 200.192.110.254 ignore
+
+
+    undo peer 200.192.110.252 ignore
+
+    undo peer 2001:12f8:0:13::253 ignore
+    undo peer 2001:12f8:0:13::254 ignore
+
+    undo peer 2001:12f8:0:13::252 ignore
+#
+commit
+
+
+#======================================================================== BGP - DELETAR - CUIDADO
+
+
+# Destruir config do peer
+bgp 265138
+    undo peer 200.192.110.253
+    undo peer 200.192.110.254
+
+    undo peer 200.192.110.252
+
+    undo peer 2001:12f8:0:13::253
+    undo peer 2001:12f8:0:13::254
+
+    undo peer 2001:12f8:0:13::252
+#
+commit
+
+
+#======================================================================== 
+#======================================================================== 
+#======================================================================== 
+#======================================================================== 
+

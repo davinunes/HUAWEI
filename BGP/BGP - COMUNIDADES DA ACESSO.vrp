@@ -1,0 +1,48 @@
+26513:26513		É uma rota minha
+
+26513:0			Exportar para todos os peer (setar nos clientes e no /22 ou /32)
+26513:1			Exportar para Up 1
+26513:5001		Exportar para Up 1 com 5 preprends
+26513:2			Exportar para Up 2
+26513:5002		Exportar para Up 2 com 5 preprends
+26513:3			Exportar para Up 3
+26513:5003		Exportar para Up 3 com 5 preprends
+26513:4			Exportar para Up 4
+26513:5004		Exportar para Up 4 com 5 preprends
+...				...
+26513:100		É um Cliente (setar nos clientes)
+
+26513:1000		É uma rota de internet
+26513:6666		Essa rota não deve ser exportada!
+
+##########################################################################
+##	Circuito 01: Linkar
+##	Circuito 02: LinkarBackup
+##	Circuito 03: Logtel
+##	Circuito 04: JET
+##	Circuito 05: Skill
+##	Circuito 06: PTTDF
+##	Circuito 07: Google Fiber7
+##########################################################################
+
+ip community-filter basic PROVEDOR		 permit 	26513:26513	
+ip community-filter basic EXPORT_ALL	 permit 	26513:0		
+ip community-filter basic EXPORT_C01	 permit 	26513:1		
+ip community-filter basic EXPORT_C01P5	 permit 	26513:5001	
+ip community-filter basic EXPORT_C02	 permit 	26513:2		
+ip community-filter basic EXPORT_C02P5	 permit 	26513:5002	
+ip community-filter basic EXPORT_C03	 permit 	26513:3		
+ip community-filter basic EXPORT_C03P5	 permit 	26513:5003	
+ip community-filter basic EXPORT_C04	 permit 	26513:4		
+ip community-filter basic EXPORT_C04P5	 permit 	26513:5004	
+ip community-filter basic EXPORT_C05	 permit 	26513:5		
+ip community-filter basic EXPORT_C05P5	 permit 	26513:5005
+ip community-filter basic EXPORT_C06	 permit 	26513:6		
+ip community-filter basic EXPORT_C06P5	 permit 	26513:5006
+
+ip community-filter basic EXPORT_C07	 permit 	26513:7		
+ip community-filter basic EXPORT_C07P5	 permit 	26513:5007
+
+ip community-filter basic CLIENTE		 permit 	26513:100	
+ip community-filter basic FULLROUTE		 permit 	26513:1000
+ip community-filter basic NO-UPLINK		 permit 	26513:999	

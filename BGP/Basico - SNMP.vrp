@@ -1,0 +1,7 @@
+snmp-agent community read n40
+snmp-agent community complexity-check disable
+snmp-agent sys-info contact DaviNunes
+snmp-agent sys-info location BSB
+snmp-agent sys-info version v2c v3
+snmp-agent mib-view included mib-view mib-2
+snmp-agent mib-view included mib2view mib-2

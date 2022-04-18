@@ -1,0 +1,25 @@
+
+return
+system-view immediately
+
+#=================================================================== PREFIX-LIST de clientes de transito
+
+#--------------------------------------------------------------------- 100 - AS268728 - Link7
+
+# AS 268728 - Link7
+#  45.171.192.0/22
+#  2804:59d4::/32
+
+
+ip ip-prefix    BGP-CLIENT-LIST-SUM-IPV4  index 100 permit 45.171.192.0 22
+ip ipv6-prefix  BGP-CLIENT-LIST-SUM-IPV6  index 100 permit 2804:59d4:: 32
+
+ip ip-prefix    BGP-CLIENT-LIST-ESP-IPV4  index 100 permit 45.171.192.0 22 greater-equal 23 less-equal 32
+ip ipv6-prefix  BGP-CLIENT-LIST-ESP-IPV6  index 100 permit 2804:59d4:: 32 greater-equal 33 less-equal 128
+
+# AS 268728 - ClickNet
+#  45.171.192.0/22
+#  2804:59d4::/32
+
+ip ip-prefix    BGP-CLIENT-LIST-SUM-IPV4  index 200 permit 189.84.143.0 24
+ip ip-prefix    BGP-CLIENT-LIST-ESP-IPV4  index 200 permit 189.84.143.0 24 greater-equal 24 less-equal 32

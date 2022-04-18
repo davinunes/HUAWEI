@@ -1,0 +1,22 @@
+router id 10.61.61.2
+#
+as-notation plain
+#
+
+#
+interface LoopBack0
+  ip address 10.61.0.1 32
+  ospf enable 1 area 0.0.0.0
+  ospfv3 1 area 0.0.0.0
+#
+
+
+
+bgp 265138
+  undo default ipv4-unicast
+  undo check-first-as
+ 
+ipv4-family unicast
+  undo synchronization
+  preference 20 220 1
+

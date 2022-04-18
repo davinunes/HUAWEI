@@ -1,0 +1,162 @@
+
+return
+system-view immediately
+
+
+
+#=================================================================== PREFIX-LIST - IPv4
+
+
+
+
+#------------------------------------------- prefix-list para o BRAS
+
+
+
+ip ip-prefix CGNAT-PRIV-PREFIXES-IPV4 index 101 permit 100.64.64.0 19 greater-equal 19 less-equal 31
+
+
+
+ip ip-prefix CGNAT-PUB-PREFIXES-IPV4 index 101 permit 143.208.74.96 27
+ip ip-prefix CGNAT-PUB-PREFIXES-IPV4 index 102 permit 143.208.74.128 27
+ip ip-prefix CGNAT-PUB-PREFIXES-IPV4 index 103 permit 143.208.74.160 27
+
+
+
+
+#------------------------------------------- prefixos publicos /32
+
+
+ip ip-prefix PUBLIC-PPPOE-IPV4 index 101 permit 143.208.72.0 22 greater-equal 32 less-equal 32
+
+
+
+#------------------------------------------- prefixos do cgnat
+
+
+#------------------------------------------- prefixos do backbone
+
+
+ip ip-prefix BACKBONE-IPV4 index 101 permit 10.0.0.0 8 greater-equal 8 less-equal 32
+ip ip-prefix BACKBONE-IPV4 index 102 permit 172.16.0.0 12 greater-equal 12 less-equal 32
+ip ip-prefix BACKBONE-IPV4 index 103 permit 192.168.0.0 16 greater-equal 16 less-equal 32
+ip ip-prefix BACKBONE-IPV4 index 104 permit 100.64.0.0 10 greater-equal 10 less-equal 31
+ip ip-prefix BACKBONE-IPV4 index 105 permit 143.208.72.0 22 greater-equal 22 less-equal 32
+
+
+
+#------------------------------------------- todos os prefixos privados
+
+
+ip ip-prefix RFC5735 index 110 permit 10.0.0.0 8 greater-equal 8 less-equal 32
+ip ip-prefix RFC5735 index 115 permit 127.0.0.0 8 greater-equal 8 less-equal 32
+ip ip-prefix RFC5735 index 120 permit 169.254.0.0 16 greater-equal 16 less-equal 32
+ip ip-prefix RFC5735 index 125 permit 172.16.0.0 12 greater-equal 12 less-equal 32
+ip ip-prefix RFC5735 index 130 permit 192.0.0.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 135 permit 192.0.2.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 140 permit 192.88.99.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 145 permit 192.168.0.0 16 greater-equal 16 less-equal 32
+ip ip-prefix RFC5735 index 150 permit 198.18.0.0 15 greater-equal 15 less-equal 32
+ip ip-prefix RFC5735 index 155 permit 198.51.100.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 160 permit 203.0.113.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 165 permit 224.0.0.0 4 greater-equal 4 less-equal 32
+ip ip-prefix RFC5735 index 170 permit 240.0.0.0 4 greater-equal 4 less-equal 32
+ip ip-prefix RFC5735 index 175 permit 255.255.255.255 32
+
+
+#------------------------------------------- full-route filtrando prefixos privados:
+
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 110 deny 10.0.0.0 8 greater-equal 8 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 115 deny 127.0.0.0 8 greater-equal 8 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 120 deny 169.254.0.0 16 greater-equal 16 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 125 deny 172.16.0.0 12 greater-equal 12 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 130 deny 192.0.0.0 24 greater-equal 24 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 135 deny 192.0.2.0 24 greater-equal 24 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 140 deny 192.88.99.0 24 greater-equal 24 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 145 deny 192.168.0.0 16 greater-equal 16 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 150 deny 198.18.0.0 15 greater-equal 15 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 155 deny 198.51.100.0 24 greater-equal 24 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 160 deny 203.0.113.0 24 greater-equal 24 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 165 deny 224.0.0.0 4 greater-equal 4 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 170 deny 240.0.0.0 4 greater-equal 4 less-equal 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 175 deny 255.255.255.255 32
+ip ip-prefix GLOBAL-INTERNET-IPV4 index 999 permit 0.0.0.0 0 greater-equal 8 less-equal 25
+
+
+#------------------------------------------- full-route sem filtro de privados:
+
+ip ip-prefix INTERNET-IPV4 index 10 permit 0.0.0.0 0 greater-equal 8 less-equal 24
+
+
+#------------------------------------------- rota padrao
+
+ip ip-prefix GATEWAY-IPV4 index 10 permit 0.0.0.0 0
+
+
+#------------------------------------------- rota padrao e rota padrao imperativa
+
+ip ip-prefix SUPER-GATEWAY-IPV4 index 10 permit 0.0.0.0 0
+ip ip-prefix SUPER-GATEWAY-IPV4 index 11 permit 0.0.0.0 1
+ip ip-prefix SUPER-GATEWAY-IPV4 index 12 permit 128.0.0.0 1
+
+
+
+
+
+#=================================================================== PREFIX-LIST - IPv6
+
+
+#===================================================================
+
+
+#------------------------------------------- prefix-list para o BRAS
+
+
+
+ip ipv6-prefix POOL-PPPOE-SUM-IPV6 index 101 permit 2804:2b28:490:: 44
+ip ipv6-prefix POOL-PPPOE-SUM-IPV6 index 102 permit 2804:2b28:4a0:: 43
+
+ip ipv6-prefix POOL-PPPOE-ESP-IPV6 index 101 permit 2804:2b28:490:: 44 greater-equal 44 less-equal 128
+ip ipv6-prefix POOL-PPPOE-ESP-IPV6 index 102 permit 2804:2b28:4a0:: 43 greater-equal 43 less-equal 128
+
+
+
+
+#------------------------------------------- prefixos do backbone
+
+
+ip ipv6-prefix BACKBONE-IPV6 index 101 permit 2804:2b28:: 32 greater-equal 32 less-equal 128
+ip ipv6-prefix BACKBONE-IPV6 index 102 permit 2001:DB8:: 32 greater-equal 32 less-equal 128
+
+
+#------------------------------------------- todos os prefixos privados
+
+ip ipv6-prefix RFC3849 index 110 permit 2001:DB8:: 32 greater-equal 32 less-equal 128
+
+
+
+#------------------------------------------- full-route filtrando prefixos privados:
+
+ip ipv6-prefix GLOBAL-INTERNET-IPV6 index 110 deny 2001:DB8:: 32 greater-equal 32 less-equal 128
+ip ipv6-prefix GLOBAL-INTERNET-IPV6 index 999 permit 2000:: 3 greater-equal 3 less-equal 48
+
+
+
+#------------------------------------------- full-route sem filtro de privados:
+
+ip ipv6-prefix INTERNET-IPV6 index 10 permit 2000:: 3 greater-equal 3 less-equal 48
+
+
+
+#------------------------------------------- rota padrao
+
+
+ip ipv6-prefix GATEWAY-IPV6 index 10 permit :: 0
+
+
+#------------------------------------------- rota padrao e rota padrao imperativa
+
+ip ipv6-prefix SUPER-GATEWAY-IPV6 index 10 permit :: 0
+ip ipv6-prefix SUPER-GATEWAY-IPV6 index 11 permit 2000:: 3
+
+

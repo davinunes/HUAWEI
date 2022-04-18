@@ -1,0 +1,36 @@
+interface Eth-Trunk10.50
+vlan-type dot1q 50
+    vlan-type dot1q 50
+    undo shutdown
+    description CLIENTE_I7TELECOM
+    statistic enable
+
+    ip address 172.20.100.1 30
+
+   ipv6 enable
+   ipv6 address 2804:2b28:0:4::1/64
+#
+
+ip route-static 143.208.72.8 30 172.20.100.2 preference 250 description CLIENTE_I7TELECOM
+ip route-static 143.208.72.8 32 172.20.100.2 preference 250 description CLIENTE_I7TELECOM
+ip route-static 143.208.72.9 32 172.20.100.2 preference 250 description CLIENTE_I7TELECOM
+ip route-static 143.208.72.10 32 172.20.100.2 preference 250 description CLIENTE_I7TELECOM
+ip route-static 143.208.72.11 32 172.20.100.2 preference 250 description CLIENTE_I7TELECOM
+ip route-static 143.208.73.48 28 172.20.100.2 preference 250 description CLIENTE_I7TELECOM
+ipv6 route-static 2804:2b28:470:: 44 2804:2b28:0:4::2 preference 250 description CLIENTE_I7TELECOM
+
+#
+
+
+# Destruir
+
+interface Eth-Trunk10.50
+vlan-type dot1q 50
+shutdown
+undo ip address 172.20.100.1 30
+undo ipv6 address 2804:2b28:0:4::1/64
+#
+
+undo ip route-static 143.208.72.8 30 172.20.100.2 
+undo ip route-static 143.208.73.48 28 172.20.100.2 
+undo ipv6 route-static 2804:2b28:470:: 44 2804:2b28:0:4::2 

@@ -1,0 +1,1696 @@
+
+
+1 - Acesse o switch por porta console
+
+    MAC:
+	sudo su
+	cd /dev
+	ls -lah | grep -i usb
+	
+	# Pegue o nome do dispositivo USB, exemplo: cu.wchusbserialfd130
+	screen /dev/cu.wchusbserialfd130
+	
+	Tecle Enter para interagir inicialmente
+
+    Windows:
+	- Abra o Putty, selecione porta serial (bit rate 9600), teste conectando: COM4, COM3 ou COM2
+	
+    Mikrotik:
+	Ligue o cabo na porta serial do mikrotik e na porta console do Huawei
+        - Abra o terminal e execute, tente na serial 0 ou serial 1:
+
+        # Serial 0:
+        /port set 0 baud-rate=9600 data-bits=8 parity=none stop-bits=1 flow-control=none
+        /system serial-terminal serial0
+
+        # Serial 1:
+        /port set 1 baud-rate=9600 data-bits=8 parity=none stop-bits=1 flow-control=none
+        /system serial-terminal serial1
+
+    Porta de gerencia padrao:
+	Ligue o cabo de rede na porta de gerencia ethernet (MNGT, METH),
+	configure o PC em 192.168.1.254/30
+	e acesse via WEB o IP padrao: 192.168.1.253
+	Entre via web e ative os servicos de SSH e TELNET no usuario admin
+	Ative o servico de SSH e TELNET 
+
+    Na configuracao de fabrica com a gerencia 192.168.1.253 o unico
+	servico rodando e' via HTTP, admin/admin@huawei.com
+	Ele vai pedir para alterar a senha no primeiro login, NAO ERRE a nova senha nem esqueca
+	Para ativar o TELNET/SSH va em:
+	> clique em 'admin' no canto superior direito (ao lado de SAVE)
+	> marque os servicos TELNET, HTTP, TERMINAL, SSH
+	> clique em OK
+	> clique em SAVE
+	(vai deslogar, logue-se novamente)
+	> MAINTENANCE
+	    > SYSTEM
+		> guia SERVICE
+		- ativar telnet e stelnet
+
+2 - Primeira vez que abrir o console, ele vai pedir pra configurar inicialmente, aceite (Y)
+    Ele vai pedir a senha de console, NAO ERRE, NEM DIGITE ERRADO, NEM ESQUECA !!!
+    Exemplo: nome provedor com primeira letra maiuscula e sequencia 123, Amnet123
+
+    Caso esteja com senha padrao:
+	user: admin
+	password: admin@huawei.com
+	password: huawei@123
+
+    Senha padrao de recuperacao:
+	password: Changeme_123
+
+3 - Apos entrar e definir a senha, voce estara no modo somente leitura:
+    <HUAWEI>
+    
+    Somente nesse modo e' possivel salvar com o comando: save
+    <HUAWEI> save
+    The current configuration (excluding the configurations of unregistered boards or cards) will be written to flash:/vrpcfg.zip.
+    Are you sure to continue?[Y/N]Y
+    Jun 27 2017 00:23:20 HUAWEI %%01CFM/4/SAVE(s)[1]:The user chose Y when deciding whether to save the configuration to the device.
+    Now saving the current configuration to the slot 0.
+    Save the configuration successfully.
+    <HUAWEI>
+
+
+    Para ver a configuracao atual, digite:
+    display current-configuration
+    
+    Voce pode abreviar com: dis cu
+
+4 - Entrar no modo configuracao: system-view
+
+    <HUAWEI>system-view
+    [HUAWEI]
+
+5 - No modo configuracao, todos os comandos sao de aplicacao imediata
+    (em outros Huawei precisa dar commit, em switchs nao precisa)
+
+X - modo de operacao das portas de 100g/400g
+
+    # ativar em modo 100g
+    set device port-config-mode 100g-port enable
+    # ou:
+    assign port-speed 100ge slot 0
+
+    # Precisa reiniciar:
+    reboot
+    
+    # Vai subir as portas UPLINK a 100ge
+    # pode suportar 40g dependendo do transceriver.
+    # 100GE0/0/1                  down  down         0%     0%          0          0
+    # 100GE0/0/2                  up    up           0%     0%          0          0
+    # 100GE0/0/3                  up    up           0%     0%          0          0
+    # 100GE0/0/4                  up    up           0%     0%          0          0
+    # 100GE0/0/5                  down  down         0%     0%          0          0
+    # 100GE0/0/6                  up    up           0%     0%          0          0
+    #
+
+    # Para retornar ao modo 40g:
+    undo assign port-speed 100ge slot 0
+    
+    # Reinicie novamente.
+
+
+
+6 - Atribuir senha do admin
+
+    - Entre nas sessao AAA, comando: aaa
+    [HUAWEI]aaa
+    [HUAWEI-aaa]
+    
+    - Sete a senha com o comando: local-user admin password
+    [HUAWEI-aaa]local-user admin password
+    Please enter password:
+    Please confirm password:
+    Info: After changing the rights (including the password, access type, FTP directory, and level) of a local user, the rights of users already online do not change. The change takes effect to users who go online after the change.
+
+    - Ative em quais servicos o usuario admin pode entrar:
+    
+    local-user admin service-type telnet terminal ssh ftp http
+
+    - Nivel de privilegio:
+
+    local-user admin privilege level 15
+
+    - Pronto, saia do AAA: quit
+    [HUAWEI-aaa]quit
+    [HUAWEI]
+    
+7 - Ativar servico TELNET
+
+    telnet server enable
+    telnet server port 2323
+
+    [HUAWEI]telnet server enable
+    Warning: Telnet is not a secure protocol, and it is recommended to use Stelnet.
+
+    [HUAWEI]telnet server port 2323
+    Warning: This operation will cause all the online Telnet users to be offline. Continue?[Y/N]:
+    Info: Succeeded in changing the listening port of the Telnet server.
+    [HUAWEI] 
+
+8 - Ativar telnet/stelnet/ssh nao basta, precisa ativar o shell no console remoto:
+
+    user-interface vty 0 4
+	authentication-mode aaa
+	protocol inbound all
+#	protocol inbound telnet
+	shell
+        user privilege level 15
+
+    ssh server authentication-retries 5
+    stelnet server enable
+    ssh server port 1822
+    ssh user admin
+    ssh user admin authentication-type password
+    ssh user admin service-type stelnet
+
+    ssh server cipher 3des_cbc aes128_cbc aes128_ctr aes256_cbc aes256_ctr des_cbc
+    ssh server hmac  md5 md5_96 sha1 sha1_96 sha2_256 sha2_256_96
+
+
+    # Exemplo:
+    [HUAWEI] ssh server authentication-retries 5
+    [HUAWEI] stelnet server enable
+    [HUAWEI] ssh server port 1822
+    [HUAWEI] ssh user admin
+    [HUAWEI] ssh user admin authentication-type password
+    [HUAWEI] ssh user admin service-type stelnet
+
+    # Confianca ssh
+    # Importante: apos o comando 'public-key-code begin', cole o conteudo
+    # do arquivo id_rsa.pub
+    #------------------------------------------------------
+    
+    rsa peer-public-key suporte-patrick encoding-type openssh
+    public-key-code begin
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCn5mH5RDQp3XUDCilcCJOmu41NQa9MddyOdUTbA8OPGexPFGVOSKMoY3Rg7f6jRmnVUNM5NPwRlQ+dgospiPT9zGzYf6MMB5lWiCgakshmUaub8X+tQrpOJhj17OjDZdwKhWhl38MUeXl8yD3MY/DM0WS66OMz3mB0W33PNm1q9pCNBQHNpErD9Au3aOOhDHekVqeUwKXg555VJJUZ/y+9f3oUZYJ8wHsoZYgbscQh89J4ouUkC4mXFLAk/KVO12hLSKnpTj8pIt76Slc6Ic/zvm6RFegcUNOeIoh/cm1j/l6RIL/s6b9i+WsLZPtwTFTZjI/2KnXXBZlqnt1QLXqt patrickbrandao@iMac-de-Patrick.local
+    public-key-code end
+    peer-public-key end
+
+    aaa
+     local-user patrick password
+     local-user patrick privilege level 15
+     local-user patrick service-type telnet terminal ssh ftp http
+
+    ssh user patrick
+    ssh user patrick authentication-type all
+    ssh user patrick service-type stelnet
+    ssh user patrick assign rsa-key suporte-patrick
+
+    user-interface vty 0 4 
+        user privilege level 15
+
+
+9 - Atribuir IP de gerencia OUTBOUND, gerencia que nao passa por dentro da rede em producao
+    # IP padrao: 192.168.1.253/24
+
+    [HUAWEI]
+    [HUAWEI] interface MEth0/0/1
+    [HUAWEI-MEth0/0/1]
+    [HUAWEI-MEth0/0/1] ip address 10.127.1.22 255.255.255.0
+    [HUAWEI-MEth0/0/1]quit
+    [HUAWEI]
+
+10 - Atribua o nome do switch
+    [HUAWEI]
+    [HUAWEI]sysname swhuawei-02
+
+
+11 - Ativar JUMBO-FRAME em todas as portas
+    [HUAWEI] interface range gigabit 0/0/1 to gigabit 0/0/28 
+    [HUAWEI-port-group] jumboframe enable 9000
+
+    [HUAWEI] interface range xgigabit 0/0/1 to xgigabit 0/0/4
+    [HUAWEI-port-group] jumboframe enable 9000
+
+
+#--------------------------------------------------- ATUALIZAR
+
+Obtenha informacoes do switch:
+
+> display device
+> display version
+
+Para limpar arquivos deletados:
+> reset recycle-bin
+
+#************** Exemplo S5720:
+    1 - Monte um servidor FTP ou TFTP
+    2 - Coloque o arquivo do firware ou patch
+	/downloads/huawei/
+
+	S5720EI-V200R009C00SPC500.cc
+	S5720EI-V200R009SPH002.pat
+	S6720EI-V200R009C00SPC500.zip
+	S6720EI-V200R009SPH002.pat
+
+    3 - Atualize o switch (x.x.x.x e' o ip do servidor tftp):
+
+    > tftp x.x.x.x get S5720EI-V200R009C00SPC500.cc
+    > tftp x.x.x.x get S5720EI-V200R009SPH002.pat
+    
+    4 - Ative o BOOT na nova versao:
+
+    > startup system-software  S5720EI-V200R009C00SPC500.cc
+
+    5 - Reinicie:
+
+    > reboot
+    # ou
+    > reboot save diagnostic-information
+
+    6 - Aplicar patch da versao atualizada:
+
+    > patch load S5720EI-V200R009SPH002.pat all run
+    > patch active all
+    > patch run all
+    > display patch-information
+
+
+# S6720 - versao 10
+
+    > tftp x.x.x.x get S6720EI-V200R010C00SPC600.cc
+    > tftp x.x.x.x get S6720EI-V200R010SPH008.pat
+    > startup system-software S6720EI-V200R010C00SPC600.cc
+    > reboot
+
+    > tftp x.x.x.x get S6720EI-V200R010SPH008.pat
+    > patch load S6720EI-V200R010SPH008.pat all run
+    > patch active all
+    > patch run all
+    > display patch-information
+
+# S6720 - versao 11
+#	S6720EI-V200R011C10SPC600.cc
+#	S6720EI-V200R011SPH001.pat
+#	S6720EI-V200R011SPH008.pat
+#	S6720EI-V200R011SPH009.pat
+
+
+
+    # Obter remotamente:
+    tftp x.x.x.x get S6720EI-V200R011C10SPC600.cc
+    tftp x.x.x.x get S6720EI-V200R011SPH001.pat
+    tftp x.x.x.x get S6720EI-V200R011SPH008.pat
+    tftp x.x.x.x get S6720EI-V200R011SPH009.pat
+
+    # Selecionar novo firmware:
+    startup system-software S6720EI-V200R011C10SPC600.cc
+
+    # Reiniciar
+    reboot
+
+    # Carregar e aplicar PATCHs
+    patch load S6720EI-V200R011SPH001.pat all run
+    patch load S6720EI-V200R011SPH008.pat all run
+    patch load S6720EI-V200R011SPH009.pat all run
+    patch active all
+    patch run all
+
+    patch active all
+    patch run all
+
+    > display patch-information
+
+
+#--------------------------------------------------- 
+
+12 - Criando vlan de gerencia INBOUND (exemplo usando vlan 4000)
+
+    * Ativar IPv6
+    [HUAWEI] ipv6
+
+    * Registrar a VLAN (barramento virtual)
+	[HUAWEI] vlan batch 4000
+    
+	- Entrar na interface da vlan 4000 (conexao entre barramento e dataplane IP)
+	[HUAWEI] interface Vlanif4000
+    
+	- Atribuir IP
+	[HUAWEI-VlanIF4000] ip address 10.127.0.22 255.255.255.0
+
+	- Atribuir IPv6
+	[HUAWEI-VlanIF4000] ipv6 enable
+	[HUAWEI-VlanIF4000] ipv6 address 2001:db8::1/64
+
+	- Garanta que a interface virtual vlan nao esteja desligada
+	[HUAWEI-VlanIF4000] undo shutdown
+
+    * Atribuir uma porta fisica como acesso da VLAN 4000
+	[HUAWEI] interface giga 0/0/26
+
+	- Garanta que a interface fisica
+	[HUAWEI] undo shutdown
+    
+	- Definir a interface como ACCESSO a vlan 4000 (recebe nao-marcado e marca):
+	
+
+X - Salve tudo que vc fez ate agora senao voce vai perder tudo no reboot/desligamento
+    return
+    save
+
+
+Interfaces de rede - Negociacao, sfp, ...
+--------------------------------------------------------------
+
+# Jogar a porta de 10 gigas em 1 giga
+   interface XGigabitEthernet 0/0/11
+      undo negotiation auto
+      port media type copper
+         undo negotiation auto
+
+# Problema de perda gerando flap
+# (interval padrao 10 segundos, threshold padrao 5 vezes):
+   interface XGigabitEthernet 0/0/12
+      port link-flap protection enable
+      port link-flap interval 10
+      port link-flap threshold 5
+
+      # Padrao da interface entrar em err-down, para subir automaticamente:
+      error-down auto-recovery cause link-flap
+
+
+[12:13, 7/3/2018] V :: Rudson Nextel: Interface xgiga x/x/x
+Port link-flap protection enable
+Port link-flap interval x (Default Ã© 10 seg)
+Port link-flap threshold x (Default Ã© 5 vezes)
+Por padrÃ£o a interface entra em Err-Down. Para que ele recupere automaticamente:
+Error-down auto-recovery cause link-flap
+[12:14, 7/3/2018] V :: Rudson Nextel: Prevenindo contra problemas com pacotes com erro
+[12:14, 7/3/2018] V :: Rudson Nextel: Interface xgiga x/x/x
+trap-threshold error-statistics threshold-value interval x (Por padrÃ£o a quantidade de erros que Ã© alarmada Ã© de 3 erros com intervalo de 10 seg)
+error-statistics threshold-event trigger error-down
+Para que recupere automaticamente apÃ³s um perÃ­odo:
+error-down auto-recovery cause error-statistics
+
+Resetar contadores
+--------------------------------------------------------------
+
+return
+reset counters interface xg
+
+
+
+VLANs
+--------------------------------------------------------------
+
+1 - Sempre crie o barramento virtual primeiro
+    [HUAWEI] vlan batch 5
+    [HUAWEI] vlan batch 10 20 30
+    [HUAWEI] vlan batch 100 to 120
+
+2 - Portas de acesso
+    [HUAWEI] interface GigabitEthernet0/0/1
+    [HUAWEI-GigabitEthernet0/0/1] port link-type access
+    [HUAWEI-GigabitEthernet0/0/1] port default vlan 5
+    [HUAWEI-GigabitEthernet0/0/1] undo shutdown
+
+3 - Portas TRUNK sem vlan1
+    [HUAWEI] interface GigabitEthernet0/0/2
+    [HUAWEI-GigabitEthernet0/0/1] port link-type trunk
+    [HUAWEI-GigabitEthernet0/0/1] undo port trunk allow-pass vlan 1
+    [HUAWEI-GigabitEthernet0/0/1] port trunk allow-pass vlan 5
+    [HUAWEI-GigabitEthernet0/0/1] undo shutdown
+
+3 - Portas TRUNK sem vlan1 com vlan nativa 10 (lembre-se de permitir a vlan nativa)
+    [HUAWEI] interface GigabitEthernet0/0/3
+    [HUAWEI-GigabitEthernet0/0/1] port link-type trunk
+    [HUAWEI-GigabitEthernet0/0/1] undo port trunk allow-pass vlan 1
+    [HUAWEI-GigabitEthernet0/0/1] port trunk allow-pass vlan 5 10
+    [HUAWEI-GigabitEthernet0/0/1] port trunk pvid vlan 10
+    [HUAWEI-GigabitEthernet0/0/1] undo shutdown
+
+
+VLANs Q-in-Q (802.1ad) - service tag - vlan de servico
+--------------------------------------------------------------
+
+# 1 - Crie a vlan e defina seu tipo
+    vlan 2
+        protocol-transparent
+
+# 2 - Entre na interface que fara o tunel:
+    interface xg 0/0/1
+
+# 3 - Coloque a interface em modo tunneling (acesso de um barramento q-in-q)
+    port link-type dot1q-tunnel
+
+# 4 - Associe a qual VLAN Q-in-Q a porta fara acesso
+    port default vlan 2
+
+# 5 - Ajuste o ether-type dos quadros q-in-q para 0x9000
+    qinq protocol 9100
+    
+# 6 - Resultado:
+
+    [HUAWEI] int xg 0/0/1
+    [HUAWEI-XGigabitEthernet0/0/1] display this
+	qinq protocol 9100
+	port link-type dot1q-tunnel
+	port default vlan 2
+	jumboframe enable 12288
+
+# DATA/HORA - NTP
+#--------------------------------------------------- 
+
+ntp-service server disable
+ntp-service ipv6 server disable
+ntp-service unicast-server 200.160.0.8
+
+
+Agregacao LACP
+--------------------------------------------------------------
+
+    # Crie a interface eth-trunk (0-127)
+    
+    # **** Agregacao LACP com VLAN dentro da agregacao:
+    interface Eth-Trunk32
+       description CDN-Netflix-Agregation
+       port link-type access
+       port default vlan 32
+       mode lacp
+
+    # Exemplo:
+    [HUAWEI] interface Eth-Trunk32
+    [HUAWEI-Trunk32] description CDN-Netflix-Agregation
+    [HUAWEI-Trunk32] port link-type access
+    [HUAWEI-Trunk32] port default vlan 32
+    [HUAWEI-Trunk32] mode lacp
+
+    # **** Agregacao LACP com porta roteada independente
+    interface Eth-Trunk32
+       description Ptp-Datacenter-POP21
+       undo portswitch
+       mode lacp
+       ip address 10.10.21.1 24
+
+    # Escolha o modo de balanceamento (hash quadro por quadro)
+    [HUAWEI-Trunk32] load-balance ?
+    # dst-ip       According to destination IP hash arithmetic
+    # dst-mac      According to destination MAC hash arithmetic
+    # enhanced     Enhanced hash arithmetic
+    # src-dst-ip   According to source/destination IP hash arithmetic
+    # src-dst-mac  According to source/destination MAC hash arithmetic
+    # src-ip       According to source IP hash arithmetic
+    # src-mac      According to source MAC hash arithmetic
+
+    # Modo padrao (nao vai aparecer na configuracao)
+    [HUAWEI-Trunk32] load-balance src-dst-ip
+
+    # Melhor modo para CDN (pelo ip de destino = cliente)
+    [HUAWEI-Trunk32] load-balance dst-ip
+
+    # Ative jumbo frame na LACP em vez das interfaces escravas
+    [HUAWEI-Trunk32]jumboframe enable 9000
+
+    # Caso a porta esteja roteada, subir o MTU (l3 mtu, IPv4 e IPv6)
+    # para o valor homologado
+    mtu 9000
+    
+    # Exemplo:
+    [HUAWEI-Trunk32] mtu 9000
+
+    # *** Depois de criar a interface virtual do trunk, associe
+    #     as portas fisicas que vao participar do balanceamento
+    # 1 - limpe a configuracao da interface
+    [HUAWEI] interface xg 0/0/14
+    [HUAWEI-XGigabitEthernet0/0/14] clear configuration this
+    [HUAWEI-XGigabitEthernet0/0/14] undo shutdown
+
+    # 2 - escravizar a interface fisica entregando-a para a virtual trunk
+    [HUAWEI-XGigabitEthernet0/0/14] eth-trunk 32
+    [HUAWEI-XGigabitEthernet0/0/14] description LACP-NETFLIX
+
+
+    interface Eth-Trunk1
+        mode lacp-static
+        lacp timeout fast
+        lacp preempt enable
+        lacp preempt delay 10
+
+    load-balance-profile LAG
+         mpls field top-label 2nd-label 3rd-label sip dip sport
+
+    interface Eth-trunk 1
+          load-balance enhanced profile LAG
+
+
+   # Exemplo ADV:
+       load-balance-profile LBP-MPLS-ADV
+          l2 field dmac smac l2-protocol sport
+          ipv4 field sip dip l4-sport l4-dport protocol sport
+          ipv6 field sip dip sport l4-dport l4-sport protocol
+          mpls field top-label 2nd-label sip dip sport protocol l4-dport l4-sport 3rd-label
+    
+       interface Eth-Trunk2
+          mode lacp
+          load-balance enhanced profile LBP-MPLS-ADV
+       #
+      
+
+
+Interfaces Loopback e NULL
+--------------------------------------------------------------
+
+1 - Interface NULL, necessaria para criar rotas blackhole
+
+    [HUAWEI] interface NULL0
+    [HUAWEI-NULL0] quit
+
+
+2 - Interface loopback, necessaria para dar coerencia (router-id)
+    e para ancorar servicos MPLS e iBGP
+    Atribua IPv4 /32 ou IPv6 /127
+
+    [HUAWEI] interface LoopBack0
+    [HUAWEI-LoopBack1] quit
+
+
+Rotas Padrao
+--------------------------------------------------------------
+
+# IPv4
+ip route-static 0.0.0.0 0.0.0.0 192.168.0.1 preference 250
+
+# IPv6
+ipv6 route-static 2000:: 3 2001:db8:beba:cafe::1 preference 250
+
+
+Rotas Blackhole
+--------------------------------------------------------------
+
+# IPv4:
+ip route-static 100.64.0.0 255.192.0.0 NULL0
+
+# IPv6
+ipv6 route-static 2001:db8:: 32 NULL0
+
+
+Prefix-List IPv4
+--------------------------------------------------------------
+
+# IPv4 Gateway
+ip ip-prefix Gateway-IPv4 index 5 permit 0.0.0.0 0
+
+# IPv4 Global no BGP:
+ip ip-prefix Internet-IPv4 index 5 permit 0.0.0.0 0 greater-equal 8 less-equal 24
+
+# IPv4 todos os prefixos:
+ip ip-prefix allv4 index 5 permit 0.0.0.0 0 less-equal 32
+# ip ip-prefix All-IPv4 index 5 permit 0.0.0.0 0 less-equal 32
+
+# IPv4 Privados/Reservados:
+ip ip-prefix RFC5735 index 5 permit 0.0.0.0 8 greater-equal 8 less-equal 32
+ip ip-prefix RFC5735 index 10 permit 10.0.0.0 8 greater-equal 8 less-equal 32
+ip ip-prefix RFC5735 index 15 permit 127.0.0.0 8 greater-equal 8 less-equal 32
+ip ip-prefix RFC5735 index 20 permit 169.254.0.0 16 greater-equal 16 less-equal 32
+ip ip-prefix RFC5735 index 25 permit 172.16.0.0 12 greater-equal 12 less-equal 32
+ip ip-prefix RFC5735 index 30 permit 192.0.0.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 35 permit 192.0.2.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 40 permit 192.88.99.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 45 permit 192.168.0.0 16 greater-equal 16 less-equal 32
+ip ip-prefix RFC5735 index 50 permit 198.18.0.0 15 greater-equal 15 less-equal 32
+ip ip-prefix RFC5735 index 55 permit 198.51.100.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 60 permit 203.0.113.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 65 permit 224.0.0.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 70 permit 240.0.0.0 24 greater-equal 24 less-equal 32
+ip ip-prefix RFC5735 index 75 permit 255.255.255.255 32
+
+# IPv4 do AS local
+ip ip-prefix LOCAL-AS-IPv4 index 5 permit 167.0.0.0 22 greater-equal 22 less-equal 25
+
+
+Community List
+--------------------------------------------------------------
+ip community-filter 101 permit 64800:101
+ip community-filter 105 permit 64800:105
+ip community-filter 110 permit 64800:110
+ip community-filter 111 permit 64800:111
+ip community-filter 112 permit 64800:112
+ip community-filter 115 permit 64800:115
+ip community-filter 116 permit 64800:116
+ip community-filter 121 permit 64800:121
+ip community-filter 122 permit 64800:122
+ip community-filter 125 permit 64800:125
+ip community-filter 126 permit 64800:126
+ip community-filter 131 permit 64800:131
+ip community-filter 135 permit 64800:135
+ip community-filter 177 permit 64800:177
+ip community-filter 179 permit 64800:179
+ip community-filter 198 permit 64700:198
+ip community-filter 199 permit 64700:199
+
+
+
+Prefix-List IPv6
+--------------------------------------------------------------
+
+# IPv6 Gateway:
+ip ipv6-prefix Gateway-IPv6 index 5 permit :: 0
+
+# IPv6 Global no BGP:
+ip ipv6-prefix Internet-IPv6 index 5 permit 2000:: 3 greater-equal 3 less-equal 48
+
+# IPv6 todos os prefixos:
+ip ipv6-prefix allv6 index 5 permit :: 0 less-equal 128
+# ip ipv6-prefix All-IPv6 index 5 permit :: 0 less-equal 128
+
+# IPv6 do AS local
+ip ipv6-prefix LOCAL-AS-IPv6 index 5 permit 2804:ffff:: 32 greater-equal 32 less-equal 48
+
+
+Route-Police (Route-Map) IPv4
+--------------------------------------------------------------
+
+# Aceitar Full-Route IPv4
+route-policy full-route-ipv4 deny node 5
+ if-match ip-prefix RFC5735
+route-policy full-route-ipv4 permit node 10
+ if-match ip-prefix Internet-IPv4
+
+# Aceitar Full-Route IPv4 com Gateway Padrao
+route-policy full-route-ipv4 deny node 5
+ if-match ip-prefix RFC5735
+route-policy full-route-ipv4 permit node 7
+ if-match ip-prefix Gateway-IPv4
+route-policy full-route-ipv4 permit node 10
+ if-match ip-prefix Internet-IPv4
+ if-match community-filter 177
+ apply local-preference 999
+ apply community 64800:101
+ apply extcommunity rt 64800:101 rt 64800:102
+
+
+# Exemplo (OI):
+#---------------------------------------------------*
+route-policy as7738-oi-import-ipv4 permit node 90
+ if-match ip-prefix Gateway-IPv4
+ apply local-preference 100
+ apply community 64700:101
+ apply extcommunity rt 64700:101
+
+route-policy as7738-oi-import-ipv4 permit node 100
+ if-match ip-prefix Internet-IPv4
+ apply local-preference 100
+ apply community 64700:101
+ apply extcommunity rt 64700:101
+ apply as-path 264142 264142 264142 264142 264142 additive
+# set as-path prepend 64000 64000 64000
+
+
+
+
+Route-Police (Route-Map) IPv6
+--------------------------------------------------------------
+
+# Aceitar Full-Route IPv6
+route-policy full-route-ipv6 permit node 10
+ if-match ipv6 address prefix-list Internet-IPv6
+ apply local-preference 999
+ apply community 64800:101
+ apply extcommunity rt 64800:101
+
+
+# Exemplo (OI):
+#---------------------------------------------------*
+route-policy as7738-oi-import-ipv6 permit node 90
+ if-match ipv6 address prefix-list Gateway-IPv6
+ apply local-preference 100
+ apply community 64700:101
+ apply extcommunity rt 64700:101
+
+route-policy as7738-oi-import-ipv6 permit node 100
+ if-match ipv6 address prefix-list Internet-IPv6
+ apply local-preference 100
+ apply community 64700:101
+ apply extcommunity rt 64700:101
+
+
+
+Jumbo Frame e MTU
+--------------------------------------------------------------
+
+# NE20:
+# 	MTU: 9600
+# 	MPLS MTU: 9600
+
+# S6720:
+#	MTU: 9216
+#	MPLS MTU: 9216
+#	JumboFrame: 12288
+
+# Homologacao geral:
+#	MTU: 9216
+#	MPLS MTU: 9216
+
+# NE20:
+    interface giga 0/3/1
+	mtu 9216
+	mpls mtu 9216
+
+# S6720:
+    interface xgiga 0/0/1
+	jumboframe enable 12288
+	mtu 9216
+	mpls mtu 9216
+
+
+
+
+
+OSPFv2
+--------------------------------------------------------------
+
+1 - Crie o processo OSPF especificando o router-id corretamente (loopback1)
+
+    [HUAWEI] ospf 1 router-id 10.70.255.1
+    [HUAWEI-ospf-1] 
+
+    # Definir metrica do OSPF (padrao 10) para o padrao cisco (110)
+    ospf 1
+	preference 110
+
+2 - Caso queira redistribuir rotas:
+
+    # CONECTADAS:
+    [HUAWEI-ospf-1] import-route direct
+
+    # ESTATICAS:
+    [HUAWEI-ospf-1] import-route static
+
+3 - Injetar rota padrao
+
+    A - artificialmente:
+    [HUAWEI-ospf-1] default-route-advertise always
+
+    B - redistribuir:
+    [HUAWEI-ospf-1] default-route-advertise
+
+4 - Criar area:
+    [HUAWEI-ospf-1] area 0.0.0.0
+    [HUAWEI-ospf-1-area-0.0.0.0] network 10.255.0.0 0.0.255.255
+
+    # Lista de Wildcards:
+	Slash	Netmask			Wildcard Mask
+	/32	255.255.255.255		0.0.0.0
+	/31	255.255.255.254		0.0.0.1
+	/30	255.255.255.252		0.0.0.3
+	/29	255.255.255.248		0.0.0.7
+	/28	255.255.255.240		0.0.0.15
+	/27	255.255.255.224		0.0.0.31
+	/26	255.255.255.192		0.0.0.63
+	/25	255.255.255.128		0.0.0.127
+	/24	255.255.255.0		0.0.0.255
+	/23	255.255.254.0		0.0.1.255
+	/22	255.255.252.0		0.0.3.255
+	/21	255.255.248.0		0.0.7.255
+	/20	255.255.240.0		0.0.15.255
+	/19	255.255.224.0		0.0.31.255
+	/18	255.255.192.0		0.0.63.255
+	/17	255.255.128.0		0.0.127.255
+	/16	255.255.0.0		0.0.255.255
+	/15	255.254.0.0		0.1.255.255
+	/14	255.252.0.0		0.3.255.255
+	/13	255.248.0.0		0.7.255.255
+	/12	255.240.0.0		0.15.255.255
+	/11	255.224.0.0		0.31.255.255
+	/10	255.192.0.0		0.63.255.255
+	/9	255.128.0.0		0.127.255.255
+	/8	255.0.0.0		0.255.255.255
+	/7	254.0.0.0		1.255.255.255
+	/6	252.0.0.0		3.255.255.255
+	/5	248.0.0.0		7.255.255.255
+	/4	240.0.0.0		15.255.255.255
+	/3	224.0.0.0		31.255.255.255
+	/2	192.0.0.0		63.255.255.255
+	/1	128.0.0.0		127.255.255.255
+
+  - Comandos para visualizar:
+
+    [HUAWEI] display ospf peer
+    [HUAWEI] display ospf brief
+    [HUAWEI] display ospf routing
+    [HUAWEI] display ospf routing interface vlanif 9
+    
+    [HUAWEI] display ospf abr-asbr
+    [HUAWEI] display ospf asbr-summary
+    [HUAWEI] display ospf cumulative
+    [HUAWEI] display ospf error
+    [HUAWEI] display ospf global-statistics brief
+    [HUAWEI] display ospf lsdb
+
+    # Reiniciar processo OSPF
+    [HUAWEI] run reset ospf 1 process
+    [HUAWEI] run reset ospf 1 redistribution
+    [HUAWEI] run reset ospf 1 counters
+    [HUAWEI] run reset ospf 1 suppress-flapping
+
+
+Filtrando rotas recebidas no OSPFv2
+-----------------------------------
+
+# crie uma prefix-list com todas as rotas aceitaveis pelo ospf:
+# com tamanho de mascara entre 8 e 30 bits (desconsiderar /31 e /32 do pppoe)
+
+# Gateway padrao, IPs privados:
+ip ip-prefix OSPF-IPV4-ROUTES index 110 permit 0.0.0.0 0
+ip ip-prefix OSPF-IPV4-ROUTES index 120 permit 100.64.0.0 10 greater-equal 10 less-equal 31
+ip ip-prefix OSPF-IPV4-ROUTES index 121 permit 10.0.0.0 8 greater-equal 8 less-equal 31
+ip ip-prefix OSPF-IPV4-ROUTES index 122 permit 192.168.0.0 16 greater-equal 16 less-equal 31
+ip ip-prefix OSPF-IPV4-ROUTES index 123 permit 172.16.0.0 12 greater-equal 12 less-equal 31
+# IPs validos:
+ip ip-prefix OSPF-IPV4-ROUTES index 130 permit 138.0.0.0 22 greater-equal 22 less-equal 32
+ip ip-prefix OSPF-IPV4-ROUTES index 131 permit 45.0.0.0 22 greater-equal 22 less-equal 32
+# Faixa de loopbacks:
+ip ip-prefix OSPF-IPV4-ROUTES index 300 permit 10.200.0.0 16 greater-equal 16 less-equal 32
+
+# Crie uma route-policy que so aceite o que estiver na lista acima:
+route-policy OSPF-IPV4-FILTER permit node 10
+   if-match ip-prefix OSPF-IPV4-ROUTES
+
+ # Associe ao filtro de route-updates do OSPF:
+ ospf 1
+    filter-policy route-policy OSPF-IPV4-FILTER import 
+    filter-policy route-policy OSPF-IPV4-FILTER export
+
+
+
+OSPFv3
+--------------------------------------------------------------
+
+1 - Crie o processo OSPFv3 especificando o numero do processo (informe 1)
+
+    [HUAWEI] ospfv3 1
+    [HUAWEI-ospfv3-1] router-id 10.70.255.1
+    [HUAWEI-ospfv3-1]
+
+2 - Caso queira redistribuir rotas:
+
+    # CONECTADAS:
+    [HUAWEI-ospfv3-1] import-route direct
+
+    # ESTATICAS:
+    [HUAWEI-ospfv3-1] import-route static
+
+3 - Injetar rota padrao
+
+    A - artificialmente:
+    [HUAWEI-ospf-1] default-route-advertise always
+
+    B - redistribuir:
+    [HUAWEI-ospf-1] default-route-advertise
+
+4 - Criar area:
+    [HUAWEI-ospf-1] area 0.0.0.0
+    [HUAWEI-ospf-1-area-0.0.0.0] quit
+
+5 - Associar interface na area
+    [HUAWEI] interface vlan 21
+    [HUAWEI-vlanif21] ipv6 enable
+    [HUAWEI-vlanif21] ospfv3 1 area 0.0.0.0
+    [HUAWEI-vlanif21] ospfv3 cost 1
+
+Filtrando rotas recebidas no OSPFv3
+-----------------------------------
+
+# Cria a lista de prefixos permitindo os prefixos aceitos
+ip ipv6-prefix OSPF-IPV6-ROUTES index 100 permit :: 0
+ip ipv6-prefix OSPF-IPV6-ROUTES index 110 permit 2001:db8:: 32 greater-equal 32 less-equal 64
+ip ipv6-prefix OSPF-IPV6-ROUTES index 130 permit 2804:CAFE:: 32 greater-equal 32 less-equal 64
+ip ipv6-prefix OSPF-IPV6-ROUTES index 140 permit 2804:FADA:: 32 greater-equal 32 less-equal 64
+# Faixa de loopbacks:
+ip ipv6-prefix OSPF-IPV6-ROUTES index 230 permit 2804:CAFE:FFFF:FFFF:: 64 less-equal 128
+ip ipv6-prefix OSPF-IPV6-ROUTES index 240 permit 2804:FADA:FFFF:FFFF:: 64 less-equal 128
+
+# Crie uma ultima regra descartando todo o resto
+ip ipv6-prefix OSPF-IPV6-ROUTES index 999 permit :: 0 greater-equal 16 less-equal 128
+
+# Crie uma route-policy aceitando somente a lista acima:
+route-policy OSPF-IPV6-FILTER permit node 10
+ if-match ipv6 address prefix-list OSPF-IPV6-ROUTES
+ 
+
+# Associe a prefix-list ao filtro dentro da area do OSPFv3:
+ospfv3 1
+  area 0.0.0.0
+    filter route-policy OSPF-IPV6-FILTER
+
+ospfv3 1
+    area 0.0.0.0
+       filter route-policy OSPF-IPV6-FILTER import 
+       filter route-policy OSPF-IPV6-FILTER export
+
+
+BGP
+--------------------------------------------------------------
+
+1 - Crie a instancia do AS oficial
+    [HUAWEI] bgp 65000
+    [HUAWEI-bgp] 
+    [HUAWEI-bgp] router-id 10.255.255.1
+
+    # Definir preferencia (ebgp, ibgp, local-origin)
+    bgp 65000
+	preference 20 220 220
+
+2 - Coloque em modo address-family (MP-BGP)
+    [HUAWEI-bgp] undo default ipv4-unicast
+    
+3 - Ignore a verificacao do AS do peer nos anuncios recebidos (vital para PTT)
+    [HUAWEI-bgp] undo check-first-as
+
+4 - Declarando conexao TCP para o peer
+    [HUAWEI-bgp] peer 192.168.0.1 as-number 65001
+    [HUAWEI-bgp] peer 192.168.0.1 description Roteador-BGP-IPv4
+    [HUAWEI-bgp] peer 2001:db8::1 as-number 65001
+    [HUAWEI-bgp] peer 2001:db8::1 description Roteador-BGP-IPv6
+
+    # Para especificar o update-source (ip de origem pela interface):
+    [HUAWEI-bgp] peer 192.168.0.1 connect-interface LoopBack 0
+
+5 - IPv4 - Ativar troca de NLRI por tipo de familia (address-family)
+
+    [HUAWEI-bgp] ipv4-family unicast
+    [HUAWEI-bgp-bgp-af-ipv4] 
+    [HUAWEI-bgp-bgp-af-ipv4] undo synchronization
+
+    # Ativar troca da familia no peer:
+    [HUAWEI-bgp-bgp-af-ipv4] peer 192.168.0.1 enable
+    
+    # Associar route-policy para filtrar recebimento e envio de anuncios
+    [HUAWEI-bgp-bgp-af-ipv4] peer 192.168.0.1 route-policy as65001-cliente-import-ipv4 import
+    [HUAWEI-bgp-bgp-af-ipv4] peer 192.168.0.1 route-policy as65001-cliente-export-ipv4 export
+
+    # Enviar Gateway padrao
+    [HUAWEI-bgp-bgp-af-ipv4] peer 192.168.0.1 default-route-advertise
+
+    # Ativar suporte a communities
+    [HUAWEI-bgp-bgp-af-ipv4] peer 192.168.0.1 advertise-community
+    [HUAWEI-bgp-bgp-af-ipv4] peer 192.168.0.1 advertise-ext-community
+
+    [HUAWEI-bgp-bgp-af-ipv4] quit
+    [HUAWEI-bgp] 
+
+6 - IPv6 - Ativar troca de NLRI por tipo de familia (address-family)
+
+    [HUAWEI-bgp] ipv6-family unicast
+    [HUAWEI-bgp-bgp-af-ipv6] 
+    [HUAWEI-bgp-bgp-af-ipv6] undo synchronization
+
+    # Ativar troca da familia no peer:
+    [HUAWEI-bgp-bgp-af-ipv6] peer 2001:db8::1 enable
+    
+    # Associar route-policy para filtrar recebimento e envio de anuncios
+    [HUAWEI-bgp-bgp-af-ipv6] peer 2001:db8::1 route-policy as65001-cliente-import-ipv6 import
+    [HUAWEI-bgp-bgp-af-ipv6] peer 2001:db8::1 route-policy as65001-cliente-export-ipv6 export
+
+    # Enviar Gateway padrao
+    [HUAWEI-bgp-bgp-af-ipv6] peer 2001:db8::1 default-route-advertise
+
+    # Ativar suporte a communities
+    [HUAWEI-bgp-bgp-af-ipv6] peer 2001:db8::1 advertise-community
+    [HUAWEI-bgp-bgp-af-ipv6] peer 2001:db8::1 advertise-ext-community
+
+    [HUAWEI-bgp-bgp-af-ipv6] quit
+    [HUAWEI-bgp]
+
+7 - Fazendo conexao MULTIHOP - iBGP (AS local e remoto iguais)
+
+    [HUAWEI] bgp 65000
+    [HUAWEI-bgp] 
+
+    # Conectar a loopback remota
+    [HUAWEI-bgp] peer 10.70.255.252 as-number 65000
+    [HUAWEI-bgp] peer 10.70.255.252 description iBGP-IPv4
+
+    # Especificar loopback local como origem da conexao
+    [HUAWEI-bgp] peer 10.70.255.252 ???
+
+    [HUAWEI-bgp] ipv4-family unicast
+    [HUAWEI-bgp-bgp-af-ipv4] peer 10.70.255.252 enable
+    [HUAWEI-bgp-bgp-af-ipv4] peer 192.168.0.1 advertise-community
+    [HUAWEI-bgp-bgp-af-ipv4] quit
+    [HUAWEI-bgp] 
+
+
+X - Visualizar:
+
+# Mostra rotas BGP:
+display bgp routing-table 
+
+# Mostra tabela de rotas:
+display ip routing-table 
+
+# Mostrar lista de peerings:
+display bgp peer
+display bgp ipv6 peer
+display bgp ipv6 network
+
+# Anunciado:
+display bgp routing-table peer 10.70.255.252 advertised-routes 
+
+GRE
+--------------------------------------------------------------
+
+
+# Tunel padrao:
+interface tunnel 14
+    description Suporte-TMSOFT
+    tunnel-protocol gre
+    source 45.255.128.2
+    destination 191.255.128.91
+    mtu 1440
+    ip address 198.19.14.1 30
+    keepalive period 5 retry-times 3
+
+
+# Tunel sem IP:
+interface tunnel 14
+    ip address unnumbered interface loopback 0
+
+
+# Ativando estatisticas (SNMP):
+interface tunnel 14
+    #statistic enable { both | inbound | outbound }
+    statistic enable both
+
+
+# Informacoes de tunel:
+display interface tunnel
+display interface tunnel 14
+display keepalive packets count
+
+
+# Limpando estatisticas keepalive:
+reset keepalive packets count
+
+
+
+
+
+MPLS
+--------------------------------------------------------------
+
+0 - Desative STP (ou somente nas portas do backbone MPLS)
+
+    lnp disable
+    stp disable
+
+    [HUAWEI] lnp disable
+    [HUAWEI] stp disable
+
+1 - Ative jumbo-frame 9k em todas as portas fisicas
+
+2 - Crie as vlans das interfaces de roteamento MPLS
+    Backbone homologado para 8k de MTU L3
+
+    interface Vlanif3001
+	mtu 8000                                 
+	ip address 10.255.0.1 255.255.255.224
+
+3 - Configure a interface LOOPBACK
+
+    interface LoopBack1
+	ip address 10.255.0.1 255.255.255.255
+
+
+4 - Suba o MPLS/LDP para que ele crie labels para os enderecos de rede
+    e para os enderecos de loopback (sao os que realmente importam)
+    
+    # Configure o LDP
+    mpls lsr-id 10.199.200.252
+    
+    # Exemplo:
+    [HUAWEI] mpls lsr-id 10.199.200.252
+
+    # Ative o MPLS
+    mpls
+    mpls te
+    mpls te cspf
+    mpls rsvp-te
+    
+    # Exemplo:
+    [HUAWEI] mpls
+    [HUAWEI-mpls] mpls te
+    [HUAWEI-mpls] mpls te cspf
+    [HUAWEI-mpls] mpls rsvp-te
+    [HUAWEI-mpls] quit
+    [HUAWEI] 
+    
+    # Ativer o LDP
+    mpls ldp
+
+    # Exemplo:
+    [HUAWEI] mpls ldp
+    [HUAWEI-mpls-ldp] quit
+    [HUAWEI] 
+
+    # Ative suporte a pseudo-wire (vpws)
+    mpls l2vpn
+
+    # Exemplo:
+    [HUAWEI] mpls l2vpn
+    [HUAWEI-l2vpn] quit
+    [HUAWEI] 
+
+    # Ative MPLS nas interfaces
+    interface Vlanif9
+      ip address x.x.x.x 255.255.255.x
+      mpls
+      mpls ldp
+      mpls te
+      mpls rsvp-te
+
+    # Exemplo:
+    [HUAWEI] interface Vlanif9
+    [HUAWEI-Vlanif9] ip address x.x.x.x 255.255.255.x
+    [HUAWEI-Vlanif9] mpls
+    [HUAWEI-Vlanif9] mpls ldp
+    [HUAWEI-Vlanif9] mpls te
+    [HUAWEI-Vlanif9] mpls rsvp-te
+
+
+
+5 - Suba o OSPF da area backbone
+    Precisa incluir o ip das interfaces entre roteadores e os ips de loopback
+
+    [HUAWEI] ospf 1 router-id 10.255.0.1
+    [HUAWEI-ospf-1] opaque-capability enable
+    [HUAWEI-ospf-1] area 0.0.0.0
+    [HUAWEI-ospf-1-area-0.0.0.0] network 10.255.0.0 0.0.255.255
+    [HUAWEI-ospf-1-area-0.0.0.0] mpls-te enable
+
+    [HUAWEI-ospf-1-area-0.0.0.0] quit
+    [HUAWEI-ospf-1] quit
+    [HUAWEI] 
+
+
+6 - Crie os templates para representarem cada roteadores MPLS no backbone
+    Informe em x.x.x.x o ip da loopback mapeada como LSP
+    Os templates servem para facilitar a criacao de tuneis L3 VPWS
+
+    [HUAWEI] pw-template NOME-TEMPLATE
+    [HUAWEI-pw-template-NOME-TEMPLATE] 
+    [HUAWEI-pw-template-NOME-TEMPLATE] peer-address 10.x.x.x
+    [HUAWEI-pw-template-NOME-TEMPLATE] control-word
+    [HUAWEI-pw-template-NOME-TEMPLATE] display this
+    #
+    pw-template NOME-TEMPLATE
+	peer-address 10.x.x.x
+	control-word
+    #
+
+7 - Faca conectividade entre os PE's declarando os ips de loopback deles
+    para que os labels de servico (inner-label) sejam negociados
+
+    [HUAWEI] mpls ldp remote-peer NOME-PE
+    [HUAWEI] mpls ldp remote-peer SW-01-SINES
+    [HUAWEI-mpls-ldp-remote-NOME-PE] remote-ip 10.x.x.x
+    [HUAWEI-mpls-ldp-remote-NOME-PE] display this
+    #
+    mpls ldp remote-peer NOME-PE
+	remote-ip x.x.x.x
+    #
+
+8 - Uma vez que voce criou os templates, precisa ativar o envio de Multicast LDP para
+    subir as adjacencias LDP e trocar os labels, faca isso nas interfaces
+    do backbone MPLS (entre roteadores)
+
+    [HUAWEI] interface Vlanif31
+    [HUAWEI-Vlanif31] mpls
+    [HUAWEI-Vlanif31] mpls ldp
+    [HUAWEI-Vlanif31] mpls te
+    [HUAWEI-Vlanif31] mpls rsvp-te
+
+
+9 - Fazendo um transporte pseudo-wire
+
+    Entre na interface no lado do cliente (lado A):
+    Informacoes:
+    > INTERFACE: nome da interface fisica ou virtual (vlan -> QinQ)
+    > NOME-DO-TEMPLATE: o nome do template pw-template que voce criou
+    > YYYY: numero do circuito virtual (voce deve criar e gerenciar)
+
+    interface INTERFACE
+    undo portswitch
+    mpls l2vc pw-template NOME-DO-TEMPLATE YYYY
+
+    Apos subir nas duas pontas:
+    
+    > display mpls l2vc brief
+    > display mpls l2vc state down
+    > display mpls l2vc state up
+
+# Exemplos:
+    interface Vlanif 1302
+        mpls l2vc 10.10.10.1 1302
+        mpls l2vpn flow-label both
+
+    interface Vlanif 1302
+        mpls l2vc 10.10.10.5 1302
+        mpls l2vpn flow-label both
+ 
+
+10 - Limitando a banda do VPWS
+
+    a - Crie um classificador, esse ira analisar o trafego
+	e dar a esse trafego um "nome" para referencia
+
+	traffic classifier Circuito-110 operator and
+	    if-match vlan-id 110
+
+    b - Crie um analisador de comportamento do trafego, que ira
+	contar bytes e determinar o que fazer com violacoes do contador
+
+	traffic behavior Circuito-110-Check
+	    car cir 502000
+	    #car cir 419200 pir 419200 cbs 52400000 pbs 52400000 green pass yellow pass red discard
+ 
+    c - Crie uma politica de trafego que sera usada para anexar ao circuito
+
+	traffic policy Circuito-110-Shape match-order config
+	    classifier Circuito-110 behavior Circuito-110-Check
+
+    d - Anexe na interface a politica de banda
+
+	vlan 100
+	    traffic-policy Circuito-110-Shape inbound
+	    traffic-policy Circuito-110-Shape outbound
+
+
+
+X - MPLS-TE Explicit path
+
+    a - Criar os caminhos, declare o next-hop do caminho desejado
+        no ultimo salto vc troca o next-hop pela loopback do ultimo roteador
+
+
+
+
+    a - Declare o caminho explicito informando o next-hop de cada salto,
+        no ultimo salvo deve-se colocar a loopback e nao o ip da interface
+        final
+
+        explicit-path sPE-01:PE-02:PE-03
+          next hop 10.20.0.10
+          next hop 10.20.255.3
+
+        explicit-path sPE-01:PE-02:PE-04:PE-03
+          next hop 10.20.0.10
+          next hop 10.20.0.33
+          next hop 10.20.255.3
+
+    b - Crie um tunnel mpls te usando os caminhos declarados com alvo
+        na loopback do roteador final
+
+	interface Tunnel 3
+	  ip address unnumbered interface Loopback0
+	  tunnel-protocol mpls te
+	  destination 10.20.255.3
+	  mpls te tunnel-id 3
+	  mpls te record-route
+	  mpls te path explicit-path sPE-01:PE-02:PE-03
+	  mpls te path explicit-path sPE-01:PE-02:PE-04:PE-03
+	  mpls te backup hot-standby mode revertive wtr 15
+	  mpls te backup ordinary best-effort
+	  mpls te reserved-for-binding
+	  mpls te commit
+
+    c - Crie uma politica para classificar o trafego no tunnel
+    
+	# Politica de PE-01 para PE-03 circuito 1001
+	tunnel-policy PE-01_PE-03-c1001
+	  tunnel binding destination 10.20.255.3 te Tunnel3
+
+
+    d - Associe o l2vpn a politica de classificacao:
+
+	interface Xgiga 0/0/48
+	  undo portswitch
+	  mpls l2vc pw-template PE-03-CW 1001 tunnel-policy PE-01_PE-03-c1001
+
+
+11 - VPLS - VSI
+
+12 - Limitando banda total da interface fisica:
+
+    a - entre na interface fisica (exemplo limitando a 10 megabits/s full por software)
+    [HUAWEI] interface xg 0/0/12
+    [HUAWEI-interface-xg0/0/12] qos lr outbound cir 10720 cbs 1840000
+    [HUAWEI-interface-xg0/0/12] qos lr inbound cir 10720 cbs 1840000
+
+
+13 - VRF
+
+#    VRFs sao tabelas de rotas independentes da tabela principal
+#    Route-Distinguisher (RD) precisa ser definido para exportar/importar
+#    VRF em outros roteadores via iBGP e transporte MPLS
+#
+    # A - Criar VRF (vpn-instance = vrf)
+    ip vpn-instance VRF-INTERNET-A
+	route-distinguisher 64900:1
+
+    # ou:
+    ip vpn-instance VRF-INTERNET-A
+        description Internet-A-GW-via-Level3
+	ipv4-family
+	    route-distinguisher 64900:1
+	    vpn-target 61591:1 export-extcommunity
+	    vpn-target 61591:1 import-extcommunity
+	ipv6-family
+	    route-distinguisher 64900:1    
+	    vpn-target 61591:1 export-extcommunity
+	    vpn-target 61591:1 import-extcommunity
+
+    # Exemplo:
+    # Criar VRF:
+    [HUAWEI] ip vpn-instance VRF-INTERNET-A
+    [HUAWEI-vpn-instance-VRF-INTERNET-A] 
+
+    # Atribuir RD:
+    [HUAWEI-vpn-instance-VRF-INTERNET-A] ipv4-family 
+    [HUAWEI-vpn-instance-VRF-INTERNET-A-af-ipv4] route-distinguisher 64900:1 
+    [HUAWEI-vpn-instance-VRF-INTERNET-A-af-ipv4] quit
+
+    [HUAWEI-vpn-instance-VRF-INTERNET-A]ipv6-family 
+    [HUAWEI-vpn-instance-VRF-INTERNET-A-af-ipv6]route-distinguisher 64900:1 
+
+
+    # B - Associar a interface (ou vlan) a uma VRF
+    #     Obs.: a rota conectada dos ips dessas interfaces
+    #           serao associadas a VRF e nao serao acessiveis
+    #           pela tabela principal
+    #     ALERTA: os ips existentes na interface (IPv4 e IPv6) serao apagados
+    #             e voce precisara adiciona-los novamente, cuidado.
+    
+    interface vlan 21
+	ip binding vpn-instance VRF-INTERNET-A
+	ipv6 enable
+	ipv6 address 2001:db8:80:21::2/64
+	ip address 10.80.21.2 24
+	
+    # Exemplo:
+    [HUAWEI] int vlan 21
+    [HUAWEI-Vlanif21] ip binding vpn-instance VRF-INTERNET-A
+    # Info: All IPv4 related configurations on this interface are removed!
+    # Info: All IPv6 related configurations on this interface are removed!
+
+    # C - Interface loopback da VRF
+    #     Embora nao seja obrigatorio, e' aconselhavel ter em cada roteador
+    #     com VRF, uma loopback por VRF (monitoramento, mpls-te e rsvp-te)
+    
+    interface loopback 101
+	ip binding vpn-instance VRF-INTERNET-A
+	ipv6 enable
+	ipv6 address 2001:db8:80:255::101/128
+	ip address 10.80.255.101 32
+
+    # D - OSPF instanciado na VRF
+    #     Rodar OSPF na VRF garante comunicacao e troca de rotas com
+    #     o lado cliente, sem misturar com as rotas da tabela principal (backbone)
+    
+    ospf 101 router-id 10.80.255.101 vpn-instance VRF-INTERNET-A
+	import-route direct
+	import-route static
+	area 0.0.0.0
+	    network 10.80.21.0 0.0.0.255
+
+    ospfv3 101 vpn-instance VRF-INTERNET-A
+	router-id 10.80.255.101
+	import-route direct
+	import-route static
+	
+    # Vincule a interface na instancia OSPF:
+    interface vlan 21
+	ospf enable 101 area 0.0.0.0
+	ospf cost 5
+	ospf network-type p2p
+	ospf dr-priority 90
+	ospfv3 101 area 0.0.0.0
+	ospfv3 cost 5
+	ospfv3 network-type p2p
+	ospfv3 dr-priority 90
+
+    interface loopback 101
+	ospf enable 101 area 0.0.0.0
+	ospfv3 101 area 0.0.0.0
+
+    # Interface de servidores (2 ou mais hosts com ospf):
+    interface vlan 4001
+	ospf enable 101 area 0.0.0.0
+	ospf cost 5
+	ospf network-type broadcast
+	ospf dr-priority 90
+	ospfv3 101 area 0.0.0.0
+	ospfv3 cost 5
+	ospfv3 network-type broadcast
+	ospfv3 dr-priority 90
+
+    # Para visualizar rotas em uma VRF:
+    display ip routing-table vpn-instance VRF-INTERNET-A
+    display ipv6 routing-table vpn-instance VRF-INTERNET-A
+
+    # Visualizar informacoes de OSPF instanciado dentro da VRF:
+    display ospf 101 peer
+    display ospf 101 peer brief
+    display ospf 101 brief
+    display ospf 101 interface 
+
+    # Reiniciar processo OSPF instancia principal
+    run reset ospf 1 process
+    run reset ospf 1 redistribution
+    run reset ospf 1 counters
+
+    # Reiniciar processo OSPF instancia da VRF
+    run reset ospf 101 process
+    run reset ospf 101 redistribution
+    run reset ospf 101 counters
+
+
+    # E - Rota estatica na VRF
+    ip route-static vpn-instance VRF-INTERNET-A 0.0.0.0 0.0.0.0 10.80.21.1 preference 250
+
+
+
+    # Testando ping dentro da VRF:
+    ping -vpn-instance VRF-INTERNET-A 10.80.255.99
+
+
+
+# 14 - VRFs interconectadas
+
+    # Uma vez criada uma VRF em um roteador, sera' preciso
+    # que ela se comunique com uma vrf em outro roteador
+    # distante (ponte de safena, vpn) usando um tunel de transporte
+
+    # A - Interconexao usando tunnel GRE
+    #   - Crie um tunnel GRE entre os dois roteadores
+
+    #   - Coloque o tunnel GRE na VRF local
+
+
+    # B - VPNv4 - Interconexao usando MPLS provisionada por iBGP
+    #   - Coloque o RD e a community de importacao/exporacao
+    
+    #   - Faca iBGP entre os roteadores
+
+    #   - Atendimento ao cliente:
+    interface GigabitEthernet0/0/21
+	undo portswitch
+	description CPE2
+	ip binding vpn-instance VRF-INTERNET-A
+	ip address 10.0.2.1 255.255.255.252
+    
+    
+    #   - Ative a familia vpnv4 no peer iBGP
+    #   - Atribua loopbacks nos roteadores (parte de OSPF)
+    #   - Faca iBGP entre loopbacks usando o ip de origem da loopback
+    bgp 64900
+        peer 10.80.255.2 as-number 64900
+	peer 10.80.255.2 connect-interface LoopBack0
+
+    #   - Ative a troca de enderecos vpn-instance
+    bgp 64900
+	ipv4-family unicast
+	    undo synchronization   
+    	    peer 10.80.255.2 enable
+
+	ipv4-family vpnv4
+    	    policy vpn-target
+    	    peer 10.80.255.2 enable
+
+        ipv4-family vpn-instance VRF-INTERNET-A
+    	    import-route direct
+            peer 10.0.2.2 as-number 269988
+
+
+# ARP
+#-----------------------------------------------------------------
+
+# Global
+    arp speed-limit source-ip maximum 65536
+    arp speed-limit destination-ip maximum 65536
+
+
+# Configurar limite de arp:
+    interface vlanif 1010
+	arp expire-time 21600
+	arp-limit maximum 8192
+	arp rate-limit 0
+
+
+# Tabela ARP:
+
+
+# Analisar arp:
+    display arp-safeguard statistics slot 3
+    display arp attack slot all
+    display arp attack slot 3
+    
+    display arp all
+    display arp interface Eth-Trunk 1
+    display arp interface vlanif 1010
+
+    display arp packet statistics
+
+# IPv6 ND
+#-----------------------------------------------------------------
+
+    interface vlanif 1012
+	ipv6 nd neighbor-limit 4096
+	ipv6 nd nud reachable-time 2400000
+	ipv6 nd ns retrans-timer 2000
+
+
+# VSI - Virtual Switch Instance
+#-----------------------------------------------------------------
+
+mpls
+mpls l2vpn
+
+vsi a2 static                             
+    pwsignal ldp
+	vsi-id 2
+	peer 10.80.255.2
+
+interface Vlanif100
+    l2 binding vsi a2
+
+
+# BFD
+#-----------------------------------------------------------------
+#
+# BFD deve ser usado para convergencia rapida de links onde ha
+# equipamentos entre um roteador e o outro, impedindo
+# que uma fibra ou cabo rompido apague o sinal da linha na porta
+#
+
+    # Ative o BFD:
+    bfd
+    
+    # Tempo minimo entre pings enviados (10 ms):
+    min-tx-interval 10
+    
+    # Tempo minimo entre pings recebidos (10 ms):
+    min-rx-interval 10
+    
+    # Numero de intervalo sem contato para considerar lost:
+    detect-multiplier 3
+
+    # Tempo para acionar trap snmp dos eventos bfd (em segundos):
+    snmp-agent bfd trap-interval 30
+
+    # Exemplo:
+    [HUAWEI] bfd
+
+    # Monitorar bfd:
+    display current-configuration configuration bfd
+    display bfd session all verbose
+    display bfd statistics
+    display bfd session
+    display bfd ttl
+
+
+# SNMP
+#-----------------------------------------------------------------
+
+    # Ative o SNMP:
+    snmp-agent
+
+    # Informe o contato tecnico (nome do responsavel):
+    snmp-agent sys-info contact "Manda Chuva"
+
+    # Informe a posicao de GPS do equipamento
+    snmp-agent sys-info location "-23.003126, -42.007460"
+
+    # Versao do SNMP:
+    snmp-agent sys-info version v2c
+    undo snmp-agent sys-info version v3
+
+    # Definir community:
+    snmp-agent community read mplsrouters1
+
+    # Ativar MIBs:
+    snmp-agent mib-view included mibvew mib-2
+    snmp-agent mib-view included mib2view mib-2
+
+    # Definir local-engine
+    snmp-agent local-engineid 800007DB03244427BA0D80
+
+    # Manter bytes rx/tx atualizados
+    set if-mib sample-interval 0
+
+    # Para controlar acesso a mibs por ACL de IP, use:
+    acl 2999
+    rule 5 permit source 10.255.0.0 255.255.0.0
+    rule 6 deny source 0.0.0.0 0.0.0.0
+    snmp-agent community read cipher security-read mib-view userinfo acl 2999
+    snmp-agent community write cipher security-write mib-view userinfo acl 2999
+
+
+
+
+# RUDSON NOTA MPLS:
+#=======================================================================
+
+# 1 - Cria um explicit-path para determinar o caminho a percorre 
+explicit-path SW-CAMINHO_2-BACK
+next hop 10.199.199.142
+next hop 10.199.200.226
+#
+explicit-path SW-CAMINHO_1-PRIM
+next hop 10.199.199.186
+next hop 10.199.199.69
+next hop 10.199.200.226
+#
+
+
+# 2 - Crie um interface tunnel e associe os explicit-path a ele 
+#
+interface Tunnel226
+ip address unnumbered interface LoopBack1
+tunnel-protocol mpls te
+destination 10.199.200.226
+mpls te tunnel-id 226
+mpls te record-route
+mpls te path explicit-path SW-CAMINHO_1-PRIM
+mpls te path explicit-path SW-CAMINHO_2-BACK
+mpls te backup hot-standby mode revertive wtr 15
+mpls te backup ordinary best-effort
+mpls te reserved-for-binding
+mpls te commit
+#
+
+# 3 - crie um Tunnel-policy e adicione a interface tunnel a ela 
+#
+tunnel-policy CAMINHO=>2_SALTOS
+tunnel binding destination 10.199.200.226 te Tunnel226
+# 
+
+
+# 4 - adicione o tunnel-policy onde desejar 
+interface Vlanif354
+description RJO354-CLIENTE
+mpls l2vc pw-template SW-INOA 354 tunnel-policy CAMINHO=>2_SALTOS
+

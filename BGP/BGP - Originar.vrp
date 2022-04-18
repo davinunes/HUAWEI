@@ -1,0 +1,203 @@
+
+return
+system-view immediately
+
+
+
+#=================================================================== BGP - Origin de prefixos
+
+
+#
+# ASN 265138 
+# 143.208.72.0/22 
+# 2804:2b28::/32 
+#
+
+#======================================================================== BLACKHOLE - IPv4
+
+
+# /22
+# description BGP-BLACKHOLE-M22-IPV4
+ip route-static 143.208.72.0 22 NULL0 description BGP-BLACKHOLE-M22-IPV4
+
+
+# /23
+ip route-static 143.208.72.0 23 NULL0 description BGP-BLACKHOLE-M23-IPV4
+ip route-static 143.208.74.0 23 NULL0 description BGP-BLACKHOLE-M23-IPV4
+
+# /24
+ip route-static 143.208.72.0 24 NULL0 description BGP-BLACKHOLE-M24-IPV4
+ip route-static 143.208.73.0 24 NULL0 description BGP-BLACKHOLE-M24-IPV4
+ip route-static 143.208.74.0 24 NULL0 description BGP-BLACKHOLE-M24-IPV4
+ip route-static 143.208.75.0 24 NULL0 description BGP-BLACKHOLE-M24-IPV4
+
+
+
+#======================================================================== BLACKHOLE - IPv6
+
+
+# /32
+ipv6 route-static 2804:2b28::      32 NULL0 description BGP-BLACKHOLE-M32-IPV6
+
+# /33
+ipv6 route-static 2804:2b28::      33 NULL0 description BGP-BLACKHOLE-M33-IPV6
+ipv6 route-static 2804:2b28:8000:: 33 NULL0 description BGP-BLACKHOLE-M33-IPV6
+
+
+# /34
+ipv6 route-static 2804:2b28::      34 NULL0 description BGP-BLACKHOLE-M34-IPV6
+ipv6 route-static 2804:2b28:4000:: 34 NULL0 description BGP-BLACKHOLE-M34-IPV6
+ipv6 route-static 2804:2b28:8000:: 34 NULL0 description BGP-BLACKHOLE-M34-IPV6
+ipv6 route-static 2804:2b28:c000:: 34 NULL0 description BGP-BLACKHOLE-M34-IPV6
+
+
+
+
+#======================================================================== Communities (lista rapida):
+
+#
+
+#
+#
+#======================================================================== ORIGIN - POLICY - IPv4
+
+
+# /22
+route-policy ORIGIN-143-208-72-000M22 permit node 10
+    apply community 26513:5002 26513:1 26513:0
+    apply local-preference 99100
+# Exporta o 22 para: Bacup, Principal, Todos os Demais
+
+
+# /23
+route-policy ORIGIN-143-208-72-000M23 permit node 10
+    apply community 26513:6
+    apply local-preference 99100
+# Exporta o 23 para: IX
+
+# /23
+route-policy ORIGIN-143-208-74-000M23 permit node 10
+    apply community 26513:6
+    apply local-preference 99100
+# Exporta o 23 para: IX
+
+
+
+# /24
+route-policy ORIGIN-143-208-72-000M24 permit node 10
+    apply community 26513:7
+    apply local-preference 99100
+# Exporta o 24 para: Fiber7
+route-policy ORIGIN-143-208-73-000M24 permit node 10
+    apply community 26513:7
+    apply local-preference 99100
+#
+route-policy ORIGIN-143-208-74-000M24 permit node 10
+    apply community 26513:7
+    apply local-preference 99100
+#
+route-policy ORIGIN-143-208-75-000M24 permit node 10
+    apply community 26513:7
+    apply local-preference 99100
+#
+
+
+
+
+#======================================================================== ORIGIN - POLICY - IPv6
+
+
+
+# /32
+route-policy ORIGIN-2804-2b28-M32 permit node 10
+    apply community 26513:0 26513:1 26513:5002
+    apply local-preference 99100
+	# Originar para todos, porém com 5 prepend no backup e 0 prepend no principal
+#
+
+
+
+# /33
+route-policy ORIGIN-2804-2b28-0000-M33 permit node 10
+    apply community 26513:0 26513:1 26513:5002
+    apply local-preference 99100
+#
+route-policy ORIGIN-2804-2b28-8000-M33 permit node 10
+    apply community 26513:0 26513:1 26513:5002
+    apply local-preference 99100
+#
+
+
+# /34
+route-policy ORIGIN-2804-2b28-0000-M34 permit node 10
+    apply community 26513:0 26513:1 26513:5002
+    apply local-preference 99100
+#
+route-policy ORIGIN-2804-2b28-4000-M34 permit node 10
+    apply community 26513:0 26513:1 26513:5002
+    apply local-preference 99100
+#
+route-policy ORIGIN-2804-2b28-8000-M34 permit node 10
+    apply community 26513:0 26513:1 26513:5002
+    apply local-preference 99100
+#
+route-policy ORIGIN-2804-2b28-C000-M34 permit node 10
+    apply community 26513:0 26513:1 26513:5002
+    apply local-preference 99100
+#
+
+
+
+
+#======================================================================== BGP - ORIGIN - IPV4
+
+
+bgp 265138
+
+    ipv4-family unicast
+
+        network 143.208.72.0 22 route-policy ORIGIN-143-208-72-000M22
+
+        network 143.208.72.0 23 route-policy ORIGIN-143-208-72-000M23
+        network 143.208.74.0 23 route-policy ORIGIN-143-208-74-000M23
+
+        network 143.208.72.0 24 route-policy ORIGIN-143-208-72-000M24
+        network 143.208.73.0 24 route-policy ORIGIN-143-208-73-000M24
+        network 143.208.74.0 24 route-policy ORIGIN-143-208-74-000M24
+        network 143.208.75.0 24 route-policy ORIGIN-143-208-75-000M24
+#
+
+
+
+#======================================================================== BGP - ORIGIN - IPV6
+
+
+bgp 265138
+
+    ipv6-family unicast
+
+        network 2804:2b28::      32 route-policy ORIGIN-2804-2b28-M32
+
+        network 2804:2b28::      33 route-policy ORIGIN-2804-2b28-0000-M33
+        network 2804:2b28:8000:: 33 route-policy ORIGIN-2804-2b28-8000-M33
+
+        network 2804:2b28::      34 route-policy ORIGIN-2804-2b28-0000-M34
+        network 2804:2b28:4000:: 34 route-policy ORIGIN-2804-2b28-4000-M34
+        network 2804:2b28:8000:: 34 route-policy ORIGIN-2804-2b28-8000-M34
+        network 2804:2b28:c000:: 34 route-policy ORIGIN-2804-2b28-C000-M34
+
+#
+
+
+
+#======================================================================== 
+#======================================================================== 
+#======================================================================== 
+
+
+
+
+
+
+
+

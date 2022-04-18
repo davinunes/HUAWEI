@@ -1,0 +1,292 @@
+
+
+
+
+
+
+
+
+#=================================================================== COMMUNITIES
+
+
+
+return
+system-view immediately
+
+
+
+
+
+
+# Origins
+#  64800:20000	Rota recebida de peering superior (parte do FULL-ROUTE), todas rotas externas
+#  64800:20010	[adicional] Rota recebida de upstream global - TIER 1 (adicional) [Mundial]
+#  64800:20020	[adicional] Rota recebida de upstream global - TIER 2 (adicional) [2 containentes]
+#  64800:20030	[adicional] Rota recebida de upstream global - TIER 3 (adicional) [BR+Pais vizinho]
+#  64800:20040	[adicional] Rota recebida de upstream global - REGIONAL (adicional) [BR apenas]
+#  64800:20050	[adicional] Rota recebida de PTT Publico
+#  64800:20060	[adicional] Rota recebida de PTT Privado
+#  64800:20070	[adicional] Rota recebida de Rede PNI
+
+ip community-filter basic FULL-ROUTE-ALL    permit 64800:20000
+
+
+
+
+#------------------------------------------------------------------------------ USO INTERNO
+
+
+# Marcas de rotas originadas dentro da rede
+#  64800:10090	Rota originada internamente (todas abaixo)
+#  64800:10091	Rota originada internamente, até /24
+#  64800:10092	Rota originada internamente, de /25 a /32 (restrito ao backbone)
+#  64800:10093	Rota originada por cliente de transito, até /25
+#  64800:10060	Controle de repasse interno - Nao repassar para outros peerings iBGP (local-router-only)
+#  64800:10061	Controle de repasse interno - Nao repassar para roteadores iBGP com UPSTREAM (bordas)
+
+ip community-filter basic BACKBONE-ROUTE      permit 64800:10090
+
+ip community-filter basic ORIGIN-LOCAL        permit 64800:10091
+ip community-filter basic ORIGIN-INTRANET     permit 64800:10092
+ip community-filter basic ORIGIN-CLIENTS      permit 64800:10093
+ip community-filter basic ORIGIN-CDNS         permit 64800:10094
+
+
+
+
+
+ip community-filter basic GLOBAL-EXPORT-BLACKHOLE    permit 64800:666
+
+
+
+
+# Controle de repasse interno - Nao repassar para outros peerings iBGP (local-router-only)
+ip community-filter basic BACKBONE-BLOCK-IBGP        permit 64800:10060
+
+
+# Controle de repasse interno - Nao repassar para roteadores iBGP com UPSTREAM (bordas)
+ip community-filter basic BACKBONE-BLOCK-UPSTREAM    permit 64800:10061
+
+
+
+
+#------------------------------------------------------------------------------ CONTROLE CDN PROPRIO
+
+
+# - Exportar para CDNs especificos:
+
+# - NETFLIX OCA #1:
+ip community-filter basic CDN-EXPORT-OCA81-BLOCK    permit 64800:58167
+ip community-filter basic CDN-EXPORT-OCA81-ROUTE    permit 64800:58100
+ip community-filter basic CDN-EXPORT-OCA81-P1       permit 64800:58101
+ip community-filter basic CDN-EXPORT-OCA81-P2       permit 64800:58102
+ip community-filter basic CDN-EXPORT-OCA81-P3       permit 64800:58103
+ip community-filter basic CDN-EXPORT-OCA81-P4       permit 64800:58104
+ip community-filter basic CDN-EXPORT-OCA81-P5       permit 64800:58105
+ip community-filter basic CDN-EXPORT-OCA81-DEFAULT  permit 64800:58109
+
+# - NETFLIX OCA SKILL #1:
+ip community-filter basic CDN-EXPORT-SKILL51-BLOCK    permit 64800:55167
+ip community-filter basic CDN-EXPORT-SKILL51-DEFAULT  permit 64800:55109
+
+# - NETFLIX OCA LOGTEL #1:
+ip community-filter basic CDN-EXPORT-LOGTEL52-BLOCK    permit 64800:55267
+ip community-filter basic CDN-EXPORT-LOGTEL52-DEFAULT  permit 64800:55209
+
+# - GOOGLE GGC:
+ip community-filter basic CDN-EXPORT-GGC82-BLOCK    permit 64800:58267
+ip community-filter basic CDN-EXPORT-GGC82-ROUTE    permit 64800:58200
+ip community-filter basic CDN-EXPORT-GGC82-P1       permit 64800:58201
+ip community-filter basic CDN-EXPORT-GGC82-P2       permit 64800:58202
+ip community-filter basic CDN-EXPORT-GGC82-P3       permit 64800:58203
+ip community-filter basic CDN-EXPORT-GGC82-P4       permit 64800:58204
+ip community-filter basic CDN-EXPORT-GGC82-P5       permit 64800:58205
+ip community-filter basic CDN-EXPORT-GGC82-DEFAULT  permit 64800:58209
+
+ip community-filter basic CDN-EXPORT-GGC82-CGNAT    permit 15169:12000
+ip community-filter basic CDN-EXPORT-GGC82-CGNAT    permit 15169:12100
+
+
+
+# - FACEBOOK FNA:
+ip community-filter basic CDN-EXPORT-FNA83-BLOCK    permit 64800:58367
+ip community-filter basic CDN-EXPORT-FNA83-ROUTE    permit 64800:58300
+ip community-filter basic CDN-EXPORT-FNA83-P1       permit 64800:58301
+ip community-filter basic CDN-EXPORT-FNA83-P2       permit 64800:58302
+ip community-filter basic CDN-EXPORT-FNA83-P3       permit 64800:58303
+ip community-filter basic CDN-EXPORT-FNA83-P4       permit 64800:58304
+ip community-filter basic CDN-EXPORT-FNA83-P5       permit 64800:58305
+ip community-filter basic CDN-EXPORT-FNA83-DEFAULT  permit 64800:58309
+
+
+
+#------------------------------------------------------------------------------ USO POR CIRCUITO
+
+
+# Circuito 01 - Level 3
+
+ip community-filter basic C01-RECEIVED         permit 64800:50100
+ip community-filter basic C01-EXPORT-BLACKHOLE permit 64800:50166
+ip community-filter basic C01-EXPORT-BLOCK     permit 64800:50167
+ip community-filter basic C01-EXPORT-P1        permit 64800:50101
+ip community-filter basic C01-EXPORT-P2        permit 64800:50102
+ip community-filter basic C01-EXPORT-P3        permit 64800:50103
+ip community-filter basic C01-EXPORT-P4        permit 64800:50104
+ip community-filter basic C01-EXPORT-P5        permit 64800:50105
+ip community-filter basic C01-EXPORT-NOEXPORT  permit 64800:50108
+ip community-filter basic C01-EXPORT-DEFAULT   permit 64800:50109
+
+
+
+
+
+# Circuito 02 - Algar
+
+ip community-filter basic C02-RECEIVED         permit 64800:50200
+ip community-filter basic C02-EXPORT-BLACKHOLE permit 64800:50266
+ip community-filter basic C02-EXPORT-BLOCK     permit 64800:50267
+ip community-filter basic C02-EXPORT-P1        permit 64800:50201
+ip community-filter basic C02-EXPORT-P2        permit 64800:50202
+ip community-filter basic C02-EXPORT-P3        permit 64800:50203
+ip community-filter basic C02-EXPORT-P4        permit 64800:50204
+ip community-filter basic C02-EXPORT-P5        permit 64800:50205
+ip community-filter basic C02-EXPORT-NOEXPORT  permit 64800:50208
+ip community-filter basic C02-EXPORT-DEFAULT   permit 64800:50209
+
+
+
+
+# Circuito 03 - PTT-SP
+
+ip community-filter basic C03-RECEIVED         permit 64800:50300
+ip community-filter basic C03-EXPORT-BLACKHOLE permit 64800:50366
+ip community-filter basic C03-EXPORT-BLOCK     permit 64800:50367
+ip community-filter basic C03-EXPORT-P1        permit 64800:50301
+ip community-filter basic C03-EXPORT-P2        permit 64800:50302
+ip community-filter basic C03-EXPORT-P3        permit 64800:50303
+ip community-filter basic C03-EXPORT-P4        permit 64800:50304
+ip community-filter basic C03-EXPORT-P5        permit 64800:50305
+ip community-filter basic C03-EXPORT-NOEXPORT  permit 64800:50308
+ip community-filter basic C03-EXPORT-DEFAULT   permit 64800:50309
+
+
+
+
+
+# Circuito 04 - (reservado uso futuro)
+
+ip community-filter basic C04-RECEIVED         permit 64800:50400
+ip community-filter basic C04-EXPORT-BLACKHOLE permit 64800:50466
+ip community-filter basic C04-EXPORT-BLOCK     permit 64800:50467
+ip community-filter basic C04-EXPORT-P1        permit 64800:50401
+ip community-filter basic C04-EXPORT-P2        permit 64800:50402
+ip community-filter basic C04-EXPORT-P3        permit 64800:50403
+ip community-filter basic C04-EXPORT-P4        permit 64800:50404
+ip community-filter basic C04-EXPORT-P5        permit 64800:50405
+ip community-filter basic C04-EXPORT-NOEXPORT  permit 64800:50408
+ip community-filter basic C04-EXPORT-DEFAULT   permit 64800:50409
+
+
+
+
+# Circuito 05 - (reservado uso futuro)
+
+ip community-filter basic C05-RECEIVED         permit 64800:50500
+ip community-filter basic C05-EXPORT-BLACKHOLE permit 64800:50566
+ip community-filter basic C05-EXPORT-BLOCK     permit 64800:50567
+ip community-filter basic C05-EXPORT-P1        permit 64800:50501
+ip community-filter basic C05-EXPORT-P2        permit 64800:50502
+ip community-filter basic C05-EXPORT-P3        permit 64800:50503
+ip community-filter basic C05-EXPORT-P4        permit 64800:50504
+ip community-filter basic C05-EXPORT-P5        permit 64800:50505
+ip community-filter basic C05-EXPORT-NOEXPORT        permit 64800:50508
+ip community-filter basic C05-EXPORT-DEFAULT        permit 64800:50509
+
+
+
+# Circuito 06 - (reservado uso futuro)
+
+ip community-filter basic C06-RECEIVED         permit 64800:50600
+ip community-filter basic C06-EXPORT-BLACKHOLE permit 64800:50666
+ip community-filter basic C06-EXPORT-BLOCK     permit 64800:50667
+ip community-filter basic C06-EXPORT-P1        permit 64800:50601
+ip community-filter basic C06-EXPORT-P2        permit 64800:50602
+ip community-filter basic C06-EXPORT-P3        permit 64800:50603
+ip community-filter basic C06-EXPORT-P4        permit 64800:50604
+ip community-filter basic C06-EXPORT-P5        permit 64800:50605
+ip community-filter basic C06-EXPORT-NOEXPORT        permit 64800:50608
+ip community-filter basic C06-EXPORT-DEFAULT        permit 64800:50609
+
+
+
+# Circuito 07 - (reservado uso futuro)
+
+ip community-filter basic C07-RECEIVED         permit 64800:50700
+ip community-filter basic C07-EXPORT-BLACKHOLE permit 64800:50766
+ip community-filter basic C07-EXPORT-BLOCK     permit 64800:50767
+ip community-filter basic C07-EXPORT-P1        permit 64800:50701
+ip community-filter basic C07-EXPORT-P2        permit 64800:50702
+ip community-filter basic C07-EXPORT-P3        permit 64800:50703
+ip community-filter basic C07-EXPORT-P4        permit 64800:50704
+ip community-filter basic C07-EXPORT-P5        permit 64800:50705
+ip community-filter basic C07-EXPORT-NOEXPORT        permit 64800:50708
+ip community-filter basic C07-EXPORT-DEFAULT        permit 64800:50709
+
+
+
+
+#------------------------------------------------------------------------------ USO GERAL
+
+
+# Permissoes GLOBAIS para exportacao para CDNs
+ip community-filter basic GLOBAL-EXPORT-CDNS-ROUTE     permit 64800:60020
+ip community-filter basic GLOBAL-EXPORT-CDNS-P1        permit 64800:60021
+ip community-filter basic GLOBAL-EXPORT-CDNS-P2        permit 64800:60022
+ip community-filter basic GLOBAL-EXPORT-CDNS-P3        permit 64800:60023
+ip community-filter basic GLOBAL-EXPORT-CDNS-P4        permit 64800:60024
+ip community-filter basic GLOBAL-EXPORT-CDNS-P5        permit 64800:60025
+ip community-filter basic GLOBAL-EXPORT-CDNS-DEFAULT   permit 64800:60029
+
+
+
+
+# Permissoes GLOBAIS para exportacao - para provedores de transito completo
+
+ip community-filter basic GLOBAL-EXPORT-UPSTREAM-P1        permit 64800:60001
+ip community-filter basic GLOBAL-EXPORT-UPSTREAM-P2        permit 64800:60002
+ip community-filter basic GLOBAL-EXPORT-UPSTREAM-P3        permit 64800:60003
+ip community-filter basic GLOBAL-EXPORT-UPSTREAM-P4        permit 64800:60004
+ip community-filter basic GLOBAL-EXPORT-UPSTREAM-P5        permit 64800:60005
+ip community-filter basic GLOBAL-EXPORT-UPSTREAM-NOEXPORT  permit 64800:60008
+ip community-filter basic GLOBAL-EXPORT-UPSTREAM-DEFAULT   permit 64800:60009
+
+
+
+# Permissoes GLOBAIS para exportacao - para ptts publicos
+
+ip community-filter basic GLOBAL-EXPORT-PUBLICIX-P1        permit 64800:60011
+ip community-filter basic GLOBAL-EXPORT-PUBLICIX-P2        permit 64800:60012
+ip community-filter basic GLOBAL-EXPORT-PUBLICIX-P3        permit 64800:60013
+ip community-filter basic GLOBAL-EXPORT-PUBLICIX-P4        permit 64800:60014
+ip community-filter basic GLOBAL-EXPORT-PUBLICIX-P5        permit 64800:60015
+ip community-filter basic GLOBAL-EXPORT-PUBLICIX-NOEXPORT  permit 64800:60018
+ip community-filter basic GLOBAL-EXPORT-PUBLICIX-DEFAULT   permit 64800:60019
+
+
+
+
+# Permissoes GLOBAIS para exportacao - para todos os peerings
+
+ip community-filter basic GLOBAL-EXPORT-ALL-P1        permit 64800:60071
+ip community-filter basic GLOBAL-EXPORT-ALL-P2        permit 64800:60072
+ip community-filter basic GLOBAL-EXPORT-ALL-P3        permit 64800:60073
+ip community-filter basic GLOBAL-EXPORT-ALL-P4        permit 64800:60074
+ip community-filter basic GLOBAL-EXPORT-ALL-P5        permit 64800:60075
+ip community-filter basic GLOBAL-EXPORT-ALL-NOEXPORT  permit 64800:60078
+ip community-filter basic GLOBAL-EXPORT-ALL-DEFAULT   permit 64800:60079
+
+
+#===================================================================
+#===================================================================
+#===================================================================
+

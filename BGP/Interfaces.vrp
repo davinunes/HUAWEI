@@ -1,0 +1,21 @@
+#
+interface GigabitEthernet0/3/4
+description Nexus1/28_PO2
+#
+interface GigabitEthernet0/3/5
+description Nexus1/27_PO2
+eth-trunk 10
+#
+interface GigabitEthernet0/3/6
+description Nexus1/29_PO2
+#
+interface GigabitEthernet0/3/7
+description Nexus1/30_PO2
+#
+interface GigabitEthernet0/3/8
+description Nexus1/32_PPPoE
+#
+interface GigabitEthernet0/3/9
+description Nexus1/31_PPPoE
+#
+

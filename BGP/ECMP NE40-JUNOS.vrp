@@ -1,0 +1,23 @@
+#
+interface Eth-Trunk10.1109
+ vlan-type dot1q 1109
+ description Fecha OSPF com BRAS Junos
+ ip address 10.111.119.1 255.255.255.252
+ statistic enable
+ ospf network-type p2p
+ ospf enable 1 area 0.0.0.0
+#
+#
+interface Eth-Trunk10.1102
+ vlan-type dot1q 1102
+ description Fecha OSPF com BRAS Junos
+ ip address 10.111.112.1 255.255.255.252
+ statistic enable
+ ospf network-type p2p
+ ospf enable 1 area 0.0.0.0
+#
+# set interfaces xe-0/0/1 unit 1102 vlan-id 1102
+# set interfaces xe-0/0/1 unit 1102 family inet filter output CGNAT_SUBSCRIBER
+# set interfaces xe-0/0/1 unit 1102 family inet address 10.111.112.2/30
+
+# set protocols ospf area 0.0.0.0 interface xe-0/0/1.1102 interface-type p2p
