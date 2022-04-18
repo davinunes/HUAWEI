@@ -102,7 +102,7 @@ route-policy ORIGIN-2804-2b28-8000-M33 permit node 10
     apply community 26513:0 26513:1 26513:5002
     apply local-preference 99100
 #
-
+   
 # /34
 route-policy ORIGIN-2804-2b28-0000-M34 permit node 10
     apply community 26513:0 26513:1 26513:5002
