@@ -53,13 +53,13 @@ route-policy ORIGIN-143-208-72-000M22 permit node 10
 
 # /23
 route-policy ORIGIN-143-208-72-000M23 permit node 10
-    apply community 26513:6 26513:5 26513:3
+    apply community 26513:6 26513:3
     apply local-preference 99100
 # Exporta o 23 para: IX, LOGTEL, Skill
 
 # /23
 route-policy ORIGIN-143-208-74-000M23 permit node 10
-    apply community 26513:6 26513:5 26513:3
+    apply community 26513:6 26513:3
     apply local-preference 99100
 # Exporta o 23 para: IX, LOGTEL, Skill
 
