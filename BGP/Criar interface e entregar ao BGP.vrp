@@ -1,11 +1,12 @@
 #
-interface Eth-Trunk10.752
-description BGP-IPv4-Fiber7
-vlan-type dot1q 752
+interface Eth-Trunk10.700
+description Cliente IP Mercado Verde
+vlan-type dot1q 700
+undo shutdown
 #
 admin
 virtual-system NE40V01 pvmb slot 3
-assign interface Eth-Trunk10.752
+assign interface Eth-Trunk10.700
 y
 #
 #
