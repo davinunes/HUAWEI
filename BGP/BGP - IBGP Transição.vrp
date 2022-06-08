@@ -149,6 +149,18 @@ interface Eth-Trunk10.127
     mpls ldp
 #
 
+interface Eth-Trunk10.9
+ vlan-type dot1q 9
+    description Conexao-com-CHR-LG
+
+    ip address 10.2.60.1 30
+
+    statistic enable
+
+    mpls
+    mpls ldp
+#
+
 interface LoopBack0
     ospf enable 1 area 0.0.0.0
     ospfv3 1 area 0.0.0.0
@@ -165,6 +177,17 @@ bgp 265138
         peer 10.61.61.5 enable
 y
         peer 10.61.61.5 group IBGP-IPV4
+#
+
+bgp 265138
+
+    peer 10.2.60.2 group IBGP-IPV4
+    peer 10.2.60.2 description CCR1072_TRANSICAO
+
+    ipv4-family unicast
+        peer 10.2.60.2 enable
+y
+        peer 10.2.60.2 group IBGP-IPV4
 #
 
 

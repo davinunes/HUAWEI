@@ -1,12 +1,12 @@
 #
-interface Eth-Trunk10.700
-description Cliente IP Mercado Verde
-vlan-type dot1q 700
+interface Eth-Trunk10.9
+description CHR IBGP LG
+vlan-type dot1q 9
 undo shutdown
 #
 admin
 virtual-system NE40V01 pvmb slot 3
-assign interface Eth-Trunk10.700
+assign interface Eth-Trunk10.9
 y
 #
 #
