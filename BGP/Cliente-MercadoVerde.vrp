@@ -9,6 +9,9 @@ vlan-type dot1q 700
 
    # ipv6 enable
   # ipv6 address 2804:2b28:0:5::1/64
+
+  qos car cir 55000 pir 55000 cbs 55000 inbound
+  qos car cir 55000 pir 55000 cbs 55000 outbound
 #
 
 # undo ip route-static 143.208.72.3 32 10.166.167.6 preference 1 description Mercado_Verde_Cliente
@@ -16,3 +19,4 @@ ip route-static 143.208.72.3 32 10.1.60.2 preference 1 description Mercado_Verde
 # ipv6 route-static 2804:2b28:470:: 44 2804:2b28:0:5::2 preference 1 description Mercado_Verde_Cliente
 
 #
+
