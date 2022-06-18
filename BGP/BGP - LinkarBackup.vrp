@@ -12,8 +12,7 @@ system-view immediately
 #======================================================================== INTERFACE
 
 
-
-interface Eth-Trunk10.953
+interface 40GE 0/3/2.953
     vlan-type dot1q 953
     undo shutdown
     description Link-LinkarBackup-AS268689-C02
@@ -24,7 +23,6 @@ interface Eth-Trunk10.953
     ipv6 enable
     ipv6 address 2804:5518:0:90::2/64
 #
-
 
 
 #======================================================================== EXPORT

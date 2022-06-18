@@ -13,13 +13,13 @@ system-view immediately
 
 
 
-interface Eth-Trunk10.2052
+interface 40GE 0/3/2.2052
     vlan-type dot1q 2052
     undo shutdown
     description C06-PTT-DF-IPv4
     statistic enable
 
-    #-mac-address a33c-aaaa-bbbb
+    mac-address cc2d-e0e4-e330
 
     ip address 200.192.110.108 24
 
@@ -28,13 +28,13 @@ interface Eth-Trunk10.2052
     arp-limit maximum 8192
 #
 
-interface Eth-Trunk10.2053
+interface 40GE 0/3/2.2053
     vlan-type dot1q 2053
     undo shutdown
     description C06-PTT-DF-IPv6
     statistic enable
 
-    #-mac-address a33c-aaaa-bbbb
+    mac-address cc2d-e0e4-e330
 
     ipv6 enable
     ipv6 address 2001:12f8:0:13::108/64

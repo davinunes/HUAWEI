@@ -13,7 +13,7 @@ system-view immediately
 
 
 
-interface Eth-Trunk10.318
+interface 40GE 0/3/2.318
     vlan-type dot1q 318
     undo shutdown
     description JET-FNA-AS263558-C04
