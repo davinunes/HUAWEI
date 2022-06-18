@@ -13,7 +13,7 @@ system-view immediately
 
 
 
-interface Eth-Trunk10.846
+interface 40GE 0/3/2.846
     vlan-type dot1q 846
     undo shutdown
     description Link-LinkarPincipal-AS268689-C01
