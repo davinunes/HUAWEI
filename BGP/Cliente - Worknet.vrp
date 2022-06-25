@@ -5,6 +5,8 @@ interface 40GE0/3/1.701
     statistic enable
 
     ip address 10.1.60.5 30
+    ipv6 enable
+    ipv6 address 2804:2b28:0:c::1/64
 
   qos car cir 2048000 pir 2048000 cbs 2048000 inbound
   qos car cir 2048000 pir 2048000 cbs 2048000 outbound
@@ -12,6 +14,6 @@ interface 40GE0/3/1.701
 
 # undo route-static 143.208.73.16 29 10.1.60.6 preference 1 description WorkNet_Cliente
 ip route-static 143.208.73.16 29 10.1.60.6 preference 1 description WorkNet_Cliente
-# ipv6 route-static 2804:2b28:470:: 44 2804:2b28:0:5::2 preference 1 description Mercado_Verde_Cliente
+ipv6 route-static 2804:2b28:480:: 44 2804:2b28:0:c::2 preference 1 description WorkNet_Cliente
 #
 
