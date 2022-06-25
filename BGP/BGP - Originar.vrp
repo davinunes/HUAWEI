@@ -67,24 +67,24 @@ route-policy ORIGIN-143-208-74-000M23 permit node 10
 
 # /24
 route-policy ORIGIN-143-208-72-000M24 permit node 10
-    apply community 26513:3 26513:4 26513:5 
+    apply community 26513:4 26513:6 26513:7
     apply local-preference 99100
-# Exporta o 24 para: Fiber7
+# 
 
 route-policy ORIGIN-143-208-73-000M24 permit node 10
-    apply community 26513:3 26513:4 26513:5
+     apply community 26513:4 26513:6 26513:7
     apply local-preference 99100
-# Exporta o 24 para: Fiber7
+# 
 
 route-policy ORIGIN-143-208-74-000M24 permit node 10
-    apply community 26513:3 26513:4 26513:5
+     apply community 26513:4 26513:6 26513:7
     apply local-preference 99100
-# Exporta o 24 para: Fiber7
+# 
 
 route-policy ORIGIN-143-208-75-000M24 permit node 10
-    apply community 26513:3 26513:4 26513:5
+     apply community 26513:4 26513:6 26513:7
     apply local-preference 99100
-# Exporta o 24 para: Fiber7
+# 
 
 
 #======================================================================== ORIGIN - POLICY - IPv6
