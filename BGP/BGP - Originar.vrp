@@ -67,7 +67,7 @@ route-policy ORIGIN-143-208-74-000M23 permit node 10
 
 # /24
 route-policy ORIGIN-143-208-72-000M24 permit node 10
-    apply community 26513:6
+    apply community 26513:6 26513:2
     apply local-preference 99100
 # 
 
