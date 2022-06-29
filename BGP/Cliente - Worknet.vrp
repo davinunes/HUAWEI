@@ -14,5 +14,17 @@ interface 40GE0/3/1.701
 
 # undo route-static 143.208.73.16 29 10.1.60.6 preference 1 description WorkNet_Cliente
 ip route-static 143.208.73.16 29 10.1.60.6 preference 1 description WorkNet_Cliente
+
+ip route-static 143.208.73.16 32 10.1.60.6 preference 1 description WorkNet_Cliente
+ip route-static 143.208.73.17 32 10.1.60.6 preference 1 description WorkNet_Cliente
+ip route-static 143.208.73.18 32 10.1.60.6 preference 1 description WorkNet_Cliente
+ip route-static 143.208.73.19 32 10.1.60.6 preference 1 description WorkNet_Cliente
+ip route-static 143.208.73.20 32 10.1.60.6 preference 1 description WorkNet_Cliente
+ip route-static 143.208.73.21 32 10.1.60.6 preference 1 description WorkNet_Cliente
+ip route-static 143.208.73.22 32 10.1.60.6 preference 1 description WorkNet_Cliente
+ip route-static 143.208.73.23 32 10.1.60.6 preference 1 description WorkNet_Cliente
+
+
+
 ipv6 route-static 2804:2b28:480:: 44 2804:2b28:0:c::2 preference 1 description WorkNet_Cliente
 #
