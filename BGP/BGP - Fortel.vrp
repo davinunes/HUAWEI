@@ -1,0 +1,205 @@
+
+return
+system-view immediately
+
+
+
+#=================================================================== BGP com link FORTEL - AS 61832 - Circuito 01
+
+
+
+
+#======================================================================== INTERFACE
+
+
+
+interface 40GE 0/3/3.1550
+    vlan-type dot1q 1550
+    undo shutdown
+    description Link-FortelBrazlandia-AS61832-C01
+    statistic enable
+    ip address 172.31.13.214 30
+
+#
+
+interface 40GE 0/3/3.1551
+    vlan-type dot1q 1551
+    undo shutdown
+    description Link-FortelBrazlandia-AS61832-C01
+    statistic enable
+
+    ipv6 enable
+    ipv6 address 2804:1a04:0:3::de6/126
+#
+
+
+
+#======================================================================== EXPORT
+
+route-policy C11-EXPORT deny node 1000
+    if-match community-filter NO-UPLINK
+	# Exportar o que tiver com a comunidade 26513:999, rotas que NÃO devem sair por este link (rotas recebidas dos cdns contratados)
+#
+
+route-policy C11-EXPORT permit node 1050
+    if-match community-filter EXPORT_C11
+	# Exportar o que tiver com a comunidade 26513:11, rotas que devem sair por este link
+#
+
+route-policy C11-EXPORT permit node 1150
+    if-match community-filter CLIENTE
+	# Exportar o que tiver com a comunidade 26513:100, ou seja, o que for rota de cliente
+#
+
+route-policy C11-EXPORT permit node 2005
+    if-match community-filter EXPORT_C11P5
+    apply as-path 265138 265138 265138 265138 additive
+	# Exportar o que tiver com a comunidade 26513:5011, rotas que devem sair por este link com muitos prepend
+#
+
+route-policy C11-EXPORT permit node 2019
+    if-match community-filter EXPORT_ALL
+	# Exportar o que tiver com a comunidade 26513:0, ou seja, rotas marcadas para exportar para todos
+#
+
+route-policy C11-EXPORT deny node 9999
+#
+
+
+#======================================================================== AS-PATH para priorizar via C01
+
+# Lista de AS-PATH para priorizar rota pelo circuito:
+
+ip as-path-filter C11-AS-ROUTE index 10 permit ^61832$
+# Cria uma lista com os prefixos Originados por Este ASN
+
+#======================================================================== IMPORT - IPV4
+
+
+route-policy C11-IMPORT-IPV4 deny   node 1000
+    if-match ip-prefix RFC5735
+	# Descarta rotas privadas
+#
+
+route-policy C11-IMPORT-IPV4 deny   node 1011
+    if-match ip-prefix BGP-CLIENT-LIST-ESP-IPV4
+	# descarta rotas específicas dos Clientes
+#
+
+route-policy C11-IMPORT-IPV4 permit node 2000
+    if-match ip-prefix BGP-CLIENT-LIST-SUM-IPV4
+    apply local-preference 50
+    apply community 26513:100 26513:0
+	# Aplica comunidades: CLIENTE EXPORT_ALL
+	# Aceita as rotas sumarizadas dos clientes e aplica as comunidades e controla a local preference
+#
+
+route-policy C11-IMPORT-IPV4 permit node 2002
+    if-match as-path-filter C11-AS-ROUTE
+    apply local-preference 205
+    apply community 26513:100 26513:0
+	# Comunidades: CLIENTE EXPORT_ALL 
+	# E aumenta o local preference especificamente para as rotas deste link
+#
+
+route-policy C11-IMPORT-IPV4 permit node 9999
+	# Permite o restante de tudo, afinal é um fullroute entrando
+#
+
+
+#======================================================================== IMPORT - IPV6
+
+route-policy C11-IMPORT-IPV6 deny   node 1000
+    if-match ipv6 address prefix-list RFC3849
+#
+
+route-policy C11-IMPORT-IPV6 deny   node 1011
+    if-match ipv6 address prefix-list BGP-CLIENT-LIST-ESP-IPV6
+#
+
+route-policy C11-IMPORT-IPV6 permit node 2000
+    if-match ipv6 address prefix-list BGP-CLIENT-LIST-SUM-IPV6
+    apply local-preference 50
+    apply community 26513:100 26513:0
+	# Aplica comunidades: CLIENTE EXPORT_ALL
+	# Aceita as rotas sumarizadas dos clientes e aplica as comunidades e controla a local preference
+#
+
+route-policy C11-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C11-AS-ROUTE
+    apply local-preference 202
+    apply community 26513:100 26513:0
+	# Comunidades: CLIENTE EXPORT_ALL 
+	# E aumenta o local preference especificamente para as rotas deste link
+#
+
+route-policy C11-IMPORT-IPV6 permit  node 9999
+#
+
+#======================================================================== BGP - RS PEERING - IPv4
+
+bgp 265138
+
+    peer 172.31.13.213 as-number 61832
+    peer 172.31.13.213 description C11-AS61832-FORTEL-IPV4
+    peer 172.31.13.213 timer connect-retry 1
+    peer 172.31.13.213 timer keepalive 10 hold 40
+y
+
+    ipv4-family unicast
+        peer 172.31.13.213 enable
+y
+        peer 172.31.13.213 route-policy C11-IMPORT-IPV4 import
+        peer 172.31.13.213 route-policy C11-EXPORT export
+        peer 172.31.13.213 advertise-community
+        peer 172.31.13.213 advertise-ext-community
+        peer 172.31.13.213 public-as-only force
+        peer 172.31.13.213 next-hop-local
+#
+
+
+#======================================================================== BGP - RS PEERING - IPv6
+
+bgp 265138
+
+    peer 2804:1a04:0:3::de5 as-number 61832
+    peer 2804:1a04:0:3::de5 description C11-AS61832-FORTEL-IPV6
+    peer 2804:1a04:0:3::de5 timer connect-retry 1
+    peer 2804:1a04:0:3::de5 timer keepalive 10 hold 40
+y
+
+    ipv6-family unicast
+        peer 2804:1a04:0:3::de5 enable
+        peer 2804:1a04:0:3::de5 route-policy C11-IMPORT-IPV6 import
+        peer 2804:1a04:0:3::de5 route-policy C11-EXPORT export
+        peer 2804:1a04:0:3::de5 advertise-community
+        peer 2804:1a04:0:3::de5 advertise-ext-community
+        peer 2804:1a04:0:3::de5 public-as-only force
+        peer 2804:1a04:0:3::de5 next-hop-local
+#
+
+#======================================================================== BGP - DESATIVAR
+
+# Desativar peer
+bgp 265138
+    peer 172.31.13.213 ignore
+    peer 2804:1a04:0:3::de5 ignore
+#
+
+#======================================================================== BGP - ATIVAR
+
+# Ativar
+bgp 265138
+    undo peer 172.31.13.213 ignore
+    undo peer 2804:1a04:0:3::de5 ignore
+#
+
+#======================================================================== BGP - DELETAR - CUIDADO
+
+# Destruir config do peer
+bgp 265138
+    undo peer 172.31.13.213
+	y
+    undo peer 2804:1a04:0:3::de5
+	y
+#
