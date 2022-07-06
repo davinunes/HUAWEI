@@ -44,7 +44,7 @@ route-policy C02-EXPORT permit node 1150
 
 route-policy C02-EXPORT permit node 2005
     if-match community-filter EXPORT_C02P5
-    apply as-path 265138 265138 265138 265138 additive
+    apply as-path 265138 265138 265138 265138 265138 265138 265138 265138 265138 265138 265138 265138 additive
 	# Exportar o que tiver com a comunidade 26513:5002, rotas que devem sair por este link com muitos prepend
 #
 
