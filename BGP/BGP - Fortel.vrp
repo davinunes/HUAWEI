@@ -32,8 +32,10 @@ interface 40GE 0/3/3.1551
     ipv6 address 2804:1a04:0:3::de6/126
 #
 
+#======================================================================== EXPORT RR
+route-policy C11-RR-EXPORT deny node 9999
 
-
+#
 #======================================================================== EXPORT
 
 route-policy C11-EXPORT deny node 1000
@@ -155,6 +157,32 @@ y
         peer 172.31.13.213 advertise-ext-community
         peer 172.31.13.213 public-as-only force
         peer 172.31.13.213 next-hop-local
+#
+
+
+
+# Sessão com RR para Obter o FullRoute
+
+#
+ip route-static 10.0.0.125 32 172.31.13.213 preference 1 description ROTA-PARA-PEER-MULTIHOP
+
+bgp 265138
+    peer 10.0.0.125 as-number 61832
+    peer 10.0.0.125 description C11-RR-AS61832-FORTEL-IPV4
+    peer 10.0.0.125 timer connect-retry 1
+    peer 10.0.0.125 timer keepalive 10 hold 40
+    peer 10.0.0.125 ebgp-max-hop
+y
+
+    ipv4-family unicast
+        peer 10.0.0.125 enable
+y
+        peer 10.0.0.125 route-policy C11-IMPORT-IPV4 import
+        peer 10.0.0.125 route-policy C11-RR-EXPORT export
+        peer 10.0.0.125 advertise-community
+        peer 10.0.0.125 advertise-ext-community
+        peer 10.0.0.125 public-as-only force
+        peer 10.0.0.125 next-hop-local
 #
 
 
