@@ -1,0 +1,200 @@
+!Software Version V200R012C00SPC500
+#
+sysname HUAWEI
+#
+authentication-profile name default_authen_profile
+authentication-profile name dot1x_authen_profile
+authentication-profile name mac_authen_profile
+authentication-profile name portal_authen_profile
+authentication-profile name dot1xmac_authen_profile
+authentication-profile name multi_authen_profile
+#
+clock timezone UTC add 00:00:00
+#
+diffserv domain default
+#
+radius-server template default
+#
+pki realm default
+ certificate-check none
+#
+free-rule-template name default_free_rule
+#
+portal-access-profile name portal_access_profile
+#
+drop-profile default                      
+#
+aaa
+ authentication-scheme default
+ authentication-scheme radius
+  authentication-mode radius
+ authorization-scheme default
+ accounting-scheme default
+ local-aaa-user password policy administrator
+  password history record number 0
+  password expire 0
+ domain default
+  authentication-scheme radius
+  radius-server default
+ domain default_admin
+  authentication-scheme default
+ local-user admin password irreversible-cipher $1a$kN;b3-(gK+$>bUGFJG;@Ms[~='K24w4tI;j#qJ@T<+<G8M$y\H7$
+ local-user admin privilege level 15
+ local-user admin ftp-directory flash:
+ local-user admin service-type telnet terminal ssh ftp x25-pad http
+#
+interface Vlanif1
+#
+interface MEth0/0/1
+ ip address 192.168.1.253 255.255.255.0   
+#
+interface XGigabitEthernet0/0/1
+#
+interface XGigabitEthernet0/0/2
+#
+interface XGigabitEthernet0/0/3
+#
+interface XGigabitEthernet0/0/4
+#
+interface XGigabitEthernet0/0/5
+#
+interface XGigabitEthernet0/0/6
+#
+interface XGigabitEthernet0/0/7
+#
+interface XGigabitEthernet0/0/8
+#
+interface XGigabitEthernet0/0/9
+#
+interface XGigabitEthernet0/0/10
+#
+interface XGigabitEthernet0/0/11
+#
+interface XGigabitEthernet0/0/12          
+#
+interface XGigabitEthernet0/0/13
+#
+interface XGigabitEthernet0/0/14
+#
+interface XGigabitEthernet0/0/15
+#
+interface XGigabitEthernet0/0/16
+#
+interface XGigabitEthernet0/0/17
+#
+interface XGigabitEthernet0/0/18
+#
+interface XGigabitEthernet0/0/19
+#
+interface XGigabitEthernet0/0/20
+#
+interface XGigabitEthernet0/0/21
+#
+interface XGigabitEthernet0/0/22
+#
+interface XGigabitEthernet0/0/23
+#
+interface XGigabitEthernet0/0/24          
+#
+interface XGigabitEthernet0/0/25
+#
+interface XGigabitEthernet0/0/26
+#
+interface XGigabitEthernet0/0/27
+#
+interface XGigabitEthernet0/0/28
+#
+interface XGigabitEthernet0/0/29
+#
+interface XGigabitEthernet0/0/30
+#
+interface XGigabitEthernet0/0/31
+#
+interface XGigabitEthernet0/0/32
+#
+interface XGigabitEthernet0/0/33
+#
+interface XGigabitEthernet0/0/34
+#
+interface XGigabitEthernet0/0/35
+#
+interface XGigabitEthernet0/0/36          
+#
+interface XGigabitEthernet0/0/37
+#
+interface XGigabitEthernet0/0/38
+#
+interface XGigabitEthernet0/0/39
+#
+interface XGigabitEthernet0/0/40
+#
+interface XGigabitEthernet0/0/41
+#
+interface XGigabitEthernet0/0/42
+#
+interface XGigabitEthernet0/0/43
+#
+interface XGigabitEthernet0/0/44
+#
+interface XGigabitEthernet0/0/45
+#
+interface XGigabitEthernet0/0/46
+#
+interface XGigabitEthernet0/0/47
+#
+interface XGigabitEthernet0/0/48          
+#
+interface 40GE0/0/1
+ undo portswitch
+ ip address 1.1.1.1 255.255.255.252
+#
+interface 40GE0/0/2
+#
+interface 40GE0/0/3
+#
+interface 40GE0/0/4
+#
+interface 40GE0/0/5
+#
+interface 40GE0/0/6
+#
+interface NULL0
+#
+stelnet server enable
+#
+user-interface con 0
+ authentication-mode aaa
+user-interface vty 0 4
+ authentication-mode aaa
+ protocol inbound all                     
+user-interface vty 16 20
+#
+wlan
+ traffic-profile name default
+ security-profile name default
+ security-profile name default-wds
+ security-profile name default-mesh
+ ssid-profile name default
+ vap-profile name default
+ wds-profile name default
+ mesh-handover-profile name default
+ mesh-profile name default
+ regulatory-domain-profile name default
+ air-scan-profile name default
+ rrm-profile name default
+ radio-2g-profile name default
+ radio-5g-profile name default
+ wids-profile name default
+ ap-system-profile name default
+ port-link-profile name default
+ wired-port-profile name default
+ ap-group name default
+ provision-ap
+#                                         
+dot1x-access-profile name dot1x_access_profile
+#
+mac-access-profile name mac_access_profile
+#
+ops
+#
+return
