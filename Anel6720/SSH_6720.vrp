@@ -1,0 +1,46 @@
+# Primeiro configurar o SSH
+user-interface maximum-vty 15
+user-interface vty 0 4
+acl 2001 inbound
+authentication-mode aaa
+idle-timeout 35791 0
+user privilege level 15
+protocol inbound all
+shell
+
+quit
+
+acl number 2001
+description Limita_SSH
+rule 10 permit source 10.0.0.0 0.255.255.255
+rule 20 permit source 172.0.0.0 0.63.255.255
+rule 30 permit source 192.168.0.0 0.0.255.255
+rule 40 permit source 143.208.72.0 0.0.3.255
+
+quit
+
+stelnet server enable
+ssh ipv4 server port 1822
+y
+ssh ipv6 server port 1822
+y
+ssh server acl 2001
+ssh server cipher 3des_cbc aes128_cbc aes128_ctr aes256_cbc aes256_ctr des_cbc
+ssh server hmac sha2_256 sha2_256_96 sha1 sha1_96 md5 md5_96
+ssh server key-exchange dh_group14_sha1 dh_group1_sha1 dh_group_exchange_sha1
+ssh server dh-exchange min-len 2048
+
+ssh client cipher 3des_cbc aes128_ctr aes128_cbc aes256_ctr aes256_cbc des_cbc
+ssh client hmac md5 md5_96 sha1 sha1_96 sha2_256 sha2_256_96
+ssh client key-exchange dh_group_exchange_sha1 dh_group14_sha1 dh_group1_sha1
+
+ssh user admin
+ssh user admin authentication-type all
+ssh user admin service-type all
+
+aaa
+local-user admin privilege level 15
+local-user admin service-type ssh ftp http telnet terminal
+quit
+
+# Fim SSH
