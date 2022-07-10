@@ -1,6 +1,6 @@
 #Primeiro removemos todas as portas do Modo Switch
 
-system 
+system-view
 interface range XGigabitEthernet 0/0/1 to XGigabitEthernet 0/0/24
 undo portswitch
 quit
