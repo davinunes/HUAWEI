@@ -6,7 +6,35 @@ undo portswitch
 quit
 interface range 40GE 0/0/1 to 40GE 0/0/6
 undo portswitch
-quit
+return
 
 # Aplico as confi de SSh do template
 
+# Crio a LoopBack
+system-view
+interface LoopBack0
+ ip address 10.222.111.2 32
+return
+
+# Habilito o MPLS global da caixa
+# system-view
+# sysname PATIO-MPLS-ACESSO
+# mpls lsr-id 10.222.111.2
+# mpls
+#  mpls te
+#  mpls rsvp-te
+# mpls l2vpn
+# mpls ldp
+
+
+
+# Cria as interfaces de agregação
+
+system-view
+interface Eth-Trunk 110
+description LACP PATIO <-> CEILANDIA
+undo portswitch
+ip address 10.222.110.1 30
+
+interface Eth-Trunk 120
+description LACP BRAZLANDIA <-> PATIO
