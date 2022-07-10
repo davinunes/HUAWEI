@@ -58,67 +58,96 @@ interface MEth0/0/1
  ip address 192.168.1.253 255.255.255.0
 #
 interface XGigabitEthernet0/0/1
+ undo portswitch
 #
 interface XGigabitEthernet0/0/2
+ undo portswitch
 #
 interface XGigabitEthernet0/0/3
+ undo portswitch
 #
 interface XGigabitEthernet0/0/4
+ undo portswitch
 #
 interface XGigabitEthernet0/0/5
+ undo portswitch                          
 #
 interface XGigabitEthernet0/0/6
+ undo portswitch
 #
 interface XGigabitEthernet0/0/7
-#                                         
+ undo portswitch
+#
 interface XGigabitEthernet0/0/8
+ undo portswitch
 #
 interface XGigabitEthernet0/0/9
+ undo portswitch
 #
 interface XGigabitEthernet0/0/10
+ undo portswitch
 #
 interface XGigabitEthernet0/0/11
+ undo portswitch
 #
 interface XGigabitEthernet0/0/12
+ undo portswitch
 #
 interface XGigabitEthernet0/0/13
+ undo portswitch                          
 #
 interface XGigabitEthernet0/0/14
+ undo portswitch
 #
 interface XGigabitEthernet0/0/15
+ undo portswitch
 #
 interface XGigabitEthernet0/0/16
+ undo portswitch
 #
 interface XGigabitEthernet0/0/17
+ undo portswitch
 #
 interface XGigabitEthernet0/0/18
+ undo portswitch
 #
 interface XGigabitEthernet0/0/19
-#                                         
+ undo portswitch
+#
 interface XGigabitEthernet0/0/20
+ undo portswitch
 #
 interface XGigabitEthernet0/0/21
+ undo portswitch                          
 #
 interface XGigabitEthernet0/0/22
+ undo portswitch
 #
 interface XGigabitEthernet0/0/23
+ undo portswitch
 #
 interface XGigabitEthernet0/0/24
+ undo portswitch
 #
 interface 40GE0/0/1
  port link-type access
  port default vlan 9
 #
 interface 40GE0/0/2
+ undo portswitch
 #
 interface 40GE0/0/3
+ undo portswitch
 #
 interface 40GE0/0/4
+ undo portswitch
 #
-interface 40GE0/0/5
+interface 40GE0/0/5                       
+ undo portswitch
 #
 interface 40GE0/0/6
-#                                         
+ undo portswitch
+#
 interface NULL0
 #
 ssh server cipher aes256_ctr aes128_ctr
@@ -137,5 +166,5 @@ dot1x-access-profile name dot1x_access_profile
 mac-access-profile name mac_access_profile
 #
 ops
-#
+#                                         
 return
