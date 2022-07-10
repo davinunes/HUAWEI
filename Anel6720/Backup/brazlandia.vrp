@@ -18,11 +18,18 @@ radius-server template default
 pki realm default
  certificate-check none
 #
+acl number 2001
+ description Limita_SSH
+ rule 10 permit source 10.0.0.0 0.255.255.255
+ rule 20 permit source 172.0.0.0 0.63.255.255
+ rule 30 permit source 192.168.0.0 0.0.255.255
+ rule 40 permit source 143.208.72.0 0.0.3.255
+#
 free-rule-template name default_free_rule
 #
 portal-access-profile name portal_access_profile
 #
-drop-profile default                      
+drop-profile default
 #
 aaa
  authentication-scheme default
@@ -39,134 +46,202 @@ aaa
  domain default_admin
   authentication-scheme default
  local-user admin password irreversible-cipher $1a$kN;b3-(gK+$>bUGFJG;@Ms[~='K24w4tI;j#qJ@T<+<G8M$y\H7$
- local-user admin privilege level 15
+ local-user admin privilege level 15      
  local-user admin ftp-directory flash:
- local-user admin service-type telnet terminal ssh ftp x25-pad http
+ local-user admin service-type telnet terminal ssh ftp http
 #
 interface Vlanif1
 #
 interface MEth0/0/1
- ip address 192.168.1.253 255.255.255.0   
+ ip address 192.168.1.253 255.255.255.0
 #
 interface XGigabitEthernet0/0/1
+ undo portswitch
 #
 interface XGigabitEthernet0/0/2
+ undo portswitch
 #
 interface XGigabitEthernet0/0/3
+ undo portswitch
 #
 interface XGigabitEthernet0/0/4
+ undo portswitch
 #
 interface XGigabitEthernet0/0/5
+ undo portswitch
 #
-interface XGigabitEthernet0/0/6
+interface XGigabitEthernet0/0/6           
+ undo portswitch
 #
 interface XGigabitEthernet0/0/7
+ undo portswitch
 #
 interface XGigabitEthernet0/0/8
+ undo portswitch
 #
 interface XGigabitEthernet0/0/9
+ undo portswitch
 #
 interface XGigabitEthernet0/0/10
+ undo portswitch
 #
 interface XGigabitEthernet0/0/11
+ undo portswitch
 #
-interface XGigabitEthernet0/0/12          
+interface XGigabitEthernet0/0/12
+ undo portswitch
 #
 interface XGigabitEthernet0/0/13
+ undo portswitch
 #
-interface XGigabitEthernet0/0/14
+interface XGigabitEthernet0/0/14          
+ undo portswitch
 #
 interface XGigabitEthernet0/0/15
+ undo portswitch
 #
 interface XGigabitEthernet0/0/16
+ undo portswitch
 #
 interface XGigabitEthernet0/0/17
+ undo portswitch
 #
 interface XGigabitEthernet0/0/18
+ undo portswitch
 #
 interface XGigabitEthernet0/0/19
+ undo portswitch
 #
 interface XGigabitEthernet0/0/20
+ undo portswitch
 #
 interface XGigabitEthernet0/0/21
+ undo portswitch
 #
-interface XGigabitEthernet0/0/22
+interface XGigabitEthernet0/0/22          
+ undo portswitch
 #
 interface XGigabitEthernet0/0/23
+ undo portswitch
 #
-interface XGigabitEthernet0/0/24          
+interface XGigabitEthernet0/0/24
+ undo portswitch
 #
 interface XGigabitEthernet0/0/25
+ undo portswitch
 #
 interface XGigabitEthernet0/0/26
+ undo portswitch
 #
 interface XGigabitEthernet0/0/27
+ undo portswitch
 #
 interface XGigabitEthernet0/0/28
+ undo portswitch
 #
 interface XGigabitEthernet0/0/29
+ undo portswitch
 #
-interface XGigabitEthernet0/0/30
+interface XGigabitEthernet0/0/30          
+ undo portswitch
 #
 interface XGigabitEthernet0/0/31
+ undo portswitch
 #
 interface XGigabitEthernet0/0/32
+ undo portswitch
 #
 interface XGigabitEthernet0/0/33
+ undo portswitch
 #
 interface XGigabitEthernet0/0/34
+ undo portswitch
 #
 interface XGigabitEthernet0/0/35
+ undo portswitch
 #
-interface XGigabitEthernet0/0/36          
+interface XGigabitEthernet0/0/36
+ undo portswitch
 #
 interface XGigabitEthernet0/0/37
+ undo portswitch
 #
-interface XGigabitEthernet0/0/38
+interface XGigabitEthernet0/0/38          
+ undo portswitch
 #
 interface XGigabitEthernet0/0/39
+ undo portswitch
 #
 interface XGigabitEthernet0/0/40
+ undo portswitch
 #
 interface XGigabitEthernet0/0/41
+ undo portswitch
 #
 interface XGigabitEthernet0/0/42
+ undo portswitch
 #
 interface XGigabitEthernet0/0/43
+ undo portswitch
 #
 interface XGigabitEthernet0/0/44
+ undo portswitch
 #
 interface XGigabitEthernet0/0/45
+ undo portswitch
 #
-interface XGigabitEthernet0/0/46
+interface XGigabitEthernet0/0/46          
+ undo portswitch
 #
 interface XGigabitEthernet0/0/47
+ undo portswitch
 #
-interface XGigabitEthernet0/0/48          
+interface XGigabitEthernet0/0/48
+ undo portswitch
 #
 interface 40GE0/0/1
  undo portswitch
  ip address 1.1.1.1 255.255.255.252
 #
 interface 40GE0/0/2
+ undo portswitch
 #
 interface 40GE0/0/3
+ undo portswitch
 #
 interface 40GE0/0/4
+ undo portswitch
 #
 interface 40GE0/0/5
-#
+ undo portswitch
+#                                         
 interface 40GE0/0/6
+ undo portswitch
 #
 interface NULL0
 #
 stelnet server enable
+ssh server port 1822
+ssh user admin
+ssh user admin authentication-type all
+ssh user admin service-type all
+ssh server acl 2001
+ssh server cipher aes256_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc des_cbc
+ssh server key-exchange dh_group_exchange_sha1 dh_group14_sha1 dh_group1_sha1
+ssh client cipher aes256_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc des_cbc
+ssh client key-exchange dh_group_exchange_sha1 dh_group14_sha1 dh_group1_sha1
+ssh server dh-exchange min-len 2048
 #
+user-interface maximum-vty 15
 user-interface con 0
  authentication-mode aaa
 user-interface vty 0 4
+ acl 2001 inbound
  authentication-mode aaa
- protocol inbound all                     
+ user privilege level 15                  
+ idle-timeout 35791 0
+ protocol inbound all
+user-interface vty 5 14
 user-interface vty 16 20
 #
 wlan
@@ -187,10 +262,10 @@ wlan
  wids-profile name default
  ap-system-profile name default
  port-link-profile name default
- wired-port-profile name default
+ wired-port-profile name default          
  ap-group name default
  provision-ap
-#                                         
+#
 dot1x-access-profile name dot1x_access_profile
 #
 mac-access-profile name mac_access_profile
