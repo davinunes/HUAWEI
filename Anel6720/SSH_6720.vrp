@@ -35,7 +35,7 @@ ssh client hmac md5 md5_96 sha1 sha1_96 sha2_256 sha2_256_96
 ssh client key-exchange dh_group_exchange_sha1 dh_group14_sha1 dh_group1_sha1
 
 ssh user admin
-ssh user admin authentication-type all
+ssh user admin authentication-type password
 ssh user admin service-type all
 
 aaa

@@ -8,5 +8,5 @@ interface range 40GE 0/0/1 to 40GE 0/0/6
 undo portswitch
 quit
 
-#
+# Aplico as confi de SSh do template
 
