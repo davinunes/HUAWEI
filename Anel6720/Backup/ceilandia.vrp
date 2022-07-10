@@ -20,6 +20,13 @@ radius-server template default
 pki realm default
  certificate-check none
 #
+acl number 2001
+ description Limita_SSH
+ rule 10 permit source 10.0.0.0 0.255.255.255
+ rule 20 permit source 172.0.0.0 0.63.255.255
+ rule 30 permit source 192.168.0.0 0.0.255.255
+ rule 40 permit source 143.208.72.0 0.0.3.255
+#
 free-rule-template name default_free_rule
 #
 portal-access-profile name portal_access_profile
@@ -39,15 +46,15 @@ aaa
   password history record number 0
   password expire 0
  domain default
-  authentication-scheme radius
+  authentication-scheme radius            
   accounting-scheme default
   radius-server default
  domain default_admin
   authentication-scheme default
   accounting-scheme default
  local-user admin password irreversible-cipher $1c$[>Y-C~D%#~$22Qq+3,M^FJ;H:$'DjiK*bv2*W3KZP>]W{71o7'-$
- local-user admin privilege level 15      
- local-user admin service-type terminal http
+ local-user admin privilege level 15
+ local-user admin service-type telnet terminal ssh ftp http
 #
 interface Vlanif1
 #
@@ -63,14 +70,14 @@ interface XGigabitEthernet0/0/1
 interface XGigabitEthernet0/0/2
  undo portswitch
 #
-interface XGigabitEthernet0/0/3
+interface XGigabitEthernet0/0/3           
  undo portswitch
 #
 interface XGigabitEthernet0/0/4
  undo portswitch
 #
 interface XGigabitEthernet0/0/5
- undo portswitch                          
+ undo portswitch
 #
 interface XGigabitEthernet0/0/6
  undo portswitch
@@ -87,14 +94,14 @@ interface XGigabitEthernet0/0/9
 interface XGigabitEthernet0/0/10
  undo portswitch
 #
-interface XGigabitEthernet0/0/11
+interface XGigabitEthernet0/0/11          
  undo portswitch
 #
 interface XGigabitEthernet0/0/12
  undo portswitch
 #
 interface XGigabitEthernet0/0/13
- undo portswitch                          
+ undo portswitch
 #
 interface XGigabitEthernet0/0/14
  undo portswitch
@@ -111,14 +118,14 @@ interface XGigabitEthernet0/0/17
 interface XGigabitEthernet0/0/18
  undo portswitch
 #
-interface XGigabitEthernet0/0/19
+interface XGigabitEthernet0/0/19          
  undo portswitch
 #
 interface XGigabitEthernet0/0/20
  undo portswitch
 #
 interface XGigabitEthernet0/0/21
- undo portswitch                          
+ undo portswitch
 #
 interface XGigabitEthernet0/0/22
  undo portswitch
@@ -135,14 +142,14 @@ interface 40GE0/0/1
 #
 interface 40GE0/0/2
  undo portswitch
-#
+#                                         
 interface 40GE0/0/3
  undo portswitch
 #
 interface 40GE0/0/4
  undo portswitch
 #
-interface 40GE0/0/5                       
+interface 40GE0/0/5
  undo portswitch
 #
 interface 40GE0/0/6
@@ -150,15 +157,28 @@ interface 40GE0/0/6
 #
 interface NULL0
 #
-ssh server cipher aes256_ctr aes128_ctr
-ssh server hmac sha2_256
-ssh client cipher aes256_ctr aes128_ctr
-ssh client hmac sha2_256
+stelnet server enable
+ssh server port 1822
+ssh user admin
+ssh user admin authentication-type password
+ssh user admin service-type all
+ssh server acl 2001
+ssh server cipher aes256_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc des_cbc
+ssh server key-exchange dh_group_exchange_sha1 dh_group14_sha1 dh_group1_sha1
+ssh client cipher aes256_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc des_cbc
+ssh client key-exchange dh_group_exchange_sha1 dh_group14_sha1 dh_group1_sha1
 ssh server dh-exchange min-len 2048
 #
+user-interface maximum-vty 15
 user-interface con 0
  authentication-mode aaa
 user-interface vty 0 4
+ acl 2001 inbound
+ authentication-mode aaa
+ user privilege level 15
+ idle-timeout 35791 0
+ protocol inbound all
+user-interface vty 5 14
 user-interface vty 16 20
 #
 dot1x-access-profile name dot1x_access_profile
@@ -166,5 +186,5 @@ dot1x-access-profile name dot1x_access_profile
 mac-access-profile name mac_access_profile
 #
 ops
-#                                         
+#
 return
