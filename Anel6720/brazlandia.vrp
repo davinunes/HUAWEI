@@ -3,3 +3,13 @@
 # Fim SSH
 # admin Senha@super131377
 
+#Coloco as portas em modo Router
+system-view
+interface range XGigabitEthernet 0/0/1 to XGigabitEthernet 0/0/48
+undo portswitch
+quit
+interface range 40GE 0/0/1 to 40GE 0/0/6
+undo portswitch
+quit
+
+##
