@@ -6,10 +6,23 @@
 #Coloco as portas em modo Router
 system-view
 interface range XGigabitEthernet 0/0/1 to XGigabitEthernet 0/0/48
-undo portswitch
+portswitch
 quit
 interface range 40GE 0/0/1 to 40GE 0/0/6
-undo portswitch
+portswitch
 quit
 
-##
+# Criar Gerencia na vlan 51
+
+ipv6
+vlan batch 51
+interface Vlanif 51
+ip address 10.222.100.1 30
+quit
+
+interface Eth-Trunk 100
+description LACP Brazlandia <=> Ceilandia
+mode lacp
+trunkport 40GE 0/0/6
+port link-type trunk
+jumboframe enable 9000
