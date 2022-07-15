@@ -1,40 +1,46 @@
-#Primeiro removemos todas as portas do Modo Switch
+# Primeiro configurar o SSH
+# Utilizar o template
+# Fim SSH
+# admin Senha@super131377
 
+#Coloco as portas em modo Router
 system-view
+
+sysname Huawei-Patio
+stp mode vbst
+
 interface range XGigabitEthernet 0/0/1 to XGigabitEthernet 0/0/24
-undo portswitch
+portswitch
 quit
 interface range 40GE 0/0/1 to 40GE 0/0/6
-undo portswitch
-return
-
-# Aplico as confi de SSh do template
-
-# Crio a LoopBack
-system-view
-interface LoopBack0
- ip address 10.222.111.2 32
-return
-
-# Habilito o MPLS global da caixa
-# system-view
-# sysname PATIO-MPLS-ACESSO
-# mpls lsr-id 10.222.111.2
-# mpls
-#  mpls te
-#  mpls rsvp-te
-# mpls l2vpn
-# mpls ldp
+portswitch
+quit
 
 
+# Criar Gerencia na vlan 51
 
-# Cria as interfaces de agregação
+ipv6
+vlan batch 51
+interface Vlanif 51
+ip address 10.222.120.1 30
+quit
 
-system-view
-interface Eth-Trunk 110
-description LACP PATIO <-> CEILANDIA
-undo portswitch
-ip address 10.222.110.1 30
+interface Eth-Trunk 100
+description LACP Brazlandia <=> Ceilandia
+mode lacp
+trunkport 40GE 0/0/6
+port link-type trunk
+jumboframe enable 9000
+
+clear configuration interface XGigabitEthernet 0/0/1
+y
+clear configuration interface XGigabitEthernet 0/0/2
+y
 
 interface Eth-Trunk 120
-description LACP BRAZLANDIA <-> PATIO
+description LACP Brazlandia <=> Patio
+mode lacp
+trunkport XGigabitEthernet 0/0/2 
+trunkport XGigabitEthernet 0/0/1 
+port link-type trunk
+jumboframe enable 9000

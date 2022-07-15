@@ -1,0 +1,47 @@
+# Primeiro configurar o SSH
+# Utilizar o template
+# Fim SSH
+# admin Senha@super131377
+
+#Coloco as portas em modo Router
+system-view
+
+sysname Huawei-Ceilandia
+stp mode vbst
+
+interface range XGigabitEthernet 0/0/1 to XGigabitEthernet 0/0/24
+portswitch
+quit
+interface range 40GE 0/0/1 to 40GE 0/0/6
+portswitch
+quit
+
+# Criar Gerencia na vlan 51
+
+ipv6
+vlan batch 51
+interface Vlanif 51
+ip address 10.222.110.1 30
+quit
+
+interface Eth-Trunk 100
+description LACP Ceilandia <=> Brazlandia
+mode lacp
+trunkport 40GE 0/0/6
+port link-type trunk
+jumboframe enable 9000
+quit
+
+clear configuration interface 40GE 0/0/1
+y
+clear configuration interface 40GE 0/0/2
+y
+
+interface Eth-Trunk 110
+description LACP Ceilandia <=> Patio
+mode lacp
+trunkport 40GE 0/0/1
+trunkport 40GE 0/0/2
+port link-type trunk
+jumboframe enable 9000
+quit
