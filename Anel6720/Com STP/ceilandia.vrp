@@ -34,12 +34,6 @@ port trunk allow-pass vlan 51
 jumboframe enable 9000
 quit
 
-interface 40GE 0/0/3
- description Brazlandia <=> PatioLab
- port link-type trunk
- undo port trunk allow-pass vlan 1
- port trunk allow-pass vlan 51
-quit
 
 interface Eth-Trunk 110
 description LACP Ceilandia <=> Patio
