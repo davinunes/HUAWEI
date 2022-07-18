@@ -27,21 +27,46 @@ quit
 interface Eth-Trunk 100
 description LACP Ceilandia <=> Brazlandia
 mode lacp
-trunkport 40GE 0/0/6
+trunkport 40GE 0/0/2
 port link-type trunk
+undo port trunk allow-pass vlan 1
+port trunk allow-pass vlan 51
 jumboframe enable 9000
 quit
+
+interface 40GE 0/0/3
+ description Brazlandia <=> PatioLab
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 51
+quit
+
+interface Eth-Trunk 110
+description LACP Ceilandia <=> Patio
+mode lacp
+trunkport 40GE 0/0/5
+trunkport 40GE 0/0/6
+port link-type trunk
+undo port trunk allow-pass vlan 1
+port trunk allow-pass vlan 51
+jumboframe enable 9000
+quit
+
 
 clear configuration interface 40GE 0/0/1
 y
 clear configuration interface 40GE 0/0/2
 y
+clear configuration interface 40GE 0/0/3
+y
+clear configuration interface 40GE 0/0/4
+y
+clear configuration interface 40GE 0/0/5
+y
+clear configuration interface 40GE 0/0/6
+y
+clear configuration interface XGigabitEthernet 0/0/2
+y
+clear configuration interface XGigabitEthernet 0/0/1
+y
 
-interface Eth-Trunk 110
-description LACP Ceilandia <=> Patio
-mode lacp
-trunkport 40GE 0/0/1
-trunkport 40GE 0/0/2
-port link-type trunk
-jumboframe enable 9000
-quit

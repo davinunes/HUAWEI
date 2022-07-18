@@ -26,15 +26,11 @@ interface Vlanif 51
 ip address 10.222.120.1 30
 quit
 
-clear configuration interface 40GE 0/0/6
-y
-clear configuration interface 40GE 0/0/5
-y
 interface Eth-Trunk 110
 description LACP Patio <=> Ceilandia
 mode lacp
-trunkport 40GE 0/0/6
 trunkport 40GE 0/0/5
+trunkport 40GE 0/0/6
 port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
@@ -45,8 +41,8 @@ quit
 interface Eth-Trunk 120
 description LACP Patio <=> Brazlandia
 mode lacp
-trunkport XGigabitEthernet 0/0/2 
 trunkport XGigabitEthernet 0/0/1 
+trunkport XGigabitEthernet 0/0/2 
 port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
