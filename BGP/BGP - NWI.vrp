@@ -187,6 +187,7 @@ commit
 # Ativar
 bgp 265138
     undo peer 172.16.31.173 ignore
+    undo peer 2804:638:0:14::49 ignore
 
 #
 

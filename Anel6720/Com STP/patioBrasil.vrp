@@ -32,10 +32,6 @@ trunkport 40GE 0/0/6
 port link-type trunk
 jumboframe enable 9000
 
-clear configuration interface XGigabitEthernet 0/0/1
-y
-clear configuration interface XGigabitEthernet 0/0/2
-y
 
 interface Eth-Trunk 120
 description LACP Brazlandia <=> Patio
@@ -43,4 +39,6 @@ mode lacp
 trunkport XGigabitEthernet 0/0/2 
 trunkport XGigabitEthernet 0/0/1 
 port link-type trunk
+undo port trunk allow-pass vlan 1
+port trunk allow-pass vlan 51
 jumboframe enable 9000

@@ -43,4 +43,29 @@ local-user admin privilege level 15
 local-user admin service-type ssh ftp http telnet terminal
 quit
 
+# Agora vou instalar a confiança SSH
+
+ssh user ilunne 
+ssh user ilunne authentication-type all
+ssh user ilunne service-type all
+
+#
+aaa
+local-user ilunne password irreversible-cipher SenhaDoCaos@131377
+local-user ilunne privilege level 15
+local-user ilunne service-type ssh ftp http telnet
+quit
+
+rsa peer-public-key kilunne encoding-type openssh
+public-key-code begin
+ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAuC+NFPDqI8IGtAm3AfipAUfd1dNa9so5kpyv
+EyXCFpVPBkeCNO0UACVWRYhaddPEH/ixfw7RNSFjyJGuAlc58P9po9jkwkhRomQB
+qfW/K5zF7k6hTUW2xj4yfdd9BksmcZ5QG4x741F8no4FZWFb5nrDxwE3nz8SlbE9
+h6d8DfryJwlhvO7TBMWo5xneXhBHFYq5f8OUluqOew/0+cbNp0L55XAH7dRqX8js
+54K3WfFWBs2QHVLWnQzEW2wEfmeXnu5WjagDeiWU2DU6OXFEp5FZc+r5wjxeEzKf
+eWJTRgUJAHL9RWLfQnb8nMKLch8Q5zYj9g3BH/bB/c28jV3d8w== rsa-key
+public-key-code end
+peer-public-key end
+
+ssh user ilunne assign rsa-key kilunne
 # Fim SSH

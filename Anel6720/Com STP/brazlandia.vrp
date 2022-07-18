@@ -36,16 +36,20 @@ port link-type trunk
 jumboframe enable 9000
 quit
 
-clear configuration interface XGigabitEthernet 0/0/1
-y
-clear configuration interface XGigabitEthernet 0/0/2
-y
-
 interface Eth-Trunk 120
 description LACP Patio <=> Brazlandia
 mode lacp
 trunkport XGigabitEthernet 0/0/2 
 trunkport XGigabitEthernet 0/0/1 
 port link-type trunk
+undo port trunk allow-pass vlan 1
+port trunk allow-pass vlan 51
 jumboframe enable 9000
+quit
+
+interface XGigabitEthernet0/0/48
+ description TesteAcessoSwitch
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 51
 quit
