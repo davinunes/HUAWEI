@@ -11,6 +11,7 @@ system-view
 
 sysname Huawei-Brazlandia
 stp mode vbst
+stp vlan 51 root primary
 
 interface range XGigabitEthernet 0/0/1 to XGigabitEthernet 0/0/48
 portswitch
