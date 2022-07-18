@@ -2,7 +2,7 @@
 
 Este anel MPLS percorrerá 3 POPs e o circuito específico MPLS se dará conforme a topologia:
 
-![](./imagens/ScreenShot_10-07-2022_09-40-56.png)
+![](./imagens/ScreenShot_17-07-2022_23-32-42.png)
 
 |Nome       |Modelo             |Firmware
 |-----------|-------------------|-
