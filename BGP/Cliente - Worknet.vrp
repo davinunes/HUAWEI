@@ -1,7 +1,7 @@
 interface 40GE0/3/1.701
     vlan-type dot1q 701
     undo shutdown
-    description CLIENTE_MERCADO_VERDE
+    description CLIENTE_WORKNET
     statistic enable
 
     ip address 10.1.60.5 30
