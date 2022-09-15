@@ -35,6 +35,7 @@ trunkport 40GE 0/0/2
 port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
+port trunk allow-pass vlan 50
 jumboframe enable 9000
 quit
 
