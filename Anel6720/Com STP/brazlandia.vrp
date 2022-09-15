@@ -31,7 +31,7 @@ quit
 interface Eth-Trunk 100
 description LACP Brazlandia <=> Ceilandia
 mode lacp
-trunkport 40GE 0/0/2
+trunkport 40GE 0/0/2 
 port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
