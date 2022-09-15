@@ -46,7 +46,7 @@ ipv6 route-static 2804:2b28:c000:: 34 NULL0 description BGP-BLACKHOLE-M34-IPV6
 
 # /22
 route-policy ORIGIN-143-208-72-000M22 permit node 10
-    apply community 26513:11 26513:0
+    apply community 26513:5011 26513:0 26513:1
     apply local-preference 99100
 # Exporta o 22 para: Backup, Principal, Todos os Demais
 
