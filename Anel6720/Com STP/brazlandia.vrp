@@ -36,6 +36,12 @@ port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
 port trunk allow-pass vlan 50
+port trunk allow-pass vlan 1047
+port trunk allow-pass vlan 401
+port trunk allow-pass vlan 1083
+port trunk allow-pass vlan 846
+port trunk allow-pass vlan 2052 to 2053
+
 jumboframe enable 9000
 quit
 
