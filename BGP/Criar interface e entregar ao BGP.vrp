@@ -1,12 +1,12 @@
 #
-interface Eth-Trunk10.9
-description CHR IBGP LG
-vlan-type dot1q 9
+interface Eth-Trunk10.1047
+description NWI_CDN_LACP
+vlan-type dot1q 1047
 undo shutdown
 #
 admin
 virtual-system NE40V01 pvmb slot 3
-assign interface Eth-Trunk10.9
+assign interface Eth-Trunk10.1047
 y
 #
 #
