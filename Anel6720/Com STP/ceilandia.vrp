@@ -3,6 +3,17 @@
 # Fim SSH
 # admin Senha@super131377
 
+# SNMP
+snmp-agent
+snmp-agent sys-info contact "Davi Nunes"
+snmp-agent sys-info version v2c
+undo snmp-agent sys-info version v3
+snmp-agent community read TheHuawei
+snmp-agent mib-view included mibvew mib-2
+snmp-agent mib-view included mib2view mib-2
+set if-mib sample-interval 0
+snmp-agent local-engineid 800007DB03244427BA0D80
+
 #Coloco as portas em modo Router
 system-view
 
