@@ -9,6 +9,17 @@ u t m
 #Coloco as portas em modo Router
 system-view
 
+# SNMP
+snmp-agent
+snmp-agent sys-info contact "Davi Nunes"
+snmp-agent sys-info version v2c
+undo snmp-agent sys-info version v3
+snmp-agent community read TheHuawei
+snmp-agent mib-view included mibvew mib-2
+snmp-agent mib-view included mib2view mib-2
+snmp-agent local-engineid 800007DB03244427BA0D80
+
+#
 sysname Huawei-Brazlandia
 stp mode vbst
 stp vlan 51 root primary
@@ -54,6 +65,14 @@ trunkport XGigabitEthernet 0/0/1
 port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
+port trunk allow-pass vlan 50
+port trunk allow-pass vlan 1047
+port trunk allow-pass vlan 401
+port trunk allow-pass vlan 1083
+port trunk allow-pass vlan 846
+port trunk allow-pass vlan 953
+port trunk allow-pass vlan 2052 to 2053
+
 jumboframe enable 9000
 quit
 
