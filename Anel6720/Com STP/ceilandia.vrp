@@ -90,6 +90,15 @@ port trunk allow-pass vlan 2052 to 2053
 jumboframe enable 9000
 quit
 
+# Interface entrega serviço eduardo
+interface XGigabitEthernet0/0/20
+ description Cliente_i7_Telecom
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 50
+ jumboframe enable 9000
+ quit
+
 
 clear configuration interface 40GE 0/0/1
 y
