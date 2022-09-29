@@ -46,8 +46,7 @@ trunkport XGigabitEthernet 0/0/2
 port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
-port trunk allow-pass vlan 846
-port trunk allow-pass vlan 1047
+port trunk allow-pass vlan 50 to 51 846 1047 1050 1083 2052 to 2053
 jumboframe enable 9000
 quit
 
@@ -123,4 +122,21 @@ interface XGigabitEthernet0/0/24
 # Configura no ett Brazlândia
 interface Eth-Trunk 120
  port trunk allow-pass vlan 1083
+ quit
+
+# Interface IX DF
+vlan batch 2052 2053
+interface XGigabitEthernet0/0/3
+ undo shutdown
+ description LOGTEL
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ undo port trunk allow-pass vlan all
+ port trunk allow-pass vlan 2052 to 2053
+ jumboframe enable 9000
+ quit
+# Configura no ett Brazlândia
+interface Eth-Trunk 120
+ port trunk allow-pass vlan 2052
+ port trunk allow-pass vlan 2053
  quit

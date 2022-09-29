@@ -38,6 +38,7 @@ vlan batch 51
 vlan batch 50
 vlan batch 1047
 vlan batch 1083
+vlan batch 846
 interface Vlanif 51
 ip address 10.222.100.1 30
 quit
