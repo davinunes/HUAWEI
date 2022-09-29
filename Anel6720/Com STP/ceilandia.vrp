@@ -32,6 +32,7 @@ quit
 ipv6
 vlan batch 51
 vlan batch 50
+vlan batch 80
 vlan batch 1047
 vlan batch 1083
 interface Vlanif 51
@@ -46,6 +47,8 @@ port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
 port trunk allow-pass vlan 50
+port trunk allow-pass vlan 80
+port trunk allow-pass vlan 54
 port trunk allow-pass vlan 1047
 port trunk allow-pass vlan 401
 port trunk allow-pass vlan 1083
@@ -96,6 +99,18 @@ interface XGigabitEthernet0/0/20
  port link-type trunk
  undo port trunk allow-pass vlan 1
  port trunk allow-pass vlan 50
+ jumboframe enable 9000
+ quit
+
+# Enlace Ceilandia-Samambaia
+vlan batch 54
+interface XGigabitEthernet0/0/3
+ description Ceilandia <=> Samambaia
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 51
+ port trunk allow-pass vlan 54
+ port trunk allow-pass vlan 80
  jumboframe enable 9000
  quit
 

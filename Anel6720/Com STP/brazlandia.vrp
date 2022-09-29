@@ -35,7 +35,9 @@ quit
 
 ipv6
 vlan batch 51
+vlan batch 54
 vlan batch 50
+vlan batch 80
 vlan batch 1047
 vlan batch 1083
 vlan batch 846
@@ -51,6 +53,8 @@ port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
 port trunk allow-pass vlan 50
+port trunk allow-pass vlan 80
+port trunk allow-pass vlan 54
 port trunk allow-pass vlan 1047
 port trunk allow-pass vlan 401
 port trunk allow-pass vlan 1083
@@ -85,6 +89,7 @@ interface XGigabitEthernet0/0/48
  port link-type trunk
  undo port trunk allow-pass vlan 1
  port trunk allow-pass vlan 51
+ port trunk allow-pass vlan 846
  jumboframe enable 9000
 quit
 
