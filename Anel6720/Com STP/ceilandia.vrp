@@ -76,7 +76,7 @@ quit
 
 # Interface tmp RB
 interface XGigabitEthernet0/0/23
- description Ceilandia <=> Brazlandia_10
+ description Ceilandia <=> Incra8_10
  port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51

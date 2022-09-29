@@ -46,6 +46,8 @@ trunkport XGigabitEthernet 0/0/2
 port link-type trunk
 undo port trunk allow-pass vlan 1
 port trunk allow-pass vlan 51
+port trunk allow-pass vlan 846
+port trunk allow-pass vlan 1047
 jumboframe enable 9000
 quit
 
@@ -56,3 +58,69 @@ interface 40GE 0/0/3
  port trunk allow-pass vlan 51
  jumboframe enable 9000
 quit
+
+########## LINKAR ###############
+# Interface Supercei Linkar
+vlan batch 1050
+interface XGigabitEthernet0/0/18
+# Desce a porta para 1G
+ undo negotiation auto
+ port negotiation disable
+##
+ description LINKAR_SUPERCEI
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ undo port trunk allow-pass vlan all
+ port trunk allow-pass vlan 1050
+ jumboframe enable 9000
+ quit
+# Configura no ett Brazlândia
+interface Eth-Trunk 120
+ port trunk allow-pass vlan 1050
+ quit
+
+# Interface recebe serviço linkar
+vlan batch 846
+interface XGigabitEthernet0/0/20
+ description UpStream_LinkarPatio
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ undo port trunk allow-pass vlan all
+ port trunk allow-pass vlan 846
+ jumboframe enable 9000
+ quit
+# Configura no ett Brazlândia
+interface Eth-Trunk 120
+ port trunk allow-pass vlan 846
+ quit
+
+
+# Interface recebe serviço NWI
+vlan batch 1047
+interface XGigabitEthernet0/0/22
+ description CDN_NWI
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ undo port trunk allow-pass vlan all
+ port trunk allow-pass vlan 1047
+ jumboframe enable 9000
+ quit
+# Configura no ett Brazlândia
+interface Eth-Trunk 120
+ port trunk allow-pass vlan 1047
+ quit
+
+# Interface recebe serviço LOGTEL
+vlan batch 1083
+interface XGigabitEthernet0/0/24
+ description LOGTEL
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ undo port trunk allow-pass vlan all
+ port trunk allow-pass vlan 1083
+ jumboframe enable 9000
+ quit
+# Configura no ett Brazlândia
+interface Eth-Trunk 120
+ port trunk allow-pass vlan 1083
+ quit
