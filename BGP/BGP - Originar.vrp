@@ -91,7 +91,7 @@ route-policy ORIGIN-143-208-75-000M24 permit node 10
 
 # /32
 route-policy ORIGIN-2804-2b28-M32 permit node 10
-    apply community 26513:11 26513:0
+    apply community 26513:5011 26513:0 26513:1
     apply local-preference 99100
 	# Originar para todos, porém com 5 prepend no backup e 0 prepend no principal
 #
