@@ -12,8 +12,7 @@ system-view immediately
 #======================================================================== INTERFACE
 
 
-
-interface 40GE 0/3/2.1083
+interface Eth-Trunk 127.1083
     vlan-type dot1q 1083
     undo shutdown
     description LOGTEL-Netflix-AS53195-C03
