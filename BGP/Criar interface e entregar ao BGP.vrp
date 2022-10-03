@@ -1,12 +1,12 @@
 #
-interface Eth-Trunk10.1047
+interface Eth-Trunk10.702
 description NWI_CDN_LACP
-vlan-type dot1q 1047
+vlan-type dot1q 702
 undo shutdown
 #
 admin
 virtual-system NE40V01 pvmb slot 3
-assign interface Eth-Trunk10.1047
+assign interface Eth-Trunk10.702
 y
 #
 #
