@@ -28,6 +28,24 @@ interface 40GE 0/3/2.2052
     arp-limit maximum 8192
 #
 
+interface 40GE 0/3/2.2052
+    vlan-type dot1q 2052
+    undo shutdown
+    description C06-PTT-DF-IPv4
+    statistic enable
+
+    mac-address cc2d-e0e4-e330
+
+    ip address 200.192.110.108 24
+
+    arp rate-limit 0
+    arp expire-time 21600
+    arp-limit maximum 8192
+#
+
+
+
+
 interface 40GE 0/3/2.2053
     vlan-type dot1q 2053
     undo shutdown
