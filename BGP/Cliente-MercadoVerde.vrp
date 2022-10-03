@@ -36,13 +36,13 @@ ip route-static 143.208.72.28 32 10.1.60.6 preference 1 description Mercado_Verd
 #
 
 interface 40GE0/3/1.702
-vlan-type dot1q 700
-    vlan-type dot1q 700
-    undo shutdown
-    description CLIENTE_MERCADO_VERDE_Paraiso
-    statistic enable
+vlan-type dot1q 702
 
-    ip address 10.1.60.9 30
+  undo shutdown
+  description CLIENTE_MERCADO_VERDE_Paraiso
+  statistic enable
+
+  ip address 10.1.60.9 30
 
   qos car cir 55000 pir 55000 cbs 55000 inbound
   qos car cir 55000 pir 55000 cbs 55000 outbound
