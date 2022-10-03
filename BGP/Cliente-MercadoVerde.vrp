@@ -7,9 +7,6 @@ vlan-type dot1q 700
 
     ip address 10.1.60.1 30
 
-   # ipv6 enable
-  # ipv6 address 2804:2b28:0:5::1/64
-
   qos car cir 55000 pir 55000 cbs 55000 inbound
   qos car cir 55000 pir 55000 cbs 55000 outbound
 #
@@ -19,4 +16,41 @@ ip route-static 143.208.72.3 32 10.1.60.2 preference 1 description Mercado_Verde
 # ipv6 route-static 2804:2b28:470:: 44 2804:2b28:0:5::2 preference 1 description Mercado_Verde_Cliente
 
 #
+
+interface 40GE0/3/1.701
+vlan-type dot1q 701
+
+undo shutdown
+description CLIENTE_MERCADO_VERDE_Bom_Jesus
+statistic enable
+
+ip address 10.1.60.5 30
+
+  qos car cir 55000 pir 55000 cbs 55000 inbound
+  qos car cir 55000 pir 55000 cbs 55000 outbound
+#
+
+ip route-static 143.208.72.28 32 10.1.60.6 preference 1 description Mercado_Verde_Cliente
+
+
+#
+
+interface 40GE0/3/1.702
+vlan-type dot1q 700
+    vlan-type dot1q 700
+    undo shutdown
+    description CLIENTE_MERCADO_VERDE_Paraiso
+    statistic enable
+
+    ip address 10.1.60.9 30
+
+  qos car cir 55000 pir 55000 cbs 55000 inbound
+  qos car cir 55000 pir 55000 cbs 55000 outbound
+#
+
+
+ip route-static 143.208.72.29 32 10.1.60.10 preference 1 description Mercado_Verde_Cliente
+#
+
+
 

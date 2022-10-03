@@ -13,7 +13,7 @@ system-view immediately
 
 
 
-interface 40GE 0/3/2.2052
+undo interface 40GE 0/3/2.2052
     vlan-type dot1q 2052
     undo shutdown
     description C06-PTT-DF-IPv4
@@ -28,7 +28,7 @@ interface 40GE 0/3/2.2052
     arp-limit maximum 8192
 #
 
-interface 40GE 0/3/2.2052
+interface Eth-Trunk 127.2052
     vlan-type dot1q 2052
     undo shutdown
     description C06-PTT-DF-IPv4
@@ -46,7 +46,23 @@ interface 40GE 0/3/2.2052
 
 
 
-interface 40GE 0/3/2.2053
+undo interface 40GE 0/3/2.2053
+    vlan-type dot1q 2053
+    undo shutdown
+    description C06-PTT-DF-IPv6
+    statistic enable
+
+    mac-address cc2d-e0e4-e330
+
+    ipv6 enable
+    ipv6 address 2001:12f8:0:13::108/64
+
+    ipv6 nd nud reachable-time 2400000
+    ipv6 nd ns retrans-timer 2000
+    ipv6 nd neighbor-limit 8192
+#
+
+interface Eth-Trunk 127.2053
     vlan-type dot1q 2053
     undo shutdown
     description C06-PTT-DF-IPv6
@@ -306,12 +322,10 @@ bgp 265138
 
     peer 200.192.110.253 ignore
     peer 200.192.110.254 ignore
-
     peer 200.192.110.252 ignore
 
     peer 2001:12f8:0:13::253 ignore
     peer 2001:12f8:0:13::254 ignore
-
     peer 2001:12f8:0:13::252 ignore
 
 #
@@ -324,13 +338,10 @@ commit
 bgp 265138
     undo peer 200.192.110.253 ignore
     undo peer 200.192.110.254 ignore
-
-
     undo peer 200.192.110.252 ignore
 
     undo peer 2001:12f8:0:13::253 ignore
     undo peer 2001:12f8:0:13::254 ignore
-
     undo peer 2001:12f8:0:13::252 ignore
 #
 commit

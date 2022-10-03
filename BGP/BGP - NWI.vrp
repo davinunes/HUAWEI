@@ -11,21 +11,19 @@ system-view immediately
 
 #======================================================================== INTERFACE
 
-
-
-interface 40GE 0/3/2.1047
+interface Eth-Trunk 10.1047
     vlan-type dot1q 1047
     undo shutdown
     description NWI-CDN-AS28178-C07
     statistic enable
 
-    undo  ip address 172.16.31.174 30
+    undo ip address 172.16.31.174 30
 
     ipv6 enable
-    undo  ipv6 address 2804:638:0:14::4A/126
+    undo ipv6 address 2804:638:0:14::4A/126
 #
 
-interface Eth-Trunk 10.1047
+interface Eth-Trunk 127.1047
     vlan-type dot1q 1047
     undo shutdown
     description NWI-CDN-AS28178-C07
