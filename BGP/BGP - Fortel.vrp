@@ -55,7 +55,7 @@ route-policy C11-EXPORT permit node 1150
 
 route-policy C11-EXPORT permit node 2005
     if-match community-filter EXPORT_C11P5
-    apply as-path 265138 265138 265138 265138 additive
+    apply as-path 265138 265138 265138 265138 265138 265138 265138 265138 265138 265138 265138 265138 additive
 	# Exportar o que tiver com a comunidade 26513:5011, rotas que devem sair por este link com muitos prepend
 #
 
@@ -241,9 +241,10 @@ bgp 265138
 # Ativar
 bgp 265138
     undo peer 172.31.13.213 ignore
+    undo peer 2804:1A04:0:1::3 ignore
+    
     undo peer 10.0.0.125 ignore
     undo peer 2804:1a04:0:3::de5 ignore
-    undo peer 2804:1A04:0:1::3 ignore
 #
 
 #======================================================================== BGP - DELETAR - CUIDADO
