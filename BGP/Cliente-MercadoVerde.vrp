@@ -17,7 +17,7 @@ ip route-static 143.208.72.3 32 10.1.60.2 preference 1 description Mercado_Verde
 
 #
 
-interface 40GE0/3/1.701
+interface Eth-Trunk10.701
 vlan-type dot1q 701
 
 undo shutdown
@@ -35,7 +35,7 @@ ip route-static 143.208.72.28 32 10.1.60.6 preference 1 description Mercado_Verd
 
 #
 
-interface 40GE0/3/1.702
+interface Eth-Trunk10.702
 vlan-type dot1q 702
 
   undo shutdown

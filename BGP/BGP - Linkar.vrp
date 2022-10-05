@@ -19,6 +19,18 @@ interface 40GE 0/3/2.846
     description Link-LinkarPincipal-AS268689-C01
     statistic enable
 
+    undo ip address 45.165.196.142 30
+
+    ipv6 enable
+    undo ipv6 address 2804:5518:0:20::2/64
+#
+
+interface Eth-Trunk127.846
+    vlan-type dot1q 846
+    undo shutdown
+    description Link-LinkarPincipal-AS268689-C01
+    statistic enable
+
     ip address 45.165.196.142 30
 
     ipv6 enable
