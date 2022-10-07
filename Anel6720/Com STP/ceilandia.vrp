@@ -114,6 +114,15 @@ interface XGigabitEthernet0/0/3
  jumboframe enable 9000
  quit
 
+# Enlace Ceilandia-Incra8
+interface XGigabitEthernet0/0/6
+ description Incra8 <=> Ceilandia
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 50 to 51 54 80 401 846 953 1047 1050 1083 2052 to 2053
+ jumboframe enable 9000
+ quit
+
 
 clear configuration interface 40GE 0/0/1
 y
