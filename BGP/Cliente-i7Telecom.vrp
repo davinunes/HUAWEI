@@ -17,7 +17,7 @@ ip route-static 143.208.72.9 32 172.20.100.2 preference 250 description CLIENTE_
 ip route-static 143.208.72.10 32 172.20.100.2 preference 250 description CLIENTE_I7TELECOM
 ip route-static 143.208.72.11 32 172.20.100.2 preference 250 description CLIENTE_I7TELECOM
 ip route-static 143.208.73.48 28 172.20.100.2 preference 250 description CLIENTE_I7TELECOM
-ipv6 route-static 2804:2b28:470:: 44 2804:2b28:0:4::2 preference 250 description CLIENTE_I7TELECOM
+ipv6 route-static 2804:2b28:460:: 44 2804:2b28:0:4::2 preference 250 description CLIENTE_I7TELECOM
 
 #
 
