@@ -1,0 +1,96 @@
+interface Eth-Trunk 127.846
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 127.1083
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 127.2052
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 127.2053
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 127.1047
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface 40GE 0/3/3.1550
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface 40GE 0/3/3.1551
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface 40GE 0/3/2.401
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 10.126
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Virtual-Ethernet 0/3/31.1001
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Virtual-Ethernet 0/3/31.1002
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 10.1102
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 10.1109
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 10.1105
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 10.50
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
+interface Eth-Trunk 10.125
+    ip netstream inbound
+    ipv6 netstream inbound
+    ip netstream outbound
+    ipv6 netstream outbound
+#
