@@ -1,0 +1,188 @@
+
+return
+system-view immediately
+
+
+
+#=================================================================== BGP com link LINKAR PRINCIPAL - AS 266054 - Circuito 05
+
+
+
+
+#======================================================================== INTERFACE
+
+
+
+interface 40GE 0/3/2.401
+    vlan-type dot1q 401
+    undo shutdown
+    description Skill-Netflix-AS266054-C51
+    statistic enable
+
+    ip address 172.20.0.2 30
+
+  #  ipv6 enable
+  #  ipv6 address 2804:5518:0:90::2/64
+#
+
+
+
+#======================================================================== EXPORT
+
+
+
+route-policy C05-EXPORT permit node 1050
+    if-match community-filter EXPORT_C05
+	# Exportar o que tiver com a comunidade 26513:5, rotas que DEVEM sair por este link
+#
+
+route-policy C05-EXPORT permit node 1150
+    if-match community-filter CLIENTE
+	# Exportar o que tiver com a comunidade 26513:100, ou seja, o que for rota de cliente
+#
+
+route-policy C05-EXPORT permit node 2005
+    if-match community-filter EXPORT_C05P5
+    apply as-path 265138 265138 265138 265138 additive
+	# Exportar o que tiver com a comunidade 26513:5005, rotas que DEVEM sair por este link MAS com muitos prepend
+#
+
+route-policy C05-EXPORT permit node 2019
+    if-match community-filter EXPORT_ALL
+	# Exportar o que tiver com a comunidade 26513:0, ou seja, rotas marcadas para exportar para todos
+#
+
+route-policy C05-EXPORT deny node 9999
+#
+
+
+#======================================================================== AS-PATH para priorizar via C02
+
+# Lista de AS-PATH para priorizar rota pelo circuito:
+
+ip as-path-filter C05-AS-ROUTE index 10 permit ^266054$
+# Cria uma lista com os prefixos Originados por Este ASN
+
+#======================================================================== IMPORT - IPV4
+
+
+route-policy C05-IMPORT-IPV4 deny   node 1000
+    if-match ip-prefix RFC5735
+	# Descarta rotas privadas
+#
+
+route-policy C05-IMPORT-IPV4 deny   node 1011
+    if-match ip-prefix BGP-CLIENT-LIST-ESP-IPV4
+	# descarta rotas específicas dos Clientes
+#
+
+route-policy C05-IMPORT-IPV4 permit node 2000
+    if-match ip-prefix BGP-CLIENT-LIST-SUM-IPV4
+    apply local-preference 50
+    apply community 26513:100 26513:0
+	# Aplica comunidades: CLIENTE EXPORT_ALL
+	# Aceita as rotas sumarizadas dos clientes e aplica as comunidades e controla a local preference
+#
+
+route-policy C05-IMPORT-IPV4 permit node 2002
+    if-match as-path-filter C05-AS-ROUTE
+    apply local-preference 205
+    apply community 26513:100 26513:0 26513:999
+	# Comunidades: CLIENTE EXPORT_ALL 
+	# E aumenta o local preference especificamente para as rotas deste link
+#
+
+route-policy C05-IMPORT-IPV4 permit node 9999
+	# Permite o restante de tudo, afinal é um fullroute entrando
+#
+
+
+#======================================================================== IMPORT - IPV6
+
+route-policy C05-IMPORT-IPV6 deny   node 1000
+    if-match ipv6 address prefix-list RFC3849
+#
+
+route-policy C05-IMPORT-IPV6 deny   node 1011
+    if-match ipv6 address prefix-list BGP-CLIENT-LIST-ESP-IPV6
+#
+
+route-policy C05-IMPORT-IPV6 permit node 2000
+    if-match ipv6 address prefix-list BGP-CLIENT-LIST-SUM-IPV6
+    apply local-preference 50
+    apply community 26513:100 26513:0
+#
+
+route-policy C05-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C05-AS-ROUTE
+    apply local-preference 202
+    apply community 26513:100 26513:0 26513:999
+#
+
+route-policy C05-IMPORT-IPV6 permit  node 9999
+#
+
+#======================================================================== BGP - RS PEERING - IPv4
+
+
+bgp 265138
+
+    peer 172.20.0.1 as-number 266054
+    peer 172.20.0.1 description C05-AS266054-SKILL-IPV4
+    peer 172.20.0.1 timer connect-retry 1
+    peer 172.20.0.1 timer keepalive 10 hold 40
+y
+
+    ipv4-family unicast
+        peer 172.20.0.1 enable
+y
+        peer 172.20.0.1 route-policy C05-IMPORT-IPV4 import
+        peer 172.20.0.1 route-policy C05-EXPORT export
+        peer 172.20.0.1 advertise-community
+        peer 172.20.0.1 advertise-ext-community
+        peer 172.20.0.1 public-as-only force
+        peer 172.20.0.1 next-hop-local
+#
+
+
+#======================================================================== BGP - RS PEERING - IPv6
+
+
+
+
+#======================================================================== BGP - DESATIVAR
+
+# Desativar peer
+bgp 265138
+    peer 172.20.0.1 ignore
+    peer 2804:5518:0:90::1 ignore
+#
+commit
+
+
+#======================================================================== BGP - ATIVAR
+
+# Ativar
+bgp 265138
+    undo peer 172.20.0.1 ignore
+
+#
+
+
+
+#======================================================================== BGP - DELETAR - CUIDADO
+
+
+# Destruir config do peer
+bgp 265138
+    undo peer 172.20.0.1
+
+#
+
+
+
+#======================================================================== 
+#======================================================================== 
+#======================================================================== 
+#======================================================================== 
+
