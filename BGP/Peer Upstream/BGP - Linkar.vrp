@@ -94,21 +94,22 @@ route-policy C01-IMPORT-IPV4 deny   node 1011
 route-policy C01-IMPORT-IPV4 permit node 2000
     if-match ip-prefix BGP-CLIENT-LIST-SUM-IPV4
     apply local-preference 50
-    apply community 26513:100 26513:0
+    apply community none
 	# Aplica comunidades: CLIENTE EXPORT_ALL
 	# Aceita as rotas sumarizadas dos clientes e aplica as comunidades e controla a local preference
 #
 
 route-policy C01-IMPORT-IPV4 permit node 2002
     if-match as-path-filter C01-AS-ROUTE
-    apply local-preference 205
-    apply community 26513:100 26513:0
+    apply local-preference 999
+    apply community none
 	# Comunidades: CLIENTE EXPORT_ALL 
 	# E aumenta o local preference especificamente para as rotas deste link
 #
 
 route-policy C01-IMPORT-IPV4 permit node 9999
     apply local-preference 190
+    apply community none
 	# Permite o restante de tudo, afinal é um fullroute entrando
 #
 
