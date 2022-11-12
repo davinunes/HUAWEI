@@ -141,6 +141,7 @@ route-policy C01-IMPORT-IPV6 permit node 2002
 #
 
 route-policy C01-IMPORT-IPV6 permit  node 9999
+    apply local-preference 190
 #
 
 #======================================================================== BGP - RS PEERING - IPv4

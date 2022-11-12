@@ -36,7 +36,7 @@ route-policy C05-EXPORT permit node 1050
 	# Exportar o que tiver com a comunidade 26513:5, rotas que DEVEM sair por este link
 #
 
-route-policy C05-EXPORT permit node 1150
+route-policy C05-EXPORT deny node 1150
     if-match community-filter CLIENTE
 	# Exportar o que tiver com a comunidade 26513:100, ou seja, o que for rota de cliente
 #
@@ -47,7 +47,7 @@ route-policy C05-EXPORT permit node 2005
 	# Exportar o que tiver com a comunidade 26513:5005, rotas que DEVEM sair por este link MAS com muitos prepend
 #
 
-route-policy C05-EXPORT permit node 2019
+route-policy C05-EXPORT deny node 2019
     if-match community-filter EXPORT_ALL
 	# Exportar o que tiver com a comunidade 26513:0, ou seja, rotas marcadas para exportar para todos
 #

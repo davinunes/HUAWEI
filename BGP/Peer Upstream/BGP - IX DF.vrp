@@ -149,6 +149,7 @@ route-policy C06-IMPORT-IPV4 permit node 2002
 
 route-policy C06-IMPORT-IPV4 permit   node 8888
     apply community 26513:999
+    apply local-preference 250
     # não exportar para uplink
 #
 
@@ -176,12 +177,13 @@ route-policy C06-IMPORT-IPV6 permit node 2000
 
 route-policy C06-IMPORT-IPV6 permit node 2002
     if-match as-path-filter C06-AS-ROUTE
-    apply local-preference 202
+    apply local-preference 999
     apply community 26513:100 26513:0 26513:999
 #
 
 route-policy C06-IMPORT-IPV6 permit   node 8888
     apply community 26513:999
+    apply local-preference 250
 #
 
 route-policy C06-IMPORT-IPV6 permit  node 9999
