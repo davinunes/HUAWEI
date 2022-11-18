@@ -1,0 +1,30 @@
+#
+
+ssh user lookinglass
+ssh user lookinglass authentication-type all
+ssh user lookinglass service-type all
+
+#
+aaa
+local-user lookinglass password irreversible-cipher MinhaSuperSenha@221377
+local-user lookinglass level 1
+local-user lookinglass service-type ssh
+#
+
+
+
+commit
+run save
+y
+
+rsa peer-public-key klookinglass encoding-type openssh
+ public-key-code begin
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd+dI3zyIhvo+pdkPCHROSd5OV9jMGPuPVD2sN+XrtoWF6JqTljFFaB4I9dEEEewXU2Sn2wwYTZ9NSdI6rI23dtxd+Ae1iPB+70EIBESLqjUQchFR7EtT8Tu5pr5nGSkiC+jg9p898OPFmd08KVlgz23uZErpC5W5Hpl4amAoIYyvwVoKY96RTcDkcnEDSn5Hoju8KjdcMLfZgoHvxQ3LpjFNcELJJQyJ/PiJesSyGUeJ/YiSvIKeyHq6h4wcH8m1B2FrVmhRyib5QcpWvJDBjrAXYrPb1j9bTdavarKNo8DXyksqfmwK3/6UID1aosEdvfmeCW0SRZWR+vocL+irlWECFWkVtsy7OBrUzJVOv6fF9hfEwbvCULJR00mLJMmRom0ow/JIb6Ltx+H7jyx1rUXY+6+OcrxsX+noNlXRKFwg80Ml3PJVW++om3+lY7D8wy50gUl3+eMy+rthl6aAI+KbWVBf018OMFZ18qw18nr+s7dEUjkvOLf1TIo7qu3E= rsa-key
+ public-key-code end
+ peer-public-key end
+#
+ssh user lookinglass assign rsa-key klookinglass
+
+commit
+run save
+y
