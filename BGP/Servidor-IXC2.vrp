@@ -1,14 +1,11 @@
 interface Eth-Trunk10.7
-vlan-type dot1q 7
-    vlan-type dot1q 7
-    undo shutdown
-    description SERVIDOR_VM_DAVI
-    statistic enable
+ vlan-type dot1q 7
+ description SpeedTest_VmDavi
+ ipv6 enable
+ ip address 143.208.72.21 29
+ ip address 143.208.72.5 30 sub
+ ipv6 address 2804:2B28:0:8::1/64
+ statistic enable
 
-    ip address 143.208.72.25 30
-	ip address 143.208.72.5 30 sub
-
-   ipv6 enable
-   ipv6 address 2804:2b28:0:8::1/64
 #
 
