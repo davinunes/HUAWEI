@@ -114,7 +114,7 @@ interface Eth-Trunk10.126
     ip address 10.61.61.6 255.255.255.252
 
     ipv6 enable
-    ipv6 address 2804:2B28:0:6::1/64
+    undo ipv6 address 2804:2B28:0:6::1/64
 
     statistic enable
 
@@ -154,6 +154,8 @@ interface Eth-Trunk10.9
     description Conexao-com-CHR-LG
 
     ip address 10.2.60.1 30
+    ipv6 enable
+    ipv6 address 2804:2B28:0:6::1/64
 
     statistic enable
 
@@ -194,7 +196,7 @@ y
 bgp 265138
 
     peer 2804:2B28:0:6::2 group IBGP-IPV6
-    peer 2804:2B28:0:6::2 description IBGP CCR 1072
+    peer 2804:2B28:0:6::2 description IBGP CHR LG
 
     ipv6-family unicast
         peer 2804:2B28:0:6::2 enable
