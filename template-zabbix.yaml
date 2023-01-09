@@ -1,0 +1,473 @@
+zabbix_export:
+  version: '6.0'
+  date: '2023-01-05T23:36:27Z'
+  groups:
+    -
+      uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    -
+      uuid: 88aeafc72b2146f7bbf558a97791b4ee
+      template: 'HUAWEI BGP'
+      name: 'HUAWEI BGP'
+      groups:
+        -
+          name: Templates
+      items:
+        -
+          uuid: 9385dafb3d594e88926be590b4444ead
+          name: 'Total IPv4'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.4.24.3.0
+          key: 1.3.6.1.2.1.4.24.3.0
+          tags:
+            -
+              tag: Application
+              value: 'Recursos Ne40'
+        -
+          uuid: 098c80d62e5c478eacc9cd8d3bd83646
+          name: 'Total IPv4 e IPv6'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.4.24.6.0
+          key: 1.3.6.1.2.1.4.24.6.0
+          tags:
+            -
+              tag: Application
+              value: 'Recursos Ne40'
+        -
+          uuid: 40b46ffb0da14d35b6e88a845236f38c
+          name: 'Total IPv6 RIB'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.55.1.9.0
+          key: 1.3.6.1.2.1.55.1.9.0
+          tags:
+            -
+              tag: Application
+              value: 'Recursos Ne40'
+        -
+          uuid: 130a0f78b4cb445ea1eae70015e783a8
+          name: 'SSH Online'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.2011.5.2.1.14.1.5.0
+          key: 1.3.6.1.4.1.2011.5.2.1.14.1.5.0
+          tags:
+            -
+              tag: Application
+              value: 'Recursos Ne40'
+        -
+          uuid: 57b636854a0143a4a5a33181d026f9d8
+          name: 'TELNET Online'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.2011.5.2.1.14.1.6.0
+          key: 1.3.6.1.4.1.2011.5.2.1.14.1.6.0
+          tags:
+            -
+              tag: Application
+              value: 'Recursos Ne40'
+        -
+          uuid: ed551d4df45248509dbf9169c74839a1
+          name: 'Total de rotas'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.2011.5.25.177.9.1.0
+          key: 1.3.6.1.4.1.2011.5.25.177.9.1.0
+          tags:
+            -
+              tag: Application
+              value: 'Recursos Ne40'
+        -
+          uuid: 5e9d4fbaa79c4eeeb484e2b55262481e
+          name: Nome
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.2011.5.25.188.1.4.0
+          key: 1.3.6.1.4.1.2011.5.25.188.1.4.0
+          trends: '0'
+          value_type: TEXT
+          tags:
+            -
+              tag: Application
+              value: 'Recursos Ne40'
+        -
+          uuid: 96d7ddcc12cf491082f1da48cd1da0c5
+          name: 'CPU usada'
+          type: SNMP_AGENT
+          snmp_oid: iso.3.6.1.4.1.2011.5.25.31.1.1.3.1.5.17240330
+          key: iso.3.6.1.4.1.2011.5.25.31.1.1.3.1.5.17240330
+          units: '%'
+          tags:
+            -
+              tag: Application
+              value: 'Recursos Ne40'
+          triggers:
+            -
+              uuid: 4c875e05e66a48ebab4a332dc3a88f6d
+              expression: 'last(/HUAWEI BGP/iso.3.6.1.4.1.2011.5.25.31.1.1.3.1.5.17240330)>95'
+              name: 'CPU Acima de 95%'
+              priority: HIGH
+              manual_close: 'YES'
+        -
+          uuid: 9785f96c944048ffbcae80f068095770
+          name: 'Memória usada'
+          type: SNMP_AGENT
+          snmp_oid: iso.3.6.1.4.1.2011.5.25.31.1.1.3.1.12.17240330
+          key: iso.3.6.1.4.1.2011.5.25.31.1.1.3.1.12.17240330
+          units: '%'
+          tags:
+            -
+              tag: Application
+              value: 'Recursos Ne40'
+        -
+          uuid: ff30510200ef4170bc9e1efb26e5a54e
+          name: Uptime
+          type: SNMP_AGENT
+          snmp_oid: iso.3.6.1.2.1.1.3.0
+          key: sysUptime
+          delay: 5m
+          units: uptime
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.01'
+          tags:
+            -
+              tag: Application
+              value: Status
+      discovery_rules:
+        -
+          uuid: 4a3bf76749f04f5e923e05ac51f86eb1
+          name: 'Peers V4'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},1.3.6.1.4.1.2011.5.25.177.1.1.2.1.4.0.1.1]'
+          key: bgpPeerIdentifier
+          item_prototypes:
+            -
+              uuid: b7899c895cb740d4b6bf208659f8faf5
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.2.1.7.0.1.1.{#SNMPINDEX}'
+              key: 'bgpPeerFsmEstablishedTime[{#SNMPVALUE}]'
+              units: uptime
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V4 :: Uptime'
+            -
+              uuid: 5ad377fef4ef4dc0acb8ad68b608d066
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.2.1.2.0.1.1.{#SNMPINDEX}'
+              key: 'bgpPeerRemoteAs[{#SNMPVALUE}]'
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V4 :: ASN'
+            -
+              uuid: 98d11669698e45f6a6b0857d3699312a
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.2.1.5.0.1.1.{#SNMPINDEX}'
+              key: 'bgpPeerState[{#SNMPVALUE}]'
+              valuemap:
+                name: BgpPeerState
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V4 :: Operational Status'
+              trigger_prototypes:
+                -
+                  uuid: 715ad8356346491cadf7df75ac7436e3
+                  expression: 'last(/HUAWEI BGP/bgpPeerState[{#SNMPVALUE}])<>6'
+                  name: 'Sessão {#SNMPVALUE} não Estabelecida'
+                  priority: HIGH
+            -
+              uuid: 7e78d636d5eb48a89cc3d012c8bd8439
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.3.1.2.0.1.1.1.4.{#SNMPVALUE}'
+              key: 'hwBgpPeerPrefixActiveCounter[{#SNMPVALUE}]'
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V4 :: Prefix Active'
+            -
+              uuid: ba800f3f2b18428fbed7f35801186247
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.3.1.3.0.1.1.1.4.{#SNMPVALUE}'
+              key: 'hwBgpPeerPrefixAdvCounter[{#SNMPVALUE}]'
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V4 :: Prefix Sent'
+            -
+              uuid: 5e4ceaae7d8a4e41b1a7c0cf1656360f
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.3.1.1.0.1.1.1.4.{#SNMPVALUE}'
+              key: 'hwBgpPeerPrefixRcvCounter[{#SNMPVALUE}]'
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V4 :: Prefix received'
+        -
+          uuid: 4ce44c4a2baa48289979d76d966d0c59
+          name: 'Peers V6'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},1.3.6.1.4.1.2011.5.25.177.1.1.2.1.4.0.2.1.2]'
+          key: bgpPeerIdentifierv6
+          item_prototypes:
+            -
+              uuid: 54231d7b9f4a4a35b31c80802dde4e1c
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.2.1.2.0.2.1.2.{#SNMPINDEX}'
+              key: 'bgpPeerAsnv6[{#SNMPVALUE}]'
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V6 :: ASN'
+            -
+              uuid: 5b7bb9c0e8ed45a48ee45ea697f1e094
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.2.1.5.0.2.1.2.{#SNMPINDEX}'
+              key: 'bgpPeerStatev6[{#SNMPVALUE}]'
+              valuemap:
+                name: BgpPeerState
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V6 :: Operational Status'
+              trigger_prototypes:
+                -
+                  uuid: c57c9c8a2a4243c59672be1a7be26308
+                  expression: 'last(/HUAWEI BGP/bgpPeerStatev6[{#SNMPVALUE}])<>6'
+                  name: '{#SNMPVALUE} não está ESTABLISHED'
+                  priority: DISASTER
+            -
+              uuid: 38f4143256c24e6e8fe2cb28d4e99005
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.2.1.7.0.2.1.2.{#SNMPINDEX}'
+              key: 'bgpPeerUptimev6[{#SNMPVALUE}]'
+              units: s
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V6 :: Uptime'
+            -
+              uuid: b6c51f560ca04a99ad0086ab6c2d765b
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.3.1.2.0.2.1.2.{#SNMPINDEX}'
+              key: 'hwBgpPeerPrefixActiveCounterV6[{#SNMPVALUE}]'
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V6 :: Prefix Active'
+            -
+              uuid: a1573e46908a4680bba0cc1ee86d2ed0
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.3.1.3.0.2.1.2.{#SNMPINDEX}'
+              key: 'hwBgpPeerPrefixAdvCounterv6[{#SNMPVALUE}]'
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V6 :: Prefix Sent'
+            -
+              uuid: 5e3186a94f0448ab8f467d1efbd486df
+              name: '{#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.177.1.1.3.1.1.0.2.1.2.{#SNMPINDEX}'
+              key: 'hwBgpPeerPrefixRcvCounterv6[{#SNMPVALUE}]'
+              tags:
+                -
+                  tag: Application
+                  value: 'Peer V6 :: Prefix received'
+        -
+          uuid: 028598b5db7f4f3f966f40ba35654dd0
+          name: 'Optical Network interfaces'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},1.3.6.1.4.1.2011.5.25.31.1.1.3.1.25]'
+          key: hwentity.discovery
+          item_prototypes:
+            -
+              uuid: e90f844570a743ef99e88672d1003771
+              name: 'Rx Power interface $1'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.31.1.1.3.1.8.{#SNMPINDEX}'
+              key: 'hwEntityOpticalRxPower.[{#SNMPVALUE}]'
+              value_type: FLOAT
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+              tags:
+                -
+                  tag: Application
+                  value: 'Rx Power new'
+            -
+              uuid: 27290efcd6ee475483edbd558834fcda
+              name: 'Temperatura $1'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.31.1.1.3.1.5.{#SNMPINDEX}'
+              key: 'hwEntityOpticalTemperature.[{#SNMPVALUE}]'
+              value_type: FLOAT
+              units: ºC
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+              tags:
+                -
+                  tag: Application
+                  value: 'Optical temperature new'
+                -
+                  tag: Application
+                  value: 'Rx Power new'
+            -
+              uuid: 62f3b0c7baa740c5b695184d0c91a4ee
+              name: 'Tx Power interface $1'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.31.1.1.3.1.9.{#SNMPINDEX}'
+              key: 'hwEntityOpticalTxPower[{#SNMPVALUE}]'
+              value_type: FLOAT
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+              tags:
+                -
+                  tag: Application
+                  value: 'Tx Power new'
+            -
+              uuid: fb8f2202bd6f4d87bc27d8eda401819e
+              name: 'Voltagem $1'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.5.25.31.1.1.3.1.6.{#SNMPINDEX}'
+              key: 'hwEntityOpticalVoltage[{#SNMPVALUE}]'
+              value_type: FLOAT
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.001'
+              tags:
+                -
+                  tag: Application
+                  value: 'Optical Voltagem new'
+        -
+          uuid: e585ca3f81b6476ea38cc444727792ee
+          name: 'Discovery Optical Module'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#IFNAME},1.3.6.1.4.1.2011.5.25.31.1.1.3.1.4]'
+          key: net.if.optical.discovery
+          delay: 45m
+          lifetime: 1d
+          item_prototypes:
+            -
+              uuid: 74e0ed58c0514a1f86520cf3fae41f94
+              name: '{#IFNAME}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.2011.5.25.31.1.1.3.1.7.{#SNMPINDEX}'
+              key: 'hwEntityOpticalLaneBias[{#SNMPINDEX}]'
+              value_type: FLOAT
+              units: mA
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+              tags:
+                -
+                  tag: Application
+                  value: 'Optical Bias'
+            -
+              uuid: 3f13dddebe3f4fdcb4999a2dbaf93f73
+              name: '{#IFNAME}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.2011.5.25.31.1.1.3.1.32.{#SNMPINDEX}'
+              key: 'hwEntityOpticalLaneRxPower[{#SNMPINDEX}]'
+              value_type: FLOAT
+              units: dBm
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+              tags:
+                -
+                  tag: Application
+                  value: 'Optical Rx Power'
+            -
+              uuid: e34ad11cda3542c69451c494a0be76a2
+              name: '{#IFNAME}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.2011.5.25.31.1.1.3.1.33.{#SNMPINDEX}'
+              key: 'hwEntityOpticalLaneTxPower[{#SNMPINDEX}]'
+              value_type: FLOAT
+              units: dBm
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+              tags:
+                -
+                  tag: Application
+                  value: 'Optical Tx Power'
+            -
+              uuid: fafdde370b0842779cd52b69b54a011b
+              name: '{#IFNAME}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.2011.5.25.31.1.1.3.1.6.{#SNMPINDEX}'
+              key: 'hwEntityOpticalLaneVoltagem[{#SNMPINDEX}]'
+              value_type: FLOAT
+              units: V
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+              tags:
+                -
+                  tag: Application
+                  value: 'Optical Voltage'
+            -
+              uuid: 880c94f03ba344939763a265b5be446e
+              name: '{#IFNAME}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.2011.5.25.31.1.1.3.1.5.{#SNMPINDEX}'
+              key: 'hwEntityOpticalTemperature[{#SNMPINDEX}]'
+              units: C
+              tags:
+                -
+                  tag: Application
+                  value: 'Optical Temperature'
+      valuemaps:
+        -
+          uuid: 25a89c017e0647399994129f524861b1
+          name: BgpPeerState
+          mappings:
+            -
+              value: '1'
+              newvalue: idle
+            -
+              value: '2'
+              newvalue: connect
+            -
+              value: '3'
+              newvalue: active
+            -
+              value: '4'
+              newvalue: opensent
+            -
+              value: '5'
+              newvalue: openconfirm
+            -
+              value: '6'
+              newvalue: established
