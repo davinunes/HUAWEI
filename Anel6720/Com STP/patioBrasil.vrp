@@ -37,6 +37,16 @@ port trunk allow-pass vlan 51
 jumboframe enable 9000
 quit
 
+interface Eth-Trunk 115
+description LACP Patio <=> Samambaia
+mode lacp
+trunkport XGigabitEthernet 0/0/4
+port link-type trunk
+undo port trunk allow-pass vlan 1
+port trunk allow-pass vlan 51
+jumboframe enable 9000
+quit
+
 
 interface Eth-Trunk 120
 description LACP Patio <=> Brazlandia

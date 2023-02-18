@@ -1,12 +1,11 @@
 #
-interface Eth-Trunk10.702
-description NWI_CDN_LACP
-vlan-type dot1q 702
+interface GigabitEthernet0/3/14
+description BGP-CORE
 undo shutdown
 #
 admin
 virtual-system NE40V01 pvmb slot 3
-assign interface Eth-Trunk10.702
+assign interface GigabitEthernet0/3/14
 y
 #
 #

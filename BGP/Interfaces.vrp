@@ -19,3 +19,22 @@ interface GigabitEthernet0/3/9
 description Nexus1/31_PPPoE
 #
 
+interface Eth-Trunk123.126
+ vlan-type dot1q 126
+ description WAN NAT 1072
+ ipv6 enable
+ ip address 10.61.61.6 255.255.255.252
+ statistic enable
+ ospfv3 1 area 0.0.0.0
+ ospfv3 cost 10
+ ospfv3 network-type p2p
+ ospf cost 10
+ ospf network-type p2p
+ ospf enable 1 area 0.0.0.0
+ ip netstream inbound
+ ip netstream outbound
+ ipv6 netstream inbound
+ ipv6 netstream outbound
+ mpls
+ mpls ldp
+#

@@ -63,14 +63,15 @@ run save
 y
 
 rsa peer-public-key kilunne encoding-type openssh
- public-key-code begin
-  ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAuC+NFPDqI8IGtAm3AfipAUfd1dNa9so5kpyvEyXCFp                                                                                                                                                                                                                                      VP
-  BkeCNO0UACVWRYhaddPEH/ixfw7RNSFjyJGuAlc58P9po9jkwkhRomQBqfW/K5zF7k6hTUW2xj4yfd                                                                                                                                                                                                                                      d9
-  BksmcZ5QG4x741F8no4FZWFb5nrDxwE3nz8SlbE9h6d8DfryJwlhvO7TBMWo5xneXhBHFYq5f8OUlu                                                                                                                                                                                                                                      qO
-  ew/0+cbNp0L55XAH7dRqX8js54K3WfFWBs2QHVLWnQzEW2wEfmeXnu5WjagDeiWU2DU6OXFEp5FZc+                                                                                                                                                                                                                                      r5
-  wjxeEzKfeWJTRgUJAHL9RWLfQnb8nMKLch8Q5zYj9g3BH/bB/c28jV3d8w== rsa-key
- public-key-code end
- peer-public-key end
+public-key-code begin
+ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAuC+NFPDqI8IGtAm3AfipAUfd1dNa9so5kpyv
+EyXCFpVPBkeCNO0UACVWRYhaddPEH/ixfw7RNSFjyJGuAlc58P9po9jkwkhRomQB
+qfW/K5zF7k6hTUW2xj4yfdd9BksmcZ5QG4x741F8no4FZWFb5nrDxwE3nz8SlbE9
+h6d8DfryJwlhvO7TBMWo5xneXhBHFYq5f8OUluqOew/0+cbNp0L55XAH7dRqX8js
+54K3WfFWBs2QHVLWnQzEW2wEfmeXnu5WjagDeiWU2DU6OXFEp5FZc+r5wjxeEzKf
+eWJTRgUJAHL9RWLfQnb8nMKLch8Q5zYj9g3BH/bB/c28jV3d8w== rsa-key
+public-key-code end
+peer-public-key end
 #
 ssh user ilunne assign rsa-key kilunne
 

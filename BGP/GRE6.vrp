@@ -1,0 +1,16 @@
+# Tunnel GRE que usarei para conectar meu mikrotik diretamente a Borda da Acesso
+
+# 3 etapas: 1 Criar um tunnel, 2 associar a interface fisica a interface tunnel, 3 configurar o roteamento
+
+#
+interface Tunnel 10
+    description VPN CPE Davi
+    mtu 1436
+    ip address 10.7.77.1 30
+    tunnel-protocol gre ipv6
+    source 2804:2B28:0:8::1
+    destination  2804:22a0:41a:a000::2
+
+#
+interface Eth-Trunk10.7
+    binding tunnel gre
