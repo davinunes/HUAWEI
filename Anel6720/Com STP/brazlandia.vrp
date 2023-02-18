@@ -123,3 +123,40 @@ interface Eth-Trunk 127
  port trunk allow-pass vlan 2052 to 2053
  jumboframe enable 9000
 quit
+
+interface XGigabitEthernet 0/0/13
+clear configuration this
+y
+interface XGigabitEthernet 0/0/14
+clear configuration this
+y
+interface XGigabitEthernet 0/0/15
+clear configuration this
+y
+interface XGigabitEthernet 0/0/16
+clear configuration this
+y
+
+## Interface que conecta NAT ao NE40 via LACP
+interface Eth-Trunk 126
+ trunkport XGigabitEthernet0/0/13
+ trunkport XGigabitEthernet0/0/14
+ trunkport XGigabitEthernet0/0/15
+ trunkport XGigabitEthernet0/0/16
+ description LAG CGNAT UPLINK
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 126
+ jumboframe enable 9000
+quit
+
+
+## Interface que conecta NE40 ao 6720 via LACP
+interface Eth-Trunk 123
+ trunkport 40GE 0/0/1
+ description LAG CGNAT UPLINK
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 126
+ jumboframe enable 9000
+quit

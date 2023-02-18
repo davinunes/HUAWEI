@@ -1,3 +1,37 @@
+#
+ip netstream as-mode 32
+ip netstream timeout inactive 15
+ip netstream export version 9
+ip netstream export index-switch 32
+ip netstream export template timeout-rate 1
+ip netstream sampler fix-packets 500 inbound
+ip netstream sampler fix-packets 500 outbound
+ip netstream export source 10.61.61.2
+ip netstream export host 10.22.13.2 7788
+ip netstream export host 10.22.13.6 9995
+ip netstream export host 24.199.66.242 8888
+ip netstream export template option sampler
+ip netstream export template option timeout-rate 1
+#
+ipv6 netstream as-mode 32
+ipv6 netstream timeout inactive 15
+ipv6 netstream export version 9
+ipv6 netstream export index-switch 32
+ipv6 netstream export template timeout-rate 1
+ipv6 netstream sampler fix-packets 500 inbound
+ipv6 netstream sampler fix-packets 500 outbound
+ipv6 netstream export source 10.61.61.2
+ipv6 netstream export host 10.22.13.2 7788
+ipv6 netstream export host 10.22.13.6 9995
+ipv6 netstream export host 24.199.66.242 8888
+ipv6 netstream export template option sampler
+ipv6 netstream export template option timeout-rate 1
+#
+ip netstream monitor teste
+#
+
+#
+
 interface Eth-Trunk 127.846
     ip netstream inbound
     ipv6 netstream inbound
