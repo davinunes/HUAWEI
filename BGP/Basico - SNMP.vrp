@@ -1,3 +1,5 @@
+snmp-agent
+snmp-agent local-engineid 800007DB052102352D2D101600045201
 snmp-agent community read n40
 snmp-agent community complexity-check disable
 snmp-agent sys-info contact DaviNunes
