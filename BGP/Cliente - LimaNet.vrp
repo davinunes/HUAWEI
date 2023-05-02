@@ -23,3 +23,15 @@ interface Eth-Trunk127.611
 
  ipv6 route-static 2804:2b28:480:: 44 2804:2b28:0:c::2 preference 1 description LimaNet_Cliente
 #
+
+
+# CLIENTE_LIMANET
+#  vlan 611
+
+#  ip gw 10.1.60.13
+#  ip cliente 10.1.60.14/30
+#  ipv6 gw 2804:2b28:0:c::1
+#  ipv6 cliente 2804:2b28:0:c::2/64  
+
+#  Bloco IPV4 143.208.73.16/30 
+#  Bloco IPV6 2804:2b28:480::/44 
