@@ -4,7 +4,7 @@ interface Eth-Trunk127.611
     description CLIENTE_LIMANET
     statistic enable
 
-    ip address 10.1.60.5 30
+    ip address 10.1.60.13 30
     ipv6 enable
     ipv6 address 2804:2b28:0:c::1 64  
 
@@ -12,14 +12,14 @@ interface Eth-Trunk127.611
  # qos car cir 2048000 pir 2048000 cbs 2048000 outbound
 #
 
- ip route-static 143.208.73.16 30 10.1.60.6 preference 1 description LimaNet_Cliente
+ ip route-static 143.208.73.16 30 10.1.60.14 preference 1 description LimaNet_Cliente
 
- ip route-static 143.208.73.16 32 10.1.60.6 preference 1 description LimaNet_Cliente
- ip route-static 143.208.73.17 32 10.1.60.6 preference 1 description LimaNet_Cliente
- ip route-static 143.208.73.18 32 10.1.60.6 preference 1 description LimaNet_Cliente
- ip route-static 143.208.73.19 32 10.1.60.6 preference 1 description LimaNet_Cliente
+ ip route-static 143.208.73.16 32 10.1.60.14 preference 1 description LimaNet_Cliente
+ ip route-static 143.208.73.17 32 10.1.60.14 preference 1 description LimaNet_Cliente
+ ip route-static 143.208.73.18 32 10.1.60.14 preference 1 description LimaNet_Cliente
+ ip route-static 143.208.73.19 32 10.1.60.14 preference 1 description LimaNet_Cliente
 
 
 
-undo ipv6 route-static 2804:2b28:480:: 44 2804:2b28:0:c::2 preference 1 description LimaNet_Cliente
+ ipv6 route-static 2804:2b28:480:: 44 2804:2b28:0:c::2 preference 1 description LimaNet_Cliente
 #
