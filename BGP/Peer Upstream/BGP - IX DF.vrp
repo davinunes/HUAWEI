@@ -16,7 +16,7 @@ system-view immediately
 undo interface 40GE 0/3/2.2052
     vlan-type dot1q 2052
     undo shutdown
-    description C06-PTT-DF-IPv4
+    description C06-IXDF-PTT-DF-IPv4
     statistic enable
 
     mac-address cc2d-e0e4-e330
@@ -31,7 +31,7 @@ undo interface 40GE 0/3/2.2052
 interface Eth-Trunk 127.2052
     vlan-type dot1q 2052
     undo shutdown
-    description C06-PTT-DF-IPv4
+    description C06-IXDF-PTT-DF-IPv4
     statistic enable
 
     mac-address cc2d-e0e4-e330
@@ -49,7 +49,7 @@ interface Eth-Trunk 127.2052
 undo interface 40GE 0/3/2.2053
     vlan-type dot1q 2053
     undo shutdown
-    description C06-PTT-DF-IPv6
+    description C06-IXDF-PTT-DF-IPv6
     statistic enable
 
     mac-address cc2d-e0e4-e330
@@ -65,7 +65,7 @@ undo interface 40GE 0/3/2.2053
 interface Eth-Trunk 127.2053
     vlan-type dot1q 2053
     undo shutdown
-    description C06-PTT-DF-IPv6
+    description C06-IXDF-PTT-DF-IPv6
     statistic enable
 
     mac-address cc2d-e0e4-e330
@@ -82,14 +82,14 @@ interface Eth-Trunk 127.2053
 
 #======================================================================== EXPORT
 
-undo route-policy C06-EXPORT
+route-policy C06-IXDF-EXPORT
 
-route-policy C06-EXPORT permit node 1050
+route-policy C06-IXDF-EXPORT permit node 1050
     if-match community-filter EXPORT_C06
 	# Exportar o que tiver com a comunidade 26513:6, rotas que DEVEM sair para o PTT DF
 #
 
-route-policy C06-EXPORT deny node 9999
+route-policy C06-IXDF-EXPORT deny node 9999
 #
 
 
@@ -101,7 +101,7 @@ route-policy C06-EXPORT deny node 9999
 
 
 
-ip ip-prefix C06-BLOCKLIST-IPV4 index 100 permit 10.0.0.0 8 greater-equal 8 less-equal 32
+ip ip-prefix C06-IXDF-BLOCKLIST-IPV4 index 100 permit 10.0.0.0 8 greater-equal 8 less-equal 32
 
 
 # Lista de PREFIXOS para bloquear recebimento pelo circuito - IPV6:
@@ -113,25 +113,25 @@ ip ipv6-prefix C03-BLOCKLIST-IPV6 index 100 permit 2001:db8:: 32 greater-equal 3
 
 # Lista de AS-PATH para priorizar rota pelo circuito:
 
-ip as-path-filter C06-AS-ROUTE index 05 permit ^20121$
-ip as-path-filter C06-AS-ROUTE index 10 permit ^26162$
+ip as-path-filter C06-IXDF-AS-ROUTE index 05 permit ^20121$
+ip as-path-filter C06-IXDF-AS-ROUTE index 10 permit ^26162$
 # Cria uma lista com os prefixos Originados por Este ASN
 
 #======================================================================== IMPORT - IPV4
 
 
-route-policy C06-IMPORT-IPV4 deny   node 1000
+route-policy C06-IXDF-IMPORT-IPV4 deny   node 1000
     if-match ip-prefix RFC5735
 	# Descarta rotas privadas
 #
 
 
-route-policy C06-IMPORT-IPV4 deny   node 1011
+route-policy C06-IXDF-IMPORT-IPV4 deny   node 1011
     if-match ip-prefix BGP-CLIENT-LIST-ESP-IPV4
 	# descarta rotas específicas dos Clientes
 #
 
-route-policy C06-IMPORT-IPV4 permit node 2000
+route-policy C06-IXDF-IMPORT-IPV4 permit node 2000
     if-match ip-prefix BGP-CLIENT-LIST-SUM-IPV4
     apply local-preference 50
     apply community none
@@ -139,21 +139,21 @@ route-policy C06-IMPORT-IPV4 permit node 2000
 	# Aceita as rotas sumarizadas dos clientes e aplica as comunidades e controla a local preference
 #
 
-route-policy C06-IMPORT-IPV4 permit node 2002
-    if-match as-path-filter C06-AS-ROUTE
+route-policy C06-IXDF-IMPORT-IPV4 permit node 2002
+    if-match as-path-filter C06-IXDF-AS-ROUTE
     apply local-preference 999
     apply community none
 	# Comunidades: CLIENTE EXPORT_ALL 
 	# E aumenta o local preference especificamente para as rotas deste link, e com a 999 não exporta para uplink
 #
 
-route-policy C06-IMPORT-IPV4 permit   node 8888
+route-policy C06-IXDF-IMPORT-IPV4 permit   node 8888
     apply community 26513:999
     apply local-preference 250
     # não exportar para uplink
 #
 
-route-policy C06-IMPORT-IPV4 permit node 9999
+route-policy C06-IXDF-IMPORT-IPV4 permit node 9999
     apply local-preference 250
 	# Permite o restante de tudo, afinal é um fullroute entrando
 #
@@ -161,32 +161,32 @@ route-policy C06-IMPORT-IPV4 permit node 9999
 
 #======================================================================== IMPORT - IPV6
 
-route-policy C06-IMPORT-IPV6 deny   node 1000
+route-policy C06-IXDF-IMPORT-IPV6 deny   node 1000
     if-match ipv6 address prefix-list RFC3849
 #
 
-route-policy C06-IMPORT-IPV6 deny   node 1011
+route-policy C06-IXDF-IMPORT-IPV6 deny   node 1011
     if-match ipv6 address prefix-list BGP-CLIENT-LIST-ESP-IPV6
 #
 
-route-policy C06-IMPORT-IPV6 permit node 2000
+route-policy C06-IXDF-IMPORT-IPV6 permit node 2000
     if-match ipv6 address prefix-list BGP-CLIENT-LIST-SUM-IPV6
     apply local-preference 50
     apply community 26513:100 26513:0
 #
 
-route-policy C06-IMPORT-IPV6 permit node 2002
-    if-match as-path-filter C06-AS-ROUTE
+route-policy C06-IXDF-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C06-IXDF-AS-ROUTE
     apply local-preference 999
     apply community 26513:100 26513:0 26513:999
 #
 
-route-policy C06-IMPORT-IPV6 permit   node 8888
+route-policy C06-IXDF-IMPORT-IPV6 permit   node 8888
     apply community 26513:999
     apply local-preference 250
 #
 
-route-policy C06-IMPORT-IPV6 permit  node 9999
+route-policy C06-IXDF-IMPORT-IPV6 permit  node 9999
 #
 
 
@@ -212,8 +212,8 @@ bgp 265138
 
        peer IX-DF-V4 enable
 y
-       peer IX-DF-V4 route-policy C06-IMPORT-IPV4 import
-       peer IX-DF-V4 route-policy C06-EXPORT export
+       peer IX-DF-V4 route-policy C06-IXDF-IMPORT-IPV4 import
+       peer IX-DF-V4 route-policy C06-IXDF-EXPORT export
        peer IX-DF-V4 advertise-community
        peer IX-DF-V4 advertise-ext-community
        peer IX-DF-V4 next-hop-local
@@ -256,8 +256,8 @@ y
 
        peer IX-DF-V6 enable
 y
-       peer IX-DF-V6 route-policy C06-IMPORT-IPV6 import
-       peer IX-DF-V6 route-policy C06-EXPORT export
+       peer IX-DF-V6 route-policy C06-IXDF-IMPORT-IPV6 import
+       peer IX-DF-V6 route-policy C06-IXDF-EXPORT export
        peer IX-DF-V6 advertise-community
        peer IX-DF-V6 advertise-ext-community
        peer IX-DF-V6 next-hop-local
@@ -278,9 +278,9 @@ y
 #======================================================== POLICE - Looking Glass
 
 
-route-policy C06-LG-IMPORT-IPV4 deny node 9999
+route-policy C06-IXDF-LG-IMPORT-IPV4 deny node 9999
 #
-route-policy C06-LG-IMPORT-IPV6 deny node 9999
+route-policy C06-IXDF-LG-IMPORT-IPV6 deny node 9999
 #
 
 
@@ -301,8 +301,8 @@ bgp 265138
 
         peer 200.192.110.252 enable
 y
-        peer 200.192.110.252 route-policy C06-LG-IMPORT-IPV4 import
-        peer 200.192.110.252 route-policy C06-EXPORT export
+        peer 200.192.110.252 route-policy C06-IXDF-LG-IMPORT-IPV4 import
+        peer 200.192.110.252 route-policy C06-IXDF-EXPORT export
         peer 200.192.110.252 next-hop-local
         peer 200.192.110.252 public-as-only force
 
@@ -312,8 +312,8 @@ y
        peer 2001:12f8:0:13::252 enable
 y
 
-       peer 2001:12f8:0:13::252 route-policy C06-LG-IMPORT-IPV6 import
-       peer 2001:12f8:0:13::252 route-policy C06-EXPORT export
+       peer 2001:12f8:0:13::252 route-policy C06-IXDF-LG-IMPORT-IPV6 import
+       peer 2001:12f8:0:13::252 route-policy C06-IXDF-EXPORT export
        peer 2001:12f8:0:13::252 next-hop-local
        peer 2001:12f8:0:13::252 public-as-only force
 #
