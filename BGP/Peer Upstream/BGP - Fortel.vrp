@@ -107,7 +107,7 @@ route-policy FORTEL-C11-IMPORT-IPV4 permit node 2002
 
 route-policy FORTEL-C11-IMPORT-IPV4 permit node 9999
     apply community none
-    apply local-preference 190
+    apply local-preference 100
 	# Permite o restante de tudo, afinal é um fullroute entrando
 #
 
