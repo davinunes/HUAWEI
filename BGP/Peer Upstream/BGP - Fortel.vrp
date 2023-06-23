@@ -6,7 +6,8 @@ system-view immediately
 
 #=================================================================== BGP com link FORTEL - AS 61832 - Circuito 01
 
-
+# DESIGNAÇÃO: 
+# BSA/IP/204399/02
 
 
 #======================================================================== INTERFACE
@@ -106,6 +107,7 @@ route-policy FORTEL-C11-IMPORT-IPV4 permit node 2002
 
 route-policy FORTEL-C11-IMPORT-IPV4 permit node 9999
     apply community none
+    apply local-preference 190
 	# Permite o restante de tudo, afinal é um fullroute entrando
 #
 
