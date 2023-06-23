@@ -24,15 +24,17 @@ interface Eth-Trunk 10.1047
 #
 
 interface Eth-Trunk 127.1047
-    vlan-type dot1q 1047
-    undo shutdown
-    description NWI-CDN-AS28178-C07
-    statistic enable
+ vlan-type dot1q 1047
+ description NWI-CDN-AS28178-C07
+ ipv6 enable
+ ip address 172.16.31.174 255.255.255.252
+ ipv6 address 2804:638:0:14::4A/126
+ statistic enable
+ ip netstream inbound
+ ip netstream outbound
+ ipv6 netstream inbound
+ ipv6 netstream outbound
 
-    ip address 172.16.31.174 30
-
-    ipv6 enable
-     ipv6 address 2804:638:0:14::4A/126
 #
 
 
@@ -43,32 +45,32 @@ ip community-filter basic EXPORT_C07	 permit 	26513:7
 ip community-filter basic EXPORT_C07P5	 permit 	26513:5007
 
 
-route-policy C07-EXPORT permit node 1050
+route-policy C07-NWI-EXPORT permit node 1050
     if-match community-filter EXPORT_C07
 	# Exportar o que tiver com a comunidade 26513:7, rotas que DEVEM sair por este link
 #
 
-route-policy C07-EXPORT deny node 1150
+route-policy C07-NWI-EXPORT deny node 1150
     if-match community-filter CLIENTE
 	# Exportar o que tiver com a comunidade 26513:100, ou seja, o que for rota de cliente
 #
-route-policy C07-EXPORT deny node 1250
+route-policy C07-NWI-EXPORT deny node 1250
     if-match community-filter NO-UPLINK
 	# Não exportar o que tiver marcado com a comunidade 999
 #
 
-route-policy C07-EXPORT permit node 2005
+route-policy C07-NWI-EXPORT permit node 2005
     if-match community-filter EXPORT_C07P5
     apply as-path 265138 265138 265138 265138 additive
 	# Exportar o que tiver com a comunidade 26513:5004, rotas que DEVEM sair por este link MAS com muitos prepend
 #
 
-route-policy C07-EXPORT deny node 2019
+route-policy C07-NWI-EXPORT deny node 2019
     if-match community-filter EXPORT_ALL
 	# Exportar o que tiver com a comunidade 26513:0, ou seja, rotas marcadas para exportar para todos
 #
 
-route-policy C07-EXPORT deny node 9999
+route-policy C07-NWI-EXPORT deny node 9999
 #
 
 
@@ -76,23 +78,23 @@ route-policy C07-EXPORT deny node 9999
 
 # Lista de AS-PATH para priorizar rota pelo circuito:
 
-ip as-path-filter C07-AS-ROUTE index 10 permit ^28178$
+ip as-path-filter C07-NWI-AS-ROUTE index 10 permit ^28178$
 # Cria uma lista com os prefixos Originados por Este ASN
 
 #======================================================================== IMPORT - IPV4
 
 
-route-policy C07-IMPORT-IPV4 deny   node 1000
+route-policy C07-NWI-IMPORT-IPV4 deny   node 1000
     if-match ip-prefix RFC5735
 	# Descarta rotas privadas
 #
 
-route-policy C07-IMPORT-IPV4 deny   node 1011
+route-policy C07-NWI-IMPORT-IPV4 deny   node 1011
     if-match ip-prefix BGP-CLIENT-LIST-ESP-IPV4
 	# descarta rotas específicas dos Clientes
 #
 
-route-policy C07-IMPORT-IPV4 permit node 2000
+route-policy C07-NWI-IMPORT-IPV4 permit node 2000
     if-match ip-prefix BGP-CLIENT-LIST-SUM-IPV4
     apply local-preference 50
     apply community 26513:100 26513:0
@@ -100,42 +102,42 @@ route-policy C07-IMPORT-IPV4 permit node 2000
 	# Aceita as rotas sumarizadas dos clientes e aplica as comunidades e controla a local preference
 #
 
-route-policy C07-IMPORT-IPV4 permit node 2002
-    if-match as-path-filter C07-AS-ROUTE
+route-policy C07-NWI-IMPORT-IPV4 permit node 2002
+    if-match as-path-filter C07-NWI-AS-ROUTE
     apply local-preference 999
     apply community 26513:100 26513:0 26513:999
 	# Comunidades: CLIENTE EXPORT_ALL 
 	# E aumenta o local preference especificamente para as rotas deste link, e com a 999 não exporta para uplink
 #
 
-route-policy C07-IMPORT-IPV4 permit node 9999
+route-policy C07-NWI-IMPORT-IPV4 permit node 9999
 	# Permite o restante de tudo, afinal é um fullroute entrando
 #
 
 
 #======================================================================== IMPORT - IPV6
 
-route-policy C07-IMPORT-IPV6 deny   node 1000
+route-policy C07-NWI-IMPORT-IPV6 deny   node 1000
     if-match ipv6 address prefix-list RFC3849
 #
 
-route-policy C07-IMPORT-IPV6 deny   node 1011
+route-policy C07-NWI-IMPORT-IPV6 deny   node 1011
     if-match ipv6 address prefix-list BGP-CLIENT-LIST-ESP-IPV6
 #
 
-route-policy C07-IMPORT-IPV6 permit node 2000
+route-policy C07-NWI-IMPORT-IPV6 permit node 2000
     if-match ipv6 address prefix-list BGP-CLIENT-LIST-SUM-IPV6
     apply local-preference 50
     apply community 26513:100 26513:0
 #
 
-route-policy C07-IMPORT-IPV6 permit node 2002
-    if-match as-path-filter C07-AS-ROUTE
+route-policy C07-NWI-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C07-NWI-AS-ROUTE
     apply local-preference 999
     apply community 26513:100 26513:0 26513:999
 #
 
-route-policy C07-IMPORT-IPV6 permit  node 9999
+route-policy C07-NWI-IMPORT-IPV6 permit  node 9999
 #
 
 #======================================================================== BGP - RS PEERING - IPv4
@@ -144,7 +146,7 @@ route-policy C07-IMPORT-IPV6 permit  node 9999
 bgp 265138
 
     peer 172.16.31.173 as-number 28178
-    peer 172.16.31.173 description C07-AS28178-NWI-IPV4
+    peer 172.16.31.173 description C07-NWI-AS28178-NWI-IPV4
     peer 172.16.31.173 timer connect-retry 1
     peer 172.16.31.173 timer keepalive 10 hold 40
 y
@@ -152,8 +154,8 @@ y
     ipv4-family unicast
         peer 172.16.31.173 enable
 y
-        peer 172.16.31.173 route-policy C07-IMPORT-IPV4 import
-        peer 172.16.31.173 route-policy C07-EXPORT export
+        peer 172.16.31.173 route-policy C07-NWI-IMPORT-IPV4 import
+        peer 172.16.31.173 route-policy C07-NWI-EXPORT export
         peer 172.16.31.173 advertise-community
         peer 172.16.31.173 advertise-ext-community
         peer 172.16.31.173 public-as-only force
@@ -165,15 +167,15 @@ y
 bgp 265138
 
     peer 2804:638:0:14::49 as-number 28178
-    peer 2804:638:0:14::49 description C07-AS28178-NWI-IPV6
+    peer 2804:638:0:14::49 description C07-NWI-AS28178-NWI-IPV6
     peer 2804:638:0:14::49 timer connect-retry 1
     peer 2804:638:0:14::49 timer keepalive 10 hold 40
 y
 
     ipv6-family unicast
         peer 2804:638:0:14::49 enable
-        peer 2804:638:0:14::49 route-policy C07-IMPORT-IPV6 import
-        peer 2804:638:0:14::49 route-policy C07-EXPORT export
+        peer 2804:638:0:14::49 route-policy C07-NWI-IMPORT-IPV6 import
+        peer 2804:638:0:14::49 route-policy C07-NWI-EXPORT export
         peer 2804:638:0:14::49 advertise-community
         peer 2804:638:0:14::49 advertise-ext-community
         peer 2804:638:0:14::49 public-as-only force
