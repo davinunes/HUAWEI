@@ -139,7 +139,7 @@ route-policy C06-IXDF-IMPORT-IPV4 permit node 2000
 	# Aceita as rotas sumarizadas dos clientes e aplica as comunidades e controla a local preference
 #
 
-route-policy C06-IXDF-IMPORT-IPV4 permit node 2002
+route-policy C06-IXDF-IMPORT-IPV4 permit node 9
     if-match as-path-filter C06-IXDF-AS-ROUTE
     apply local-preference 999
     apply community none
@@ -147,13 +147,13 @@ route-policy C06-IXDF-IMPORT-IPV4 permit node 2002
 	# E aumenta o local preference especificamente para as rotas deste link, e com a 999 não exporta para uplink
 #
 
-route-policy C06-IXDF-IMPORT-IPV4 permit   node 8888
+route-policy C06-IXDF-IMPORT-IPV4 permit   node 10
     apply community 26513:999
     apply local-preference 250
     # não exportar para uplink
 #
 
-route-policy C06-IXDF-IMPORT-IPV4 permit node 9999
+route-policy C06-IXDF-IMPORT-IPV4 permit node 10
     apply local-preference 250
 	# Permite o restante de tudo, afinal é um fullroute entrando
 #
