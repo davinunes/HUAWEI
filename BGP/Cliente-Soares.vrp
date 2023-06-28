@@ -1,4 +1,5 @@
-interface Eth-Trunk10.125
+interface Eth-Trunk123.125
+interface 100GE0/1/54.125
 vlan-type dot1q 125
     vlan-type dot1q 125
     undo shutdown

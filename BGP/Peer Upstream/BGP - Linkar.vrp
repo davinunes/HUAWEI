@@ -192,7 +192,12 @@ y
 bgp 265138
     peer 45.165.196.141 ignore
     peer 2804:5518:0:20::1 ignore
+    commit
+interface Eth-Trunk 127.846
+    shutdown
+    commit
 #
+
 
 #======================================================================== BGP - ATIVAR
 
@@ -200,6 +205,11 @@ bgp 265138
 bgp 265138
     undo peer 45.165.196.141 ignore
     undo peer 2804:5518:0:20::1 ignore
+    commit
+
+interface 100GE0/1/55.846
+    undo shutdown
+    commit
 #
 
 #======================================================================== BGP - DELETAR - CUIDADO

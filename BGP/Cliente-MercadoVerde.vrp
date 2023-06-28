@@ -1,4 +1,5 @@
-interface Eth-Trunk10.700
+interface Eth-Trunk123.700
+interface 100GE0/1/54.700
 vlan-type dot1q 700
     vlan-type dot1q 700
     undo shutdown
@@ -18,7 +19,8 @@ ip route-static 143.208.72.3 32 10.1.60.2 preference 1 description Mercado_Verde
 
 #
 
-interface Eth-Trunk10.701
+interface Eth-Trunk123.701
+interface 100GE0/1/54.701
 vlan-type dot1q 701
 
 undo shutdown
@@ -37,7 +39,8 @@ ip route-static 143.208.72.28 32 10.1.60.6 preference 1 description Mercado_Verd
 
 #
 
-interface Eth-Trunk10.702
+interface Eth-Trunk123.702
+interface 100GE0/1/54.702
 vlan-type dot1q 702
 
   undo shutdown
