@@ -10,26 +10,18 @@ interface 100GE0/1/54.703
  qos car cir 55000 pir 55000 cbs 55000 pbs 10285000 green pass yellow pass red discard outbound
 #
 
+interface 100GE0/1/54.704
+ vlan-type dot1q 704
+ description Avetec via Vendinha
+ ip address 10.1.60.21 255.255.255.252
+ statistic enable
+ ospf network-type p2p
+ ospf enable 1 area 0.0.0.0
+ qos car cir 55000 pir 55000 cbs 55000 pbs 10285000 green pass yellow pass red discard inbound
+ qos car cir 55000 pir 55000 cbs 55000 pbs 10285000 green pass yellow pass red discard outbound
 #
 
 ip route-static 143.208.72.56 32 10.1.61.1 preference 1 description Avetec
 ip route-static 143.208.72.57 32 10.1.61.1 preference 1 description Avetec
 # ipv6 route-static 2804:2b28:470:: 44 2804:2b28:0:5::2 preference 1 description Mercado_Verde_Cliente
 
-#
-
-interface 100GE0/1/54.704
-vlan-type dot1q 704
-
-undo shutdown
-  description Avetec via Vendinha
-statistic enable
-
-ip address 10.1.60.21 30
-
-  qos car cir 55000 pir 55000 cbs 55000 inbound
-  qos car cir 55000 pir 55000 cbs 55000 outbound
-#
-
-## Migrado para PPPoE a Pedido do Cliente
-#ip route-static 143.208.72.28 32 10.1.60.6 preference 1 description Mercado_Verde_Cliente
