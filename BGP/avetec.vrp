@@ -12,7 +12,7 @@ interface 100GE0/1/54.703
 
 #
 
-# ip route-static 143.208.72.3 32 10.1.60.2 preference 1 description Mercado_Verde_Cliente
+ip route-static 143.208.72.57 32 10.1.61.1 preference 1 description Avetec
 # ipv6 route-static 2804:2b28:470:: 44 2804:2b28:0:5::2 preference 1 description Mercado_Verde_Cliente
 
 #
