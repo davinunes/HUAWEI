@@ -11,4 +11,4 @@ interface 100GE0/1/54.705
 
 ip route-static 143.208.73.36 30 10.1.60.30 preference 1 description Tel Internet
 
-ipv6 route-static 2804:2b28:4e0:: 44 2804:2b28:0:d::1 preference 1 description Tel Internet
+ipv6 route-static 2804:2b28:4e0:: 44 2804:2b28:0:d::2 preference 1 description Tel Internet

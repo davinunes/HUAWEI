@@ -1,0 +1,14 @@
+
+interface 100GE0/1/54.706
+    vlan-type dot1q 706
+    description V5 Telecom
+    ip address 10.1.60.33 30
+    statistic enable
+    ipv6 enable
+    ipv6 address 2804:2b28:0:e::1 64 
+#
+
+
+ip route-static 143.208.73.20 30 10.1.60.34 preference 1 description V5 Telecom
+
+ipv6 route-static 2804:2b28:4f0:: 44 2804:2b28:0:e::2 preference 1 description V5 Telecom
