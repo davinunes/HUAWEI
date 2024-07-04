@@ -13,6 +13,7 @@ interface 100GE 0/1/48.1141
  ipv6 enable
  ip address 168.181.23.61 31
  ipv6 address 2801:80:17b1::23:61/127
+ mac-address cc2d-e0e4-e330
  statistic enable
  ip netstream inbound
  ip netstream outbound
