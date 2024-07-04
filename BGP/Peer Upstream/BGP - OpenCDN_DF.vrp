@@ -1,0 +1,173 @@
+
+
+#=================================== Open CDN DF - AS 61580 - Circuito 08
+
+
+
+
+#======================================================================== INTERFACE
+
+interface 100GE 0/1/48.1141
+ vlan-type dot1q 1141
+ description OpenCDN-C08
+ ipv6 enable
+ ip address 168.181.23.61 31
+ ipv6 address 2801:80:17b1::23:61/127
+ statistic enable
+ ip netstream inbound
+ ip netstream outbound
+ ipv6 netstream inbound
+ ipv6 netstream outbound
+
+#
+
+
+
+#======================================================================== EXPORT
+
+ip community-filter basic EXPORT_C08	 permit 	26513:8
+ip community-filter basic EXPORT_C08P5	 permit 	26513:5008
+
+
+route-policy C08-OPENCDN-EXPORT permit node 1050
+    if-match community-filter EXPORT_C08
+	# Exportar o que tiver com a comunidade 26513:8, rotas que DEVEM sair por este link
+#
+
+route-policy C08-OPENCDN-EXPORT permit node 2005
+    if-match community-filter EXPORT_C08P5
+    apply as-path 265138 265138 265138 265138 additive
+	# Exportar o que tiver com a comunidade 26513:5004, rotas que DEVEM sair por este link MAS com muitos prepend
+#
+
+route-policy C08-OPENCDN-EXPORT deny node 9999
+#
+
+
+#========================= AS-PATH para priorizar via C08
+
+# Lista de AS-PATH para priorizar rota pelo circuito:
+
+ip as-path-filter C08-OPENCDN-AS-ROUTE index 10 permit ^61580$
+# Cria uma lista com os prefixos Originados por Este ASN
+
+#======================================================================== IMPORT - IPV4
+
+
+route-policy C08-OPENCDN-IMPORT-IPV4 deny   node 1000
+    if-match ip-prefix RFC5735
+	# Descarta rotas privadas
+#
+
+route-policy C08-OPENCDN-IMPORT-IPV4 permit node 2002
+    if-match as-path-filter C08-OPENCDN-AS-ROUTE
+    apply local-preference 999
+    apply community 26513:100 26513:0 26513:999
+	# Comunidades: CLIENTE EXPORT_ALL 
+	# E aumenta o local preference especificamente para as rotas deste link, e com a 999 não exporta para uplink
+#
+
+route-policy C08-OPENCDN-IMPORT-IPV4 permit node 9999
+	# Permite o restante de tudo, afinal é um fullroute entrando
+#
+
+
+#======================================================================== IMPORT - IPV6
+
+route-policy C08-OPENCDN-IMPORT-IPV6 deny   node 1000
+    if-match ipv6 address prefix-list RFC3849
+#
+
+route-policy C08-OPENCDN-IMPORT-IPV6 deny   node 1011
+    if-match ipv6 address prefix-list BGP-CLIENT-LIST-ESP-IPV6
+#
+
+route-policy C08-OPENCDN-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C08-OPENCDN-AS-ROUTE
+    apply local-preference 999
+    apply community 26513:100 26513:0 26513:999
+#
+
+route-policy C08-OPENCDN-IMPORT-IPV6 permit  node 9999
+#
+
+#======================================================================== BGP - RS PEERING - IPv4
+
+
+bgp 265138
+
+    peer 168.181.23.60 as-number 61580
+    peer 168.181.23.60 description C08-OPENCDN-AS61580-IPV4
+    peer 168.181.23.60 timer connect-retry 1
+    peer 168.181.23.60 timer keepalive 10 hold 40
+y
+
+    ipv4-family unicast
+        peer 168.181.23.60 enable
+y
+        peer 168.181.23.60 route-policy C08-OPENCDN-IMPORT-IPV4 import
+        peer 168.181.23.60 route-policy C08-OPENCDN-EXPORT export
+        peer 168.181.23.60 advertise-community
+        peer 168.181.23.60 advertise-ext-community
+        peer 168.181.23.60 public-as-only force
+        peer 168.181.23.60 next-hop-local
+#
+
+
+#======================================================================== BGP - RS PEERING - IPv6
+bgp 265138
+
+    peer 2801:80:17b1::23:60 as-number 61580
+    peer 2801:80:17b1::23:60 description C08-OPENCDN-AS61580-IPV6
+    peer 2801:80:17b1::23:60 timer connect-retry 1
+    peer 2801:80:17b1::23:60 timer keepalive 10 hold 40
+y
+
+    ipv6-family unicast
+        peer 2801:80:17b1::23:60 enable
+        peer 2801:80:17b1::23:60 route-policy C08-OPENCDN-IMPORT-IPV6 import
+        peer 2801:80:17b1::23:60 route-policy C08-OPENCDN-EXPORT export
+        peer 2801:80:17b1::23:60 advertise-community
+        peer 2801:80:17b1::23:60 advertise-ext-community
+        peer 2801:80:17b1::23:60 public-as-only force
+        peer 2801:80:17b1::23:60 next-hop-local
+#
+
+
+
+#======================================================================== BGP - DESATIVAR
+
+# Desativar peer
+bgp 265138
+    peer 168.181.23.60 ignore
+    peer 2801:80:17b1::23:60 ignore
+#
+commit
+
+
+#======================================================================== BGP - ATIVAR
+
+# Ativar
+bgp 265138
+    undo peer 168.181.23.60 ignore
+    undo peer 2801:80:17b1::23:60 ignore
+#
+commit
+
+
+#======================================================================== BGP - DELETAR - CUIDADO
+
+
+# Destruir config do peer
+bgp 265138
+    undo peer 168.181.23.60
+
+#
+
+
+
+#======================================================================== 
+#======================================================================== 
+#======================================================================== 
+#======================================================================== 
+
