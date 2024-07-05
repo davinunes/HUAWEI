@@ -28,6 +28,8 @@ interface 100GE 0/1/48.1141
 
 ip community-filter basic EXPORT_C08	 permit 	26513:8
 ip community-filter basic EXPORT_C08P5	 permit 	26513:5008
+ip community-filter basic EXPORT_C08_NETFLIX permit 40027:40000
+
 
 
 route-policy C08-OPENCDN-EXPORT permit node 1050
@@ -40,6 +42,11 @@ route-policy C08-OPENCDN-EXPORT permit node 2005
     apply as-path 265138 265138 265138 265138 additive
 	# Exportar o que tiver com a comunidade 26513:5004, rotas que DEVEM sair por este link MAS com muitos prepend
 #
+
+route-policy C08-OPENCDN-EXPORT permit node 3000
+    if-match community-filter EXPORT_C08_NETFLIX
+    apply community 40027:40000
+
 
 route-policy C08-OPENCDN-EXPORT deny node 9999
 #
