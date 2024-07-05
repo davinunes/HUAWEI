@@ -24,32 +24,36 @@ interface 100GE 0/1/48.1141
 
 
 
-#======================================================================== EXPORT
+#======================================================================== EXPORT-V4
+
+route-policy OpenCDN-Export-V4 permit node 1000
+if-match ip-prefix AnunciarOpenCDN
+apply community 40027:40000 additive
+#
+
+route-policy OpenCDN-Export-V4 deny node 9999
+
+#======================================================================== EXPORT-V6
+
+route-policy OpenCDN-Export-V6 permit node 1000
+if-match ipv6 address prefix-list AnunciarOpenCDN
+apply community 40027:40000 additive
+#
+
+route-policy OpenCDN-Export-V6 deny node 9999
+
+
 
 ip community-filter basic EXPORT_C08	 permit 	26513:8
 ip community-filter basic EXPORT_C08P5	 permit 	26513:5008
 ip community-filter basic EXPORT_C08_NETFLIX permit 40027:40000
 
 
+ip ip-prefix AnunciarOpenCDN index 100 permit 143.208.72.0 22 greater-equal 22 less-equal 24
+ip ipv6-prefix AnunciarOpenCDN index 100 permit 2804:2b28:: 32 greater-equal 32 less-equal 48
 
-route-policy C08-OPENCDN-EXPORT permit node 1050
-    if-match community-filter EXPORT_C08
-	# Exportar o que tiver com a comunidade 26513:8, rotas que DEVEM sair por este link
 #
 
-route-policy C08-OPENCDN-EXPORT permit node 2005
-    if-match community-filter EXPORT_C08P5
-    apply as-path 265138 265138 265138 265138 additive
-	# Exportar o que tiver com a comunidade 26513:5004, rotas que DEVEM sair por este link MAS com muitos prepend
-#
-
-route-policy C08-OPENCDN-EXPORT permit node 3000
-    if-match community-filter EXPORT_C08_NETFLIX
-    apply community 40027:40000
-
-
-route-policy C08-OPENCDN-EXPORT deny node 9999
-#
 
 
 #========================= AS-PATH para priorizar via C08
@@ -114,7 +118,7 @@ y
         peer 168.181.23.60 enable
 y
         peer 168.181.23.60 route-policy C08-OPENCDN-IMPORT-IPV4 import
-        peer 168.181.23.60 route-policy C08-OPENCDN-EXPORT export
+        peer 168.181.23.60 route-policy OpenCDN-Export-V4 export
         peer 168.181.23.60 advertise-community
         peer 168.181.23.60 advertise-ext-community
         peer 168.181.23.60 public-as-only force
@@ -134,14 +138,12 @@ y
     ipv6-family unicast
         peer 2801:80:17b1::23:60 enable
         peer 2801:80:17b1::23:60 route-policy C08-OPENCDN-IMPORT-IPV6 import
-        peer 2801:80:17b1::23:60 route-policy C08-OPENCDN-EXPORT export
+        peer 2801:80:17b1::23:60 route-policy OpenCDN-Export-V6 export
         peer 2801:80:17b1::23:60 advertise-community
         peer 2801:80:17b1::23:60 advertise-ext-community
         peer 2801:80:17b1::23:60 public-as-only force
         peer 2801:80:17b1::23:60 next-hop-local
 #
-
-
 
 #======================================================================== BGP - DESATIVAR
 
@@ -165,17 +167,9 @@ commit
 
 #======================================================================== BGP - DELETAR - CUIDADO
 
-
 # Destruir config do peer
 bgp 265138
     undo peer 168.181.23.60
+    undo peer 2801:80:17b1::23:60
 
 #
-
-
-
-#======================================================================== 
-#======================================================================== 
-#======================================================================== 
-#======================================================================== 
-
