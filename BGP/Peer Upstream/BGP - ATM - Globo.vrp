@@ -1,0 +1,175 @@
+#=================================================================== BGP ATM GLOBO
+
+#======================================================================== INTERFACE
+
+#======================================================================== COMUNIDADE
+ip community-filter basic EXPORT_C09	 permit 	26513:9		
+ip community-filter basic EXPORT_C09P5	 permit 	26513:5009
+
+#======================================================================== EXPORT
+
+route-policy C09-IXDF-ATM-GLOBO-EXPORT permit node 1000
+    if-match community-filter EXPORT_C09
+#
+
+route-policy C09-IXDF-ATM-GLOBO-EXPORT deny node 9999
+#
+
+#======================================================================== AS-PATH para priorizar via C02
+
+# Lista de AS-PATH para priorizar rota pelo circuito:
+
+ip as-path-filter C09-IXDF-ATM-GLOBO-AS-ROUTE index 10 permit ^28604$
+# Cria uma lista com os prefixos Originados por Este ASN
+
+#======================================================================== IMPORT - IPV4
+
+route-policy C09-IXDF-ATM-GLOBO-IMPORT-IPV4 permit node 10
+    if-match as-path-filter C09-IXDF-ATM-GLOBO-AS-ROUTE
+    apply local-preference 999
+    apply community none
+#
+
+route-policy C09-IXDF-ATM-GLOBO-IMPORT-IPV4 DENY node 100
+#
+
+
+#======================================================================== IMPORT - IPV6
+
+route-policy C09-IXDF-ATM-GLOBO-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C09-IXDF-ATM-GLOBO-AS-ROUTE
+    apply local-preference 999
+    apply community none
+#
+
+route-policy C09-IXDF-ATM-GLOBO-IMPORT-IPV6 permit  node 9999
+#
+
+#======================================================================== BGP - RS PEERING - RouterServer - IPv4
+
+
+bgp 265138
+    group GLOBO-ATM-V4 external
+    peer GLOBO-ATM-V4 as-number 28604
+    peer GLOBO-ATM-V4 timer connect-retry 1
+    peer GLOBO-ATM-V4 timer keepalive 20 hold 60
+
+    peer 200.192.110.33 as-number 28604
+    peer 200.192.110.33 group GLOBO-ATM-V4
+    peer 200.192.110.33 description GLOBO1-IPv4
+
+    peer 200.192.110.34 as-number 28604
+    peer 200.192.110.34 group GLOBO-ATM-V4
+    peer 200.192.110.34 description GLOBO2-IPv4
+
+    ipv4-family unicast
+
+       peer GLOBO-ATM-V4 enable
+y
+       peer GLOBO-ATM-V4 route-policy C09-IXDF-ATM-GLOBO-IMPORT-IPV4 import
+       peer GLOBO-ATM-V4 route-policy C09-IXDF-ATM-GLOBO-EXPORT export
+       peer GLOBO-ATM-V4 advertise-community
+       peer GLOBO-ATM-V4 advertise-ext-community
+       peer GLOBO-ATM-V4 next-hop-local
+       peer GLOBO-ATM-V4 public-as-only force
+
+       peer 200.192.110.33 enable
+y
+       peer 200.192.110.33 group GLOBO-ATM-V4
+
+       peer 200.192.110.34 enable
+y
+       peer 200.192.110.34 group GLOBO-ATM-V4
+
+
+
+#
+
+
+#======================================================================== BGP - RS PEERING - RouterServer - IPv6
+
+
+bgp 265138
+
+    group GLOBO-ATM-V6 external
+    peer GLOBO-ATM-V6 as-number 28604
+    peer GLOBO-ATM-V6 timer connect-retry 1
+    peer GLOBO-ATM-V6 timer keepalive 20 hold 60
+
+    peer 2001:12f8:0:13::33 as-number 28604
+    peer 2001:12f8:0:13::33 group GLOBO-ATM-V6
+    peer 2001:12f8:0:13::33 description GLOBO1-IPv6
+
+    peer 2001:12f8:0:13::34 as-number 28604
+    peer 2001:12f8:0:13::34 group GLOBO-ATM-V6
+    peer 2001:12f8:0:13::34 description GLOBO2-IPv6
+
+
+    ipv6-family unicast
+
+       peer GLOBO-ATM-V6 enable
+       peer GLOBO-ATM-V6 route-policy C09-IXDF-ATM-GLOBO-IMPORT-IPV6 import
+       peer GLOBO-ATM-V6 route-policy C09-IXDF-ATM-GLOBO-EXPORT export
+       peer GLOBO-ATM-V6 advertise-community
+       peer GLOBO-ATM-V6 advertise-ext-community
+       peer GLOBO-ATM-V6 next-hop-local
+       peer GLOBO-ATM-V6 public-as-only force
+
+       peer 2001:12f8:0:13::33 enable
+y
+       peer 2001:12f8:0:13::33 group GLOBO-ATM-V6
+
+       peer 2001:12f8:0:13::34 enable
+y
+       peer 2001:12f8:0:13::34 group GLOBO-ATM-V6
+
+#
+
+#======================================================================== BGP - DESATIVAR
+
+# Desativar peer
+bgp 265138
+
+    peer 200.192.110.33 ignore
+    peer 200.192.110.34 ignore
+    
+
+    peer 2001:12f8:0:13::33 ignore
+    peer 2001:12f8:0:13::34 ignore
+    
+
+#
+commit
+
+
+#======================================================================== BGP - ATIVAR
+
+# Ativar
+bgp 265138
+    undo peer 200.192.110.33 ignore
+    undo peer 200.192.110.34 ignore
+    
+
+    undo peer 2001:12f8:0:13::33 ignore
+    undo peer 2001:12f8:0:13::34 ignore
+    
+#
+commit
+
+
+#======================================================================== BGP - DELETAR - CUIDADO
+
+
+# Destruir config do peer
+bgp 265138
+    undo peer 200.192.110.33
+    undo peer 200.192.110.34
+
+    
+
+    undo peer 2001:12f8:0:13::33
+    undo peer 2001:12f8:0:13::34
+
+    
+#
+commit

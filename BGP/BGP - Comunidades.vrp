@@ -233,6 +233,20 @@ ip community-filter basic C07-EXPORT-NOEXPORT        permit 64800:50708
 ip community-filter basic C07-EXPORT-DEFAULT        permit 64800:50709
 
 
+# Circuito 09 - (reservado uso futuro)
+
+ip community-filter basic C09-RECEIVED         permit 64800:50700
+ip community-filter basic C07-EXPORT-BLACKHOLE permit 64800:50766
+ip community-filter basic C07-EXPORT-BLOCK     permit 64800:50767
+ip community-filter basic C07-EXPORT-P1        permit 64800:50701
+ip community-filter basic C07-EXPORT-P2        permit 64800:50702
+ip community-filter basic C07-EXPORT-P3        permit 64800:50703
+ip community-filter basic C07-EXPORT-P4        permit 64800:50704
+ip community-filter basic C07-EXPORT-P5        permit 64800:50705
+ip community-filter basic C07-EXPORT-NOEXPORT        permit 64800:50708
+ip community-filter basic C07-EXPORT-DEFAULT        permit 64800:50709
+
+
 
 
 #------------------------------------------------------------------------------ USO GERAL

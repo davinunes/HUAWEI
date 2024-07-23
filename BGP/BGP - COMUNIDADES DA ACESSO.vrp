@@ -46,6 +46,9 @@ ip community-filter basic EXPORT_C07P5	 permit 	26513:5007
 ip community-filter basic EXPORT_C08	 permit 	26513:8		
 ip community-filter basic EXPORT_C08P5	 permit 	26513:5008
 
+ip community-filter basic EXPORT_C09	 permit 	26513:9		
+ip community-filter basic EXPORT_C09P5	 permit 	26513:5009
+
 ip community-filter basic EXPORT_C11	 permit 	26513:11		
 ip community-filter basic EXPORT_C11P5	 permit 	26513:5011
 

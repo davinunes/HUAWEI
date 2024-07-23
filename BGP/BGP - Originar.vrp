@@ -67,22 +67,22 @@ route-policy ORIGIN-143-208-74-000M23 permit node 10
 
 # /24
 route-policy ORIGIN-143-208-72-000M24 permit node 10
-    apply community 26513:7 26513:8 40027:40000
+    apply community 26513:7 26513:8 26513:9 40027:40000
     apply local-preference 99100
 # 
 
 route-policy ORIGIN-143-208-73-000M24 permit node 10
-     apply community 26513:7 26513:8 40027:40000
+     apply community 26513:7 26513:8 26513:9 40027:40000
     apply local-preference 99100
 # 
 
 route-policy ORIGIN-143-208-74-000M24 permit node 10
-     apply community 26513:7 26513:8 40027:40000
+     apply community 26513:7 26513:8 26513:9 40027:40000
     apply local-preference 99100
 # 
 
 route-policy ORIGIN-143-208-75-000M24 permit node 10
-     apply community 26513:7 26513:8 40027:40000
+     apply community 26513:7 26513:8 26513:9 40027:40000
     apply local-preference 99100
 # 
 
@@ -108,19 +108,19 @@ route-policy ORIGIN-2804-2b28-8000-M33 permit node 10
    
 # /34
 route-policy ORIGIN-2804-2b28-0000-M34 permit node 10
-    apply community 26513:8 26513:7 40027:40000 26513:6
+    apply community 26513:9 26513:8 26513:7 40027:40000 26513:6
     apply local-preference 99100
 #
 route-policy ORIGIN-2804-2b28-4000-M34 permit node 10
-    apply community 26513:8 26513:7 40027:40000 26513:6
+    apply community 26513:9 26513:8 26513:7 40027:40000 26513:6
     apply local-preference 99100
 #
 route-policy ORIGIN-2804-2b28-8000-M34 permit node 10
-    apply community 26513:8 26513:7 40027:40000 26513:6
+    apply community 26513:9 26513:8 26513:7 40027:40000 26513:6
     apply local-preference 99100
 #
 route-policy ORIGIN-2804-2b28-C000-M34 permit node 10
-    apply community 26513:8 26513:7 40027:40000 26513:6
+    apply community 26513:9 26513:8 26513:7 40027:40000 26513:6
     apply local-preference 99100
 #
 
