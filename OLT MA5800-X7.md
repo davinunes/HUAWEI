@@ -65,3 +65,11 @@ Coloca a interface pra ouvir o SSH
 ```
 sysman server source ssh any-interface
 ```
+
+Habilitar Telnet para integração com IXC:
+
+```
+sysman server source telnet any-interface
+sysman service telnet enable
+```
+
