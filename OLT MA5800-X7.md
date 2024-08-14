@@ -56,6 +56,7 @@ terminal user name ilunne
 
 Define o tipo de autenticação do usuario e atribui a chave rsa
 ```
+config
  ssh user "ilunne" authentication-type all
  ssh user "ilunne" assign rsa-key "kilunne"
 ```
