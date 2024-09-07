@@ -21,7 +21,10 @@ interface 100GE0/1/54.704
  qos car cir 55000 pir 55000 cbs 55000 pbs 10285000 green pass yellow pass red discard outbound
 #
 
+# Via Vendinha
 ip route-static 143.208.72.56 32 10.1.60.22 preference 1 description Avetec
-ip route-static 143.208.72.57 32 10.1.61.1 preference 1 description Avetec
+# Via Morada
+ip route-static 143.208.72.56 32 10.1.60.18 preference 1 description Avetec
+# undo ip route-static 143.208.72.57 32 10.1.61.1 preference 1 description Avetec
 # ipv6 route-static 2804:2b28:4d0:100:: 56 2804:2b28:0:5::2 preference 1 description Mercado_Verde_Cliente
 
