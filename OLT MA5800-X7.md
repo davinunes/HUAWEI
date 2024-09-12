@@ -72,4 +72,12 @@ Habilitar Telnet para integração com IXC:
 sysman server source telnet any-interface
 sysman service telnet enable
 ```
+Verificar:
+
+ont-lineprofile gpon profile-id 3050 profile-name "vlan3050"
+
+port vlan 3050 0/8 0
+
+dba-profile add profile-id 100 profile-name "P-1G-UP" type3 assure 7168 max 10000000
+
 
