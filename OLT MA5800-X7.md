@@ -74,10 +74,76 @@ sysman service telnet enable
 ```
 Verificar:
 
-ont-lineprofile gpon profile-id 3050 profile-name "vlan3050"
+Criar vlan smart
 
+```
+vlan 3050 smart
 port vlan 3050 0/8 0
+```
 
+dba profile (upload)
+```
 dba-profile add profile-id 100 profile-name "P-1G-UP" type3 assure 7168 max 10000000
+```
+trafic table (download)
+```bash
+traffic table ip index 100 cir 7168 pir 10000000 priority 4 priority-policy tag-in-package 
+```
+srv-profile
+
+```
+ont-srvprofile gpon profile-id 3050 profile-name "vlan3050"
+ont-port pots adaptive 32 eth adaptive 8
+port vlan eth 1 translation 3050 user-vlan 3050
+  port vlan eth 2 translation 3050 user-vlan 3050
+  port vlan eth 3 translation 3050 user-vlan 3050
+  port vlan eth 4 translation 3050 user-vlan 3050
+  q
+```
+
+line profile
+
+```
+ont-lineprofile gpon profile-id 3050 profile-name "vlan3050"
+tcont 1 dba-profile-id 100
+gem add 1 eth tcont 1
+gem mapping 1 1 vlan 3050
+q
+```
+
+ativar portas pon
+
+```
+interface gpon 0/1
+ port 0 ont-auto-find enable
+ port 1 ont-auto-find enable
+ port 2 ont-auto-find enable
+ port 3 ont-auto-find enable
+ port 4 ont-auto-find enable
+ port 5 ont-auto-find enable
+ port 6 ont-auto-find enable
+ port 7 ont-auto-find enable
+ port 8 ont-auto-find enable
+ port 9 ont-auto-find enable
+ port 10 ont-auto-find enable
+ port 11 ont-auto-find enable
+ port 12 ont-auto-find enable
+ port 13 ont-auto-find enable
+ port 14 ont-auto-find enable
+ port 15 ont-auto-find enable
+```
+
+provisonar onu
+
+```
+interface gpon #subrack#/#slot#;
+ont add #pon# sn-auth #onu_mac# omci ont-lineprofile-id #vlan# ont-srvprofile-id #vlan# desc #nome#;
+ont port native-vlan #pon# #onu_numero# eth 1 vlan #vlan# priority 0;
+quit;
+service-port vlan #vlan# gpon #pon_id# ont #onu_numero# gemport 1 multi-service user-vlan #vlan#;
+```
+
+
+
 
 
