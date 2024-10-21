@@ -1,7 +1,7 @@
 
 interface 100GE0/1/54.707
     vlan-type dot1q 707
-    description Isanet
+    description Valnet
     ip address 10.1.60.37 30
     statistic enable
     ipv6 enable
@@ -9,9 +9,9 @@ interface 100GE0/1/54.707
 #
 
 
-ip route-static 143.208.72.32 30 10.1.60.38 preference 1 description Isanet
+ip route-static 143.208.72.32 30 10.1.60.38 preference 1 description Valnet
 
-ipv6 route-static 2804:2b28:500:: 44 2804:2b28:0:f::2 preference 1 description Isanet
+ipv6 route-static 2804:2b28:500:: 44 2804:2b28:0:f::2 preference 1 description Valnet
 
 
 
