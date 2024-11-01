@@ -56,12 +56,6 @@ ip as-path-filter C02-AS-ROUTE index 10 permit ^16735$
 
 #======================================================================== IMPORT - IPV4
 
-
-route-policy C02-IMPORT-IPV4 deny   node 1000
-    if-match ip-prefix RFC5735
-	# Descarta rotas privadas
-#
-
 route-policy C02-IMPORT-IPV4 permit node 2002
     if-match as-path-filter C02-AS-ROUTE
     apply local-preference 205
@@ -74,9 +68,6 @@ route-policy C02-IMPORT-IPV4 permit node 9999
 
 #======================================================================== IMPORT - IPV6
 
-route-policy C02-IMPORT-IPV6 deny   node 1000
-    if-match ipv6 address prefix-list RFC3849
-#
 
 route-policy C02-IMPORT-IPV6 permit node 2002
     if-match as-path-filter C02-AS-ROUTE
