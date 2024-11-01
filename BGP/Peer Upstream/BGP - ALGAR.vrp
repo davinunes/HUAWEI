@@ -1,0 +1,156 @@
+
+return
+system-view immediately
+
+
+
+#=================================================================== BGP com link ALGAR - AS 16735 - Circuito 02
+
+
+
+#======================================================================== INTERFACE
+
+
+interface 100GE 0/1/48.1083
+    vlan-type dot1q 1083
+    undo shutdown
+    description Link-ALGAR-AS16735-C02
+    statistic enable
+
+    ip address 100.101.40.21 30
+
+    ipv6 enable
+    ipv6 address 2001:1291:0:80::B/63
+#
+
+
+#======================================================================== EXPORT
+
+route-policy C02-EXPORT permit node 1050
+    if-match community-filter EXPORT_C02
+	# Exportar o que tiver com a comunidade 26513:2, rotas que devem sair por este link
+#
+
+
+route-policy C02-EXPORT permit node 2005
+    if-match community-filter EXPORT_C02P5
+    apply as-path 265138 265138 265138 265138 265138 265138 265138 265138 265138 265138 265138 265138 additive
+	# Exportar o que tiver com a comunidade 26513:5002, rotas que devem sair por este link com muitos prepend
+#
+
+route-policy C02-EXPORT permit node 2019
+    if-match community-filter EXPORT_ALL
+	# Exportar o que tiver com a comunidade 26513:0, ou seja, rotas marcadas para exportar para todos
+#
+
+route-policy C02-EXPORT deny node 9999
+#
+
+
+#======================================================================== AS-PATH para priorizar via C02
+
+# Lista de AS-PATH para priorizar rota pelo circuito:
+
+ip as-path-filter C02-AS-ROUTE index 10 permit ^16735$
+# Cria uma lista com os prefixos Originados por Este ASN
+
+#======================================================================== IMPORT - IPV4
+
+
+route-policy C02-IMPORT-IPV4 deny   node 1000
+    if-match ip-prefix RFC5735
+	# Descarta rotas privadas
+#
+
+route-policy C02-IMPORT-IPV4 permit node 2002
+    if-match as-path-filter C02-AS-ROUTE
+    apply local-preference 205
+    apply community none
+#
+
+route-policy C02-IMPORT-IPV4 permit node 9999
+#
+
+
+#======================================================================== IMPORT - IPV6
+
+route-policy C02-IMPORT-IPV6 deny   node 1000
+    if-match ipv6 address prefix-list RFC3849
+#
+
+route-policy C02-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C02-AS-ROUTE
+    apply local-preference 202
+    apply community none
+#
+
+route-policy C02-IMPORT-IPV6 permit  node 9999
+#
+
+#======================================================================== BGP - RS PEERING - IPv4
+
+bgp 265138
+
+    peer 100.101.40.22 as-number 16735
+    peer 100.101.40.22 description C02-AS16735-ALGAR-IPV4
+    peer 100.101.40.22 timer connect-retry 1
+    peer 100.101.40.22 timer keepalive 10 hold 40
+y
+
+    ipv4-family unicast
+        peer 100.101.40.22 enable
+y
+        peer 100.101.40.22 route-policy C02-IMPORT-IPV4 import
+        peer 100.101.40.22 route-policy C02-EXPORT export
+        peer 100.101.40.22 advertise-community
+        peer 100.101.40.22 advertise-ext-community
+        peer 100.101.40.22 public-as-only force
+        peer 100.101.40.22 next-hop-local
+#
+
+
+#======================================================================== BGP - RS PEERING - IPv6
+
+bgp 265138
+
+    peer 2001:1291:0:80::A as-number 16735
+    peer 2001:1291:0:80::A description C02-AS16735-ALGAR-IPV6
+    peer 2001:1291:0:80::A timer connect-retry 1
+    peer 2001:1291:0:80::A timer keepalive 10 hold 40
+y
+
+    ipv6-family unicast
+        peer 2001:1291:0:80::A enable
+        peer 2001:1291:0:80::A route-policy C02-IMPORT-IPV6 import
+        peer 2001:1291:0:80::A route-policy C02-EXPORT export
+        peer 2001:1291:0:80::A advertise-community
+        peer 2001:1291:0:80::A advertise-ext-community
+        peer 2001:1291:0:80::A public-as-only force
+        peer 2001:1291:0:80::A next-hop-local
+#
+
+#======================================================================== BGP - DESATIVAR
+
+# Desativar peer
+bgp 265138
+    peer 100.101.40.22 ignore
+    peer 2001:1291:0:80::A ignore
+#
+
+#======================================================================== BGP - ATIVAR
+
+# Ativar
+bgp 265138
+    undo peer 100.101.40.22 ignore
+    undo peer 2001:1291:0:80::A ignore
+#
+
+#======================================================================== BGP - DELETAR - CUIDADO
+
+# Destruir config do peer
+bgp 265138
+    undo peer 100.101.40.22
+	y
+    undo peer 2001:1291:0:80::A
+	y
+#
