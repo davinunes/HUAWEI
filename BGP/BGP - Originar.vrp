@@ -46,14 +46,14 @@ ipv6 route-static 2804:2b28:c000:: 34 NULL0 description BGP-BLACKHOLE-M34-IPV6
 
 # /22
 route-policy ORIGIN-143-208-72-000M22 permit node 10
-    apply community 26513:5011 26513:1
+    apply community 26513:5011 26513:1 26513:5002
     apply local-preference 99100
 # 
 
 
 # /23
 route-policy ORIGIN-143-208-72-000M23 permit node 10
-    apply community 26513:7
+    apply community 26513:7 26513:2
     apply local-preference 99100
 # 
 
