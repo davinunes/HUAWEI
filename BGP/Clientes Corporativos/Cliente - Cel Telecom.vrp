@@ -18,3 +18,10 @@ ipv6 route-static 2804:2b28:510:: 44 2804:2b28:0:11::2 preference 1 description 
 
 ## Instruções para o cliente:
 
+IPV4 no cliente: 10.1.60.46/30
+Gateway IPV4: 10.1.60.45
+Prefixo IPV4 delegado: 143.208.72.64/30
+
+IPV6 no cliente: 2804:2b28:0:11::2/64
+Gateway IPV6: 2804:2b28:0:11::1
+Prefixo IPV6 delegado: 2804:2b28:510::/44
