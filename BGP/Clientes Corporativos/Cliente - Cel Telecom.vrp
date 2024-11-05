@@ -1,0 +1,20 @@
+interface 100GE0/1/54.708
+    vlan-type dot1q 708
+    vlan-type dot1q 708
+    description CEL_TELECOM
+    statistic enable
+
+    ip address 10.1.60.45 30
+
+    ipv6 enable
+    ipv6 address 2804:2b28:0:11::1 64
+
+    qos car cir 1500000 pir 1500000 cbs 1500000 inbound
+    qos car cir 1500000 pir 1500000 cbs 1500000 outbound
+#
+
+ip route-static 143.208.72.3 32 10.1.60.2 preference 1 description CEL_TELECOM
+ipv6 route-static 2804:2b28:510:: 44 2804:2b28:0:11::2 preference 1 description CEL_TELECOM
+
+## Instruções para o cliente:
+
