@@ -14,6 +14,13 @@ interface 100GE0/1/54.708
 #
 
 ip route-static 143.208.72.64 30 10.1.60.46 preference 1 description CEL_TELECOM
+
+ip route-static 143.208.72.64 32 10.1.60.46 preference 1 description CEL_TELECOM
+ip route-static 143.208.72.65 32 10.1.60.46 preference 1 description CEL_TELECOM
+ip route-static 143.208.72.66 32 10.1.60.46 preference 1 description CEL_TELECOM
+ip route-static 143.208.72.67 32 10.1.60.46 preference 1 description CEL_TELECOM
+
+
 ipv6 route-static 2804:2b28:510:: 44 2804:2b28:0:11::2 preference 1 description CEL_TELECOM
 
 ## Instruções para o cliente:
