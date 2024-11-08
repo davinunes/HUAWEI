@@ -86,7 +86,9 @@ route-policy C06-IXDF-EXPORT
 
 route-policy C06-IXDF-EXPORT permit node 1050
     if-match community-filter EXPORT_C06
+    apply cost 300
 	# Exportar o que tiver com a comunidade 26513:6, rotas que DEVEM sair para o PTT DF
+    # custo maior pra evitar que forneçam cdn pelo IX
 #
 
 route-policy C06-IXDF-EXPORT deny node 9999
