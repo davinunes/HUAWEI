@@ -13,3 +13,8 @@ interface 100GE0/1/54.709
 ip route-static 143.208.73.28 32 10.1.60.50 preference 1 description dfAsa
 
 # undo ip route-static 143.208.72.57 32 10.1.61.1 preference 1 description Avetec
+
+> *DF ASA*
+*IPv4* no cliente: *10.1.60.50/24*
+*Gateway* IPv4 no cliente: *10.1.60.49*
+IPv4 Publico *delegado* para o cliente usando rota estática: *143.208.73.28/32*
