@@ -6,10 +6,10 @@ interface 100GE0/1/54.709
  statistic enable
  ospf network-type p2p
  ospf enable 1 area 0.0.0.0
- qos car cir 55000 pir 55000 cbs 55000 pbs 10285000 green pass yellow pass red discard inbound
- qos car cir 55000 pir 55000 cbs 55000 pbs 10285000 green pass yellow pass red discard outbound
+ qos car cir 200000 pir 200000 cbs 200000 pbs 2000000 green pass yellow pass red discard inbound
+ qos car cir 200000 pir 200000 cbs 200000 pbs 2000000 green pass yellow pass red discard outbound
 #
 
-ip route-static 143.208.72.56 32 10.1.60.50 preference 1 description dfAsa
+ip route-static 143.208.73.28 32 10.1.60.50 preference 1 description dfAsa
 
 # undo ip route-static 143.208.72.57 32 10.1.61.1 preference 1 description Avetec
