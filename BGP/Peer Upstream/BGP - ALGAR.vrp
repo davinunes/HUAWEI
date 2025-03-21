@@ -79,6 +79,11 @@ route-policy C02-IMPORT-IPV6 permit node 2002
     apply community none
 #
 
+route-policy C02-IMPORT-IPV6 permit node 4004
+apply local-preference 600
+
+#
+
 route-policy C02-IMPORT-IPV6 permit  node 9999
 #
 
