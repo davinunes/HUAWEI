@@ -21,7 +21,7 @@ undo interface 40GE 0/3/2.2052
 
     mac-address cc2d-e0e4-e330
 
-    ip address 200.192.110.108 24
+    ip address 45.184.144.108 24
 
     arp rate-limit 0
     arp expire-time 21600
@@ -36,7 +36,7 @@ interface Eth-Trunk 127.2052
 
     mac-address cc2d-e0e4-e330
 
-    ip address 200.192.110.108 24
+    ip address 45.184.144.108 24
 
     arp rate-limit 0
     arp expire-time 21600
@@ -202,13 +202,13 @@ bgp 265138
     peer IX-DF-V4 timer connect-retry 1
     peer IX-DF-V4 timer keepalive 20 hold 60
 
-    peer 200.192.110.253 as-number 26162
-    peer 200.192.110.253 group IX-DF-V4
-    peer 200.192.110.253 description RS1.DF.PTT.BR-IPv4
+    peer 45.184.144.253 as-number 26162
+    peer 45.184.144.253 group IX-DF-V4
+    peer 45.184.144.253 description RS1.DF.PTT.BR-IPv4
 
-    peer 200.192.110.254 as-number 26162
-    peer 200.192.110.254 group IX-DF-V4
-    peer 200.192.110.254 description RS2.DF.PTT.BR-IPv4
+    peer 45.184.144.254 as-number 26162
+    peer 45.184.144.254 group IX-DF-V4
+    peer 45.184.144.254 description RS2.DF.PTT.BR-IPv4
 
     ipv4-family unicast
 
@@ -221,13 +221,13 @@ y
        peer IX-DF-V4 next-hop-local
        peer IX-DF-V4 public-as-only force
 
-       peer 200.192.110.253 enable
+       peer 45.184.144.253 enable
 y
-       peer 200.192.110.253 group IX-DF-V4
+       peer 45.184.144.253 group IX-DF-V4
 
-       peer 200.192.110.254 enable
+       peer 45.184.144.254 enable
 y
-       peer 200.192.110.254 group IX-DF-V4
+       peer 45.184.144.254 group IX-DF-V4
 
 
 
@@ -293,20 +293,20 @@ route-policy C06-IXDF-LG-IMPORT-IPV6 deny node 9999
 
 bgp 265138
 
-    peer 200.192.110.252 as-number 20121
-    peer 200.192.110.252 description LG.DF.IX.BR-IPv4
+    peer 45.184.144.252 as-number 20121
+    peer 45.184.144.252 description LG.DF.IX.BR-IPv4
 
     peer 2001:12f8:0:13::252 as-number 20121
     peer 2001:12f8:0:13::252 description LG.DF.IX.BR-IPv6
 
     ipv4-family unicast
 
-        peer 200.192.110.252 enable
+        peer 45.184.144.252 enable
 y
-        peer 200.192.110.252 route-policy C06-IXDF-LG-IMPORT-IPV4 import
-        peer 200.192.110.252 route-policy C06-IXDF-EXPORT export
-        peer 200.192.110.252 next-hop-local
-        peer 200.192.110.252 public-as-only force
+        peer 45.184.144.252 route-policy C06-IXDF-LG-IMPORT-IPV4 import
+        peer 45.184.144.252 route-policy C06-IXDF-EXPORT export
+        peer 45.184.144.252 next-hop-local
+        peer 45.184.144.252 public-as-only force
 
 
     ipv6-family unicast
@@ -327,9 +327,9 @@ y
 # Desativar peer
 bgp 265138
 
-    peer 200.192.110.253 ignore
-    peer 200.192.110.254 ignore
-    peer 200.192.110.252 ignore
+    peer 45.184.144.253 ignore
+    peer 45.184.144.254 ignore
+    peer 45.184.144.252 ignore
 
     peer 2001:12f8:0:13::253 ignore
     peer 2001:12f8:0:13::254 ignore
@@ -343,9 +343,9 @@ commit
 
 # Ativar
 bgp 265138
-    undo peer 200.192.110.253 ignore
-    undo peer 200.192.110.254 ignore
-    undo peer 200.192.110.252 ignore
+    undo peer 45.184.144.253 ignore
+    undo peer 45.184.144.254 ignore
+    undo peer 45.184.144.252 ignore
 
     undo peer 2001:12f8:0:13::253 ignore
     undo peer 2001:12f8:0:13::254 ignore
@@ -359,10 +359,10 @@ commit
 
 # Destruir config do peer
 bgp 265138
-    undo peer 200.192.110.253
-    undo peer 200.192.110.254
+    undo peer 45.184.144.253
+    undo peer 45.184.144.254
 
-    undo peer 200.192.110.252
+    undo peer 45.184.144.252
 
     undo peer 2001:12f8:0:13::253
     undo peer 2001:12f8:0:13::254
