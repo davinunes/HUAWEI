@@ -54,13 +54,13 @@ bgp 265138
     peer GLOBO-ATM-V4 timer connect-retry 1
     peer GLOBO-ATM-V4 timer keepalive 20 hold 60
 
-    peer 200.192.110.33 as-number 28604
-    peer 200.192.110.33 group GLOBO-ATM-V4
-    peer 200.192.110.33 description GLOBO1-IPv4
+    peer 45.184.145.33 as-number 28604
+    peer 45.184.145.33 group GLOBO-ATM-V4
+    peer 45.184.145.33 description GLOBO1-IPv4
 
-    peer 200.192.110.34 as-number 28604
-    peer 200.192.110.34 group GLOBO-ATM-V4
-    peer 200.192.110.34 description GLOBO2-IPv4
+    peer 45.184.145.34 as-number 28604
+    peer 45.184.145.34 group GLOBO-ATM-V4
+    peer 45.184.145.34 description GLOBO2-IPv4
 
     ipv4-family unicast
 
@@ -73,13 +73,13 @@ y
        peer GLOBO-ATM-V4 next-hop-local
        peer GLOBO-ATM-V4 public-as-only force
 
-       peer 200.192.110.33 enable
+       peer 45.184.145.33 enable
 y
-       peer 200.192.110.33 group GLOBO-ATM-V4
+       peer 45.184.145.33 group GLOBO-ATM-V4
 
-       peer 200.192.110.34 enable
+       peer 45.184.145.34 enable
 y
-       peer 200.192.110.34 group GLOBO-ATM-V4
+       peer 45.184.145.34 group GLOBO-ATM-V4
 
 
 
@@ -130,8 +130,8 @@ y
 # Desativar peer
 bgp 265138
 
-    peer 200.192.110.33 ignore
-    peer 200.192.110.34 ignore
+    peer 45.184.145.33 ignore
+    peer 45.184.145.34 ignore
     
 
     peer 2001:12f8:0:13::33 ignore
@@ -146,8 +146,8 @@ commit
 
 # Ativar
 bgp 265138
-    undo peer 200.192.110.33 ignore
-    undo peer 200.192.110.34 ignore
+    undo peer 45.184.145.33 ignore
+    undo peer 45.184.145.34 ignore
     
 
     undo peer 2001:12f8:0:13::33 ignore
@@ -162,8 +162,8 @@ commit
 
 # Destruir config do peer
 bgp 265138
-    undo peer 200.192.110.33
-    undo peer 200.192.110.34
+    undo peer 45.184.145.33
+    undo peer 45.184.145.34
 
     
 

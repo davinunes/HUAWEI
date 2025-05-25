@@ -1,0 +1,175 @@
+#=================================================================== BGP ATM META
+
+#======================================================================== INTERFACE
+
+#======================================================================== COMUNIDADE
+ip community-filter basic EXPORT_C10	 permit 	26513:10		
+ip community-filter basic EXPORT_C10P5	 permit 	26513:5010
+
+#======================================================================== EXPORT
+
+route-policy C10-IXDF-ATM-META-EXPORT permit node 1000
+    if-match community-filter EXPORT_C10
+#
+
+route-policy C10-IXDF-ATM-META-EXPORT deny node 9999
+#
+
+#======================================================================== AS-PATH para priorizar via C02
+
+# Lista de AS-PATH para priorizar rota pelo circuito:
+
+ip as-path-filter C10-IXDF-ATM-META-AS-ROUTE index 10 permit ^32934$
+# Cria uma lista com os prefixos Originados por Este ASN
+
+#======================================================================== IMPORT - IPV4
+
+route-policy C10-IXDF-ATM-META-IMPORT-IPV4 permit node 10
+    if-match as-path-filter C10-IXDF-ATM-META-AS-ROUTE
+    apply local-preference 999
+    apply community none
+#
+
+route-policy C10-IXDF-ATM-META-IMPORT-IPV4 DENY node 100
+#
+
+
+#======================================================================== IMPORT - IPV6
+
+route-policy C10-IXDF-ATM-META-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C10-IXDF-ATM-META-AS-ROUTE
+    apply local-preference 999
+    apply community none
+#
+
+route-policy C10-IXDF-ATM-META-IMPORT-IPV6 permit  node 9999
+#
+
+#======================================================================== BGP - RS PEERING - RouterServer - IPv4
+
+
+bgp 265138
+    group META-ATM-V4 external
+    peer META-ATM-V4 as-number 32934
+    peer META-ATM-V4 timer connect-retry 1
+    peer META-ATM-V4 timer keepalive 20 hold 60
+
+    peer 45.184.144.231 as-number 32934
+    peer 45.184.144.231 group META-ATM-V4
+    peer 45.184.144.231 description META1-IPv4
+
+    peer 45.184.144.232 as-number 32934
+    peer 45.184.144.232 group META-ATM-V4
+    peer 45.184.144.232 description META2-IPv4
+
+    ipv4-family unicast
+
+       peer META-ATM-V4 enable
+y
+       peer META-ATM-V4 route-policy C10-IXDF-ATM-META-IMPORT-IPV4 import
+       peer META-ATM-V4 route-policy C10-IXDF-ATM-META-EXPORT export
+       peer META-ATM-V4 advertise-community
+       peer META-ATM-V4 advertise-ext-community
+       peer META-ATM-V4 next-hop-local
+       peer META-ATM-V4 public-as-only force
+
+       peer 45.184.144.231 enable
+y
+       peer 45.184.144.231 group META-ATM-V4
+
+       peer 45.184.144.232 enable
+y
+       peer 45.184.144.232 group META-ATM-V4
+
+
+
+#
+
+
+#======================================================================== BGP - RS PEERING - RouterServer - IPv6
+
+
+bgp 265138
+
+    group META-ATM-V6 external
+    peer META-ATM-V6 as-number 32934
+    peer META-ATM-V6 timer connect-retry 1
+    peer META-ATM-V6 timer keepalive 20 hold 60
+
+    peer 2001:12f8:0:13::231 as-number 32934
+    peer 2001:12f8:0:13::231 group META-ATM-V6
+    peer 2001:12f8:0:13::231 description META1-IPv6
+
+    peer 2001:12f8:0:13::232 as-number 32934
+    peer 2001:12f8:0:13::232 group META-ATM-V6
+    peer 2001:12f8:0:13::232 description META2-IPv6
+
+
+    ipv6-family unicast
+
+       peer META-ATM-V6 enable
+       peer META-ATM-V6 route-policy C10-IXDF-ATM-META-IMPORT-IPV6 import
+       peer META-ATM-V6 route-policy C10-IXDF-ATM-META-EXPORT export
+       peer META-ATM-V6 advertise-community
+       peer META-ATM-V6 advertise-ext-community
+       peer META-ATM-V6 next-hop-local
+       peer META-ATM-V6 public-as-only force
+
+       peer 2001:12f8:0:13::231 enable
+y
+       peer 2001:12f8:0:13::231 group META-ATM-V6
+
+       peer 2001:12f8:0:13::232 enable
+y
+       peer 2001:12f8:0:13::232 group META-ATM-V6
+
+#
+
+#======================================================================== BGP - DESATIVAR
+
+# Desativar peer
+bgp 265138
+
+    peer 45.184.144.231 ignore
+    peer 45.184.144.232 ignore
+    
+
+    peer 2001:12f8:0:13::231 ignore
+    peer 2001:12f8:0:13::232 ignore
+    
+
+#
+commit
+
+
+#======================================================================== BGP - ATIVAR
+
+# Ativar
+bgp 265138
+    undo peer 45.184.144.231 ignore
+    undo peer 45.184.144.232 ignore
+    
+
+    undo peer 2001:12f8:0:13::231 ignore
+    undo peer 2001:12f8:0:13::232 ignore
+    
+#
+commit
+
+
+#======================================================================== BGP - DELETAR - CUIDADO
+
+
+# Destruir config do peer
+bgp 265138
+    undo peer 45.184.144.231
+    undo peer 45.184.144.232
+
+    
+
+    undo peer 2001:12f8:0:13::231
+    undo peer 2001:12f8:0:13::232
+
+    
+#
+commit
