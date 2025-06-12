@@ -25,6 +25,9 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd+dI3zyIhvo+pdkPCHROSd5OV9jMGPuPVD2sN+Xrt
 #
 ssh user lookinglass assign rsa-key klookinglass
 
+# ssh server publickey rsa rsa_sha2_256 rsa_sha2_512
+ssh client publickey rsa rsa_sha2_256 rsa_sha2_512
+
 commit
 run save
 y
