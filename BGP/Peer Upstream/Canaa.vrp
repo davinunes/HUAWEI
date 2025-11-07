@@ -2,7 +2,8 @@
 return
 system-view immediately
 
-
+# ip community-filter basic EXPORT_C12	 permit 	26513:12		
+# ip community-filter basic EXPORT_C12P5	 permit 	26513:5012
 
 #=================================================================== BGP com link CANAA - AS 269359 - Circuito 02
 
