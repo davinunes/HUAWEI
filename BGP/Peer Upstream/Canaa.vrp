@@ -1,0 +1,155 @@
+
+return
+system-view immediately
+
+
+
+#=================================================================== BGP com link CANAA - AS 269359 - Circuito 02
+
+
+
+#======================================================================== INTERFACE
+
+
+interface 100GE 0/1/48.3324
+    vlan-type dot1q 3324
+    undo shutdown
+    description Link-CANAA-AS269359-C12
+    statistic enable
+
+    ip address 198.19.201.1 30
+
+    ipv6 enable
+    ipv6 address fd6c:d681:5212::1/64
+#
+
+
+#======================================================================== EXPORT
+
+route-policy C12-EXPORT permit node 1050
+    if-match community-filter EXPORT_C12
+	# Exportar o que tiver com a comunidade 26513:2, rotas que devem sair por este link
+#
+
+
+route-policy C12-EXPORT permit node 2005
+    if-match community-filter EXPORT_C12P5
+    apply as-path 265138 265138 265138 265138 265138 additive
+	# Exportar o que tiver com a comunidade 26513:5002, rotas que devem sair por este link com muitos prepend
+#
+
+route-policy C12-EXPORT permit node 2019
+    if-match community-filter EXPORT_ALL
+	# Exportar o que tiver com a comunidade 26513:0, ou seja, rotas marcadas para exportar para todos
+#
+
+route-policy C12-EXPORT permit node 9999
+#
+
+
+#======================================================================== AS-PATH para priorizar via C12
+
+# Lista de AS-PATH para priorizar rota pelo circuito:
+
+ip as-path-filter C12-AS-ROUTE index 10 permit ^269359$
+# Cria uma lista com os prefixos Originados por Este ASN
+
+#======================================================================== IMPORT - IPV4
+
+route-policy C12-IMPORT-IPV4 permit node 2002
+    if-match as-path-filter C12-AS-ROUTE
+    apply local-preference 999999999
+#
+
+route-policy C12-IMPORT-IPV4 permit node 4004
+apply local-preference 100
+#
+
+route-policy C12-IMPORT-IPV4 permit node 9999
+#
+
+
+#======================================================================== IMPORT - IPV6
+
+
+route-policy C12-IMPORT-IPV6 permit node 2002
+    if-match as-path-filter C12-AS-ROUTE
+    apply local-preference 999999999
+    apply community none
+#
+
+route-policy C12-IMPORT-IPV6 permit node 4004
+apply local-preference 100
+
+#
+
+route-policy C12-IMPORT-IPV6 permit  node 9999
+#
+
+#======================================================================== BGP - RS PEERING - IPv4
+
+bgp 265138
+
+    peer 198.19.201.2 as-number 269359
+    peer 198.19.201.2 description C12-AS269359-CANAA-IPV4
+    peer 198.19.201.2 timer connect-retry 1
+    peer 198.19.201.2 timer keepalive 10 hold 40
+y
+
+    ipv4-family unicast
+        peer 198.19.201.2 enable
+y
+        peer 198.19.201.2 route-policy C12-IMPORT-IPV4 import
+        peer 198.19.201.2 route-policy C12-EXPORT export
+        peer 198.19.201.2 advertise-community
+        peer 198.19.201.2 advertise-ext-community
+        peer 198.19.201.2 public-as-only force
+        peer 198.19.201.2 next-hop-local
+#
+
+
+#======================================================================== BGP - RS PEERING - IPv6
+
+bgp 265138
+
+    peer fd6c:d681:5212::2 as-number 269359
+    peer fd6c:d681:5212::2 description C12-AS269359-CANAA-IPV6
+    peer fd6c:d681:5212::2 timer connect-retry 1
+    peer fd6c:d681:5212::2 timer keepalive 10 hold 40
+y
+
+    ipv6-family unicast
+        peer fd6c:d681:5212::2 enable
+        peer fd6c:d681:5212::2 route-policy C12-IMPORT-IPV6 import
+        peer fd6c:d681:5212::2 route-policy C12-EXPORT export
+        peer fd6c:d681:5212::2 advertise-community
+        peer fd6c:d681:5212::2 advertise-ext-community
+        peer fd6c:d681:5212::2 public-as-only force
+        peer fd6c:d681:5212::2 next-hop-local
+#
+
+#======================================================================== BGP - DESATIVAR
+
+# Desativar peer
+bgp 265138
+    peer 198.19.201.2 ignore
+    peer fd6c:d681:5212::2 ignore
+#
+
+#======================================================================== BGP - ATIVAR
+
+# Ativar
+bgp 265138
+    undo peer 198.19.201.2 ignore
+    undo peer fd6c:d681:5212::2 ignore
+#
+
+#======================================================================== BGP - DELETAR - CUIDADO
+
+# Destruir config do peer
+bgp 265138
+    undo peer 198.19.201.2
+	y
+    undo peer fd6c:d681:5212::2
+	y
+#
