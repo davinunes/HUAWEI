@@ -22,6 +22,13 @@ interface 100GE 0/1/48.3324
 
     ipv6 enable
     ipv6 address fd6c:d681:5212::1/64
+
+	mac-address cc2d-e0e4-e330
+ ip netstream inbound
+ ip netstream outbound
+ ipv6 netstream inbound
+ ipv6 netstream outbound
+
 #
 
 
