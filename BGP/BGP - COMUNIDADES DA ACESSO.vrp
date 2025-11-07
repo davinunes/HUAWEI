@@ -52,6 +52,10 @@ ip community-filter basic EXPORT_C09P5	 permit 	26513:5009
 ip community-filter basic EXPORT_C11	 permit 	26513:11		
 ip community-filter basic EXPORT_C11P5	 permit 	26513:5011
 
+ip community-filter basic EXPORT_C12	 permit 	26513:12		
+ip community-filter basic EXPORT_C12P5	 permit 	26513:5012
+
 ip community-filter basic CLIENTE		 permit 	26513:100	
 ip community-filter basic FULLROUTE		 permit 	26513:1000
+
 ip community-filter basic NO-UPLINK		 permit 	26513:999	
